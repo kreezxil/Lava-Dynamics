@@ -10,7 +10,14 @@ import org.apache.logging.log4j.Logger;
 @Mod(modid = LavaDynamics.MODID, name = LavaDynamics.NAME, version = LavaDynamics.VERSION)
 public class LavaDynamics
 {
-    public static final String MODID = "lavadynamics";
+   /*
+    * Adding Vulcanism to Minecraft through Block Update Detection
+    * 
+    * Specifically when lava flows on a block, if the block has a smeltable block output recipe, 
+    * the block will be dynamically updated to that output block.
+    */
+	
+	public static final String MODID = "lavadynamics";
     public static final String NAME = "Lava Dynamics";
     public static final String VERSION = "@VERSION@";
 
