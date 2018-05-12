@@ -12,11 +12,13 @@ public class Config {
 
 	public static Configuration cfg = LavaDynamics.config;
 
-	public static String CATEGORY_GENERAL = "general", CATEGORY_DIMENSIONS = "dimensions", CATEGORY_CONVERSIONS = "conversions (mappings)";
+	public static String CATEGORY_GENERAL = "general", CATEGORY_DIMENSIONS = "dimensions", CATEGORY_CONVERSIONS = "conversions (mappings)", CVOLCANO = "Volcano Settings";
 
-	public static Property debugMode, dimOverworld, dimNether, dimEnd, conversions, burping, furnaceRecipes, partialBlock;
+	public static Property debugMode, dimOverworld, dimNether, dimEnd, conversions, burping, furnaceRecipes, partialBlock, volcanoChance;
 
 	public static Property dimensions; //a kludge for now
+	
+	public static Property volcanoGen,lowNoise,highNoise,maxExplosion,minExplosion,chanceExplosion,lavaSpread,psuedoSurface,extraHt,minHt,maxYlevel;
 
 	// Call this from CommonProxy.preInit(). It will create our config if it doesn't
 	// exist yet and read the values if it does exist.
@@ -38,7 +40,19 @@ public class Config {
 		debugMode = cfg.get(CATEGORY_GENERAL, "debugMode", false,
 				"If true it will print messages to the player based on what you are doing in the protected zone, useful for helping Kreezxil debug the mod");
 		//burping = cfg.get(CATEGORY_GENERAL, "burping", false, "Allows lava to be burped to force block events to happen in it.");
-	
+		volcanoChance = cfg.get(CVOLCANO, "volcanoChance", 5, "Percent chance a volcano or magma vent will occur.\nDefault: 5");
+		volcanoGen = cfg.get(CVOLCANO, "volcanoGen", false, "You can play with this value, but it's not for you.\nDefault: seriously it will ignore you");
+		lowNoise = cfg.get(CVOLCANO, "lowNoise", 1, "The Minimum value for determining how many blocks above the current block is also lava.\nDefault: 1");
+		highNoise = cfg.get(CVOLCANO, "highNoise", 4, "The Maximum value for determining how many blocks above the current block is also lava.\nDefault: 4");
+	    maxExplosion = cfg.get(CVOLCANO, "maxExplosion", 10.0, "float value for determining strength of random explosions.\nDefault: 10.0");
+	    minExplosion = cfg.get(CVOLCANO, "minExplosion", 1.0, "The minimum value for determing strenth of random explosions.\nDefault: 1.0");
+	    chanceExplosion = cfg.get(CVOLCANO, "chanceExplosion", 5, "Integer value from 0 to 100 for determining the chance that lava causes an explosion.\nDefault: 5");
+	    lavaSpread = cfg.get(CVOLCANO, "lavaSpread", 10, "The integer value from 0 to 100 for determing the chance that lava will spread.\nDefault: 10");
+	    psuedoSurface = cfg.get(CVOLCANO, "psuedoSurface", 69, "The y level for the approximate level of your surface.\nDefault: 69");
+	    extraHt = cfg.get(CVOLCANO, "extraHt", 10, "Extra amount of source blocks to add to the magma vent.\nDefault: 10");
+	    minHt = cfg.get(CVOLCANO, "minHt", 3,"The minimum amount of source blocks to add to the magma vent.\nDefault: 3");
+	    maxYlevel = cfg.get(CVOLCANO, "maxYlevel", 10, "The max y value to consider for turning lava into a magma vent.\nDefault: 10");
+	    
 //		cfg.addCustomCategoryComment(CATEGORY_DIMENSIONS, "Dimensions not listed are not allowed to function with Lava Dynamics. For instance don't list\n"+"Nether and you won't have a million blocks tyring to update their neighbors!");
 //		dimensions = cfg.get(CATEGORY_DIMENSIONS, "dimensions", new int[]{0}, "List of dimension id's for which the mod is allowed to operate");
 		

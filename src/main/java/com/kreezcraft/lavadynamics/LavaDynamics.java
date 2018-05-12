@@ -52,14 +52,15 @@ public class LavaDynamics {
 	public static Logger logger;
 	public static Configuration config;
 	public static LavaDynamics instance;
-	public static Object source,destination;
-	
+	public static Object source, destination;
+
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		logger = event.getModLog();
 		File directory = event.getModConfigurationDirectory();
 		config = new Configuration(new File(directory.getPath(), "lavadynamics.cfg"));
 		Config.readConfig();
+		Config.volcanoGen.set(false);
 	}
 
 	@EventHandler
@@ -68,26 +69,19 @@ public class LavaDynamics {
 
 	@EventHandler
 	public void post(FMLPostInitializationEvent event) {
-		// int i = 1;
-		// while (i < 6) {
-		// GameRegistry.addSmelting(new ItemStack(Blocks.STONE, 1, i), new
-		// ItemStack(Blocks.STONE, 1, i + 1), 0f);
-		// i += 2;
-		// }
 		if (config.hasChanged()) {
 			config.save();
 		}
 
 	}
-	
+
 	@EventHandler
 	public void serverLoad(FMLServerStartingEvent event) {
 		/*
-		 * way too much time has been spent on commands and subcommands
-		 * it is disabled for now
+		 * way too much time has been spent on commands and subcommands it is disabled
+		 * for now
 		 */
-//		event.registerServerCommand(new cmdLavaDynamics());
+		// event.registerServerCommand(new cmdLavaDynamics());
 	}
-
 
 }
