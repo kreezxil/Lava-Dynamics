@@ -45,9 +45,7 @@ public class LavaLove {
 
 	@SubscribeEvent
 	public static void worldSmelting(BlockEvent event) {
-		// NeighborNotifyEvent
-		// public static void worldSmelting(NeighborNotifyEvent event) {
-
+		
 		boolean allowErupt = false; // assume that the chunk has a tileentity, until we are sure it doesn't
 
 		EnumFacing facing;
@@ -57,11 +55,6 @@ public class LavaLove {
 
 		EntityPlayer player = null;
 		player = event.getWorld().getClosestPlayer(thisPos.getX(), thisPos.getY(), thisPos.getZ(), 10, false);
-
-		// if(player==null) {
-		// System.out.println("no player!");
-		// return; //no player
-		// }
 
 		Block thisBlock = null, blockTarget = null, blockFromTarget = null;
 		ItemStack targetOutput = null;
@@ -116,12 +109,16 @@ public class LavaLove {
 			Chunk theChunk = worldIn.getChunkFromBlockCoords(thisPos);
 			if (theChunk != null) {
 				// eclipse wanted a null check here?!!
+				if(Config.protection.getBoolean()) {
 				Map<BlockPos, TileEntity> scanlist = theChunk.getTileEntityMap();
 				if (scanlist.isEmpty())
 					allowErupt = true;
 				else {
 					if (Config.debugMode.getBoolean())
 						System.out.println("TileEntities were found, allowErupt is false!");
+				}
+				} else {
+					allowErupt = true; //because protection is false, then nothing is safe!
 				}
 			}
 		}
@@ -183,6 +180,47 @@ public class LavaLove {
 			blockTarget = targetState.getBlock();
 			meta = blockTarget.getMetaFromState(targetState);
 
+			/*
+			 * build the volcanic walls
+			 */
+
+			// volcanic wall construction
+			// because one of these might be true for blockTarget
+			// Blocks.AIR, Blocks.LAVA, Blocks.FLOWING_LAVA)
+			if (worldIn.getBlockState(thisPos.up(1)).getBlock() == Blocks.AIR && !Config.volcanoGen.getBoolean()) {
+				Random rNoise = new Random();
+				int lowNoise = Config.lowNoise.getInt();
+				int upCheck = rNoise.nextInt(Config.highNoise.getInt()) + lowNoise;
+				Block aboveMe = worldIn.getBlockState(thisPos.up(upCheck)).getBlock();
+				if (Config.debugMode.getBoolean())
+					System.out.println("attempt to build a wall at " + thisPos.toString());
+				if (
+				// (blockTarget == Blocks.LAVA || blockTarget == Blocks.FLOWING_LAVA)
+				// &&
+				(aboveMe == Blocks.LAVA || aboveMe == Blocks.FLOWING_LAVA)
+				// && blockTarget == Blocks.AIR
+				) {
+					// hopefully this means it's a perimeter lava block and not one in the core of a
+					// pool
+					Block block = getRndOre().getBlock();
+
+					if (block != Blocks.STONE) {
+						if(rNoise.nextInt(100)<Config.nodulePartChance.getInt()) worldIn.setBlockState(thisPos.up(), Blocks.STONE.getDefaultState());
+						if(rNoise.nextInt(100)<Config.nodulePartChance.getInt()) worldIn.setBlockState(thisPos.down(), Blocks.STONE.getDefaultState());
+						if(rNoise.nextInt(100)<Config.nodulePartChance.getInt()) worldIn.setBlockState(thisPos.east(), Blocks.STONE.getDefaultState());
+						if(rNoise.nextInt(100)<Config.nodulePartChance.getInt()) worldIn.setBlockState(thisPos.west(), Blocks.STONE.getDefaultState());
+						if(rNoise.nextInt(100)<Config.nodulePartChance.getInt()) worldIn.setBlockState(thisPos.north(), Blocks.STONE.getDefaultState());
+						if(rNoise.nextInt(100)<Config.nodulePartChance.getInt()) worldIn.setBlockState(thisPos.south(), Blocks.STONE.getDefaultState());
+					}
+
+					worldIn.setBlockState(thisPos, block.getDefaultState());
+
+				}
+			}
+			/*
+			 * end build the walls
+			 */
+
 			if (!targetState.isFullBlock() && !Config.partialBlock.getBoolean()) {
 				if (Config.debugMode.getBoolean())
 					System.out.println("partial block detected");
@@ -230,7 +268,8 @@ public class LavaLove {
 							}
 
 							randomInt = r.nextInt(100);
-							float explosion = (float) ((r.nextFloat() * Config.maxExplosion.getDouble()) + Config.minExplosion.getDouble());
+							float explosion = (float) ((r.nextFloat() * Config.maxExplosion.getDouble())
+									+ Config.minExplosion.getDouble());
 							if (randomInt < Config.chanceExplosion.getInt())
 								worldIn.createExplosion(null, targetPos.getX(), targetPos.getY(), targetPos.getZ(),
 										explosion, false);
@@ -241,38 +280,6 @@ public class LavaLove {
 					// blockFromTarget.getBlockState()
 					beTheLava(worldIn, furnaceRecipes, targetPos, blockFromTarget, targetOutput, targetMeta, facing);
 					makeEffect(worldIn, thisPos);
-
-				} else {
-					// volcanic wall construction
-					// because one of these might be true for blockTarget
-					// Blocks.AIR, Blocks.LAVA, Blocks.FLOWING_LAVA)
-					Random rNoise = new Random();
-					int lowNoise = Config.lowNoise.getInt();
-					int highNoise = rNoise.nextInt(Config.highNoise.getInt()) + 1;
-					Block aboveMe = worldIn.getBlockState(thisPos.up(highNoise + lowNoise)).getBlock();
-					if ((blockTarget != Blocks.LAVA && blockTarget != Blocks.FLOWING_LAVA)
-							&& (aboveMe == Blocks.LAVA || aboveMe == Blocks.FLOWING_LAVA)
-							&& blockTarget == Blocks.AIR) {
-						// hopefully this means it's a perimeter lava block and not one in the core of a
-						// pool
-						Block block = getRndOre().getBlock();
-
-						if (block != Blocks.STONE) {
-							worldIn.setBlockState(thisPos.up(), Blocks.STONE.getDefaultState());
-							worldIn.setBlockState(thisPos.down(), Blocks.STONE.getDefaultState());
-							worldIn.setBlockState(thisPos.east(), Blocks.STONE.getDefaultState());
-							worldIn.setBlockState(thisPos.west(), Blocks.STONE.getDefaultState());
-							worldIn.setBlockState(thisPos.north(), Blocks.STONE.getDefaultState());
-							worldIn.setBlockState(thisPos.south(), Blocks.STONE.getDefaultState());
-						}
-
-						worldIn.setBlockState(thisPos, block.getDefaultState());
-
-					} 
-//					else if (aboveMe == Blocks.AIR && blockTarget == Blocks.AIR) {
-//						if (rNoise.nextInt(10) <= 2)
-//							worldIn.setBlockState(thisPos, Blocks.STONE.getDefaultState());
-//					}
 
 				}
 			}
@@ -290,7 +297,8 @@ public class LavaLove {
 		if (Volcano <= Config.volcanoChance.getInt()) {
 			// if (Config.debugMode.getBoolean())
 			// System.out.println("checking to see if 2 blocks up is air");
-			if (thisPos.getY() <= Config.maxYlevel.getInt() && worldIn.getBlockState(thisPos.up(2)) != Blocks.AIR.getDefaultState()) {
+			if (thisPos.getY() <= Config.maxYlevel.getInt()
+					&& worldIn.getBlockState(thisPos.up(2)) != Blocks.AIR.getDefaultState()) {
 				// if (Config.debugMode.getBoolean())
 				// System.out.println("checking to see if lava is below y 69");
 				if (thisPos.getY() <= Config.psuedoSurface.getInt()) {
@@ -313,7 +321,7 @@ public class LavaLove {
 
 	private static IBlockState getRndOre() {
 		Random r = new Random();
-		int ore = r.nextInt(100);
+		int ore = r.nextInt(1000);
 
 		Block block;
 		// we should pull from the config at this point but for now it will be hard
