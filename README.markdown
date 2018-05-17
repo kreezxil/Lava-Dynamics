@@ -213,7 +213,7 @@ Discord: https://discord.gg/Nm9W3zw
 ## Donate
 
 Help a Veteran today
-I am Veteran of United States Army. I am not disabled. But I do love to make these mods and modpacks for you guys. Please help me to help you by Donating at [![Patreon](https://imgur.com/WIC5swq)](https://patreon.com/kreezxil "Donate to Kreezxil")
+I am Veteran of United States Army. I am not disabled. But I do love to make these mods and modpacks for you guys. Please help me to help you by Donating at [![Patreon](https://imgur.com/WIC5swq.png)](https://patreon.com/kreezxil "Donate to Kreezxil")
 
  
 
