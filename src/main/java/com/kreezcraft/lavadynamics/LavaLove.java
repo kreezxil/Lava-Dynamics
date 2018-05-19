@@ -62,12 +62,7 @@ public class LavaLove {
 		IBlockState targetState = null;
 		int meta = 0, targetMeta = 0;
 
-		try {
-			thisBlock = event.getState().getActualState(null, thisPos).getBlock();
-		} catch (Exception e) {
-			// nothing left to do, exit function
-			return;
-		}
+		thisBlock = event.getState().getBlock();
 		if (thisBlock != Blocks.LAVA && thisBlock != Blocks.FLOWING_LAVA) {
 			// it's not lava, get out here!
 			// if(Config.debugMode.getBoolean()) System.out.println("not lava!");
