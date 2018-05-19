@@ -258,10 +258,16 @@ public class LavaLove {
 									targetPos.add(0, 0, targetPos.getZ() + 1);
 								}
 
-								worldIn.setBlockState(targetPos, Blocks.LAVA.getDefaultState());
+								if(Config.sourceBlock.getBoolean()) {
+									worldIn.setBlockState(targetPos, Blocks.LAVA.getDefaultState());
+								} 
+//								else {
+//									worldIn.setBlockState(targetPos, Blocks.FLOWING_LAVA.getDefaultState());
+//								}
 
 							}
 
+							//explosions are generated when new lava is determined to be formed. It is now possible to witness exploding lava flows with out no new lava source blocks.
 							randomInt = r.nextInt(100);
 							float explosion = (float) ((r.nextFloat() * Config.maxExplosion.getDouble())
 									+ Config.minExplosion.getDouble());
