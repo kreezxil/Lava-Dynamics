@@ -137,6 +137,11 @@ public class LavaLove {
 		if (worldIn.provider.getDimension() < -1 || worldIn.provider.getDimension() > 1)
 			return;
 
+		if(Config.preserveVillages.getBoolean() && worldIn.villageCollection.getNearestVillage(thisPos, Config.findVillageRange.getInt()) != null) {
+			//get out here, we're saving tha village!
+			return;
+		}
+		
 		if (allowErupt) {
 			// if (do_erupt(worldIn, thisPos))
 			// return;

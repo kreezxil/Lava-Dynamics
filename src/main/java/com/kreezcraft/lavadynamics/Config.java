@@ -13,12 +13,14 @@ public class Config {
 	public static Configuration cfg = LavaDynamics.config;
 
 	public static String CATEGORY_GENERAL = "general", CATEGORY_DIMENSIONS = "dimensions",
-			CATEGORY_CONVERSIONS = "conversions (mappings)", CVOLCANO = "Volcano Settings";
+			CATEGORY_CONVERSIONS = "conversions (mappings)", CVOLCANO = "Volcano Settings",
+			CPROTECTION = "protection";
+	
 	public static String CNOISE = "noise", CEXPLOSIONS = "explosions", CPLUME = "plume height", CAT_OREGEN = "oreGen",
 			CLAVA = "justTheLava";
 
 	public static Property debugMode, dimOverworld, dimNether, dimEnd, conversions, burping, furnaceRecipes,
-			partialBlock, volcanoChance;
+			partialBlock, volcanoChance, preserveVillages, findVillageRange;
 
 	public static Property dimensions; // a kludge for now
 
@@ -42,8 +44,9 @@ public class Config {
 	}
 
 	private static void initGeneralConfig(Configuration cfg) {
-		cfg.addCustomCategoryComment("NOTES", "If a config setting is not preceded by comments #'s then you may delete that particular setting as it is no longer being used.");
+		cfg.addCustomCategoryComment("NOTES", "If any config setting is not preceded by comments #'s then you may delete that particular setting as it is no longer being used.");
 		cfg.addCustomCategoryComment(CATEGORY_GENERAL, "General Settings");
+		cfg.addCustomCategoryComment(CPROTECTION, "Protection Settings");
 		debugMode = cfg.get(CATEGORY_GENERAL, "debugMode", false,
 				"If true it will print messages to the player based on what you are doing in the protected zone, useful for helping Kreezxil debug the mod");
 
@@ -51,8 +54,10 @@ public class Config {
 				"Percent chance a volcano or magma vent will occur.\nDefault: 20");
 		volcanoGen = cfg.get(CVOLCANO, "volcanoGen", false,
 				"You can play with this value, but it's not for you.\nDefault: seriously it will ignore you");
-		protection = cfg.get(CVOLCANO, "protection", true,
+		protection = cfg.get(CPROTECTION, "protection", true,
 				"if true any tile entity will prevent a volcano from erupting in a chunk. Signs are tile entities btw. Setting this to false enables hardcore volcanoes. Meaning a play must neutralize lava pools below them to be truly safe.");
+		preserveVillages = cfg.get(CPROTECTION, "preserveVillages", true, "Disable to allow Villages to be destroyed with volcanos");
+		findVillageRange = cfg.get(CPROTECTION, "findVillageRange", 10, "The range from the lava event to scan for a village.\nDefault: 10");
 		psuedoSurface = cfg.get(CVOLCANO, "psuedoSurface", 69,
 				"The y level for the approximate level of your surface.\nDefault: 69");
 
