@@ -43,9 +43,14 @@ public class LavaLove {
 			player.sendMessage(new TextComponentString(msg));
 	}
 
+	private static void debug(String msg) {
+		if (Config.debugMode.getBoolean())
+			System.out.println(msg);
+	}
+
 	@SubscribeEvent
 	public static void worldSmelting(BlockEvent event) {
-		
+
 		boolean allowErupt = false; // assume that the chunk has a tileentity, until we are sure it doesn't
 
 		EnumFacing facing;
@@ -72,31 +77,32 @@ public class LavaLove {
 
 		World worldIn = event.getWorld();
 
-		// never do this again! it breaks the mod!
-		// if (player == null)
-		// return;
+		// We don't do this during worldGen!
 
-		// the following code block checks to see if a player is in the present chunk
-		// and if not exits the event to prevent unnecessary code execution light that
-		// caused
-		// in cascading world gen
-		// also a player must be present in a chunk for a volcano to be generated, yeah
-		// players
-		// are gonna love hate this so bad!
-		if (player != null) {
-			if (Config.debugMode.getBoolean())
-				System.out.println("we have a player");
+		// debug("before chunk neighbor test");
+		if (!chunkNeighborsLoaded(worldIn, thisPos))
+			return;
+		// debug("after chunk neighbor test and before is populated test");
+		if (!worldIn.getChunkFromBlockCoords(thisPos).isPopulated())
+			return;
+		// debug("after is populated test");
 
-			// if (thisPos.getX() >> 4 != player.chunkCoordX || thisPos.getZ() >> 4 !=
-			// player.chunkCoordZ) {
-			if (Math.abs(thisPos.getX() - player.getPosition().getX()) <= 100
-					|| Math.abs(thisPos.getZ() - player.getPosition().getZ()) <= 100) {
-				if (Config.debugMode.getBoolean())
-					System.out.println("player not in range of block event");
-				return;// player not in range
-			}
-
-		}
+//		if (player != null) {
+//			// if (Config.debugMode.getBoolean())
+//			// System.out.println("we have a player");
+//
+//			// if (thisPos.getX() >> 4 != player.chunkCoordX || thisPos.getZ() >> 4 !=
+//			// player.chunkCoordZ) {
+//			if (Math.abs(worldIn.getChunkFromBlockCoords(thisPos).x - player.chunkCoordX) <= 4
+//					|| Math.abs(worldIn.getChunkFromBlockCoords(thisPos).z - player.chunkCoordZ) <= 4) {
+//				// if (Math.abs(thisPos.getX() - player.getPosition().getX()) <= 100
+//				// || Math.abs(thisPos.getZ() - player.getPosition().getZ()) <= 100) {
+//				if (Config.debugMode.getBoolean())
+//					System.out.println("player not in range of block event");
+//				return;// player not in range
+//			}
+//
+//		}
 
 		if (Config.volcanoChance.getInt() > 0) {
 			// check for crafted and return if found
@@ -104,16 +110,16 @@ public class LavaLove {
 			Chunk theChunk = worldIn.getChunkFromBlockCoords(thisPos);
 			if (theChunk != null) {
 				// eclipse wanted a null check here?!!
-				if(Config.protection.getBoolean()) {
-				Map<BlockPos, TileEntity> scanlist = theChunk.getTileEntityMap();
-				if (scanlist.isEmpty())
-					allowErupt = true;
-				else {
-					if (Config.debugMode.getBoolean())
-						System.out.println("TileEntities were found, allowErupt is false!");
-				}
+				if (Config.protection.getBoolean()) {
+					Map<BlockPos, TileEntity> scanlist = theChunk.getTileEntityMap();
+					if (scanlist.isEmpty())
+						allowErupt = true;
+					else {
+						if (Config.debugMode.getBoolean())
+							System.out.println("TileEntities were found, allowErupt is false!");
+					}
 				} else {
-					allowErupt = true; //because protection is false, then nothing is safe!
+					allowErupt = true; // because protection is false, then nothing is safe!
 				}
 			}
 		}
@@ -200,12 +206,18 @@ public class LavaLove {
 					Block block = getRndOre().getBlock();
 
 					if (block != Blocks.STONE) {
-						if(rNoise.nextInt(100)<Config.nodulePartChance.getInt()) worldIn.setBlockState(thisPos.up(), Blocks.STONE.getDefaultState());
-						if(rNoise.nextInt(100)<Config.nodulePartChance.getInt()) worldIn.setBlockState(thisPos.down(), Blocks.STONE.getDefaultState());
-						if(rNoise.nextInt(100)<Config.nodulePartChance.getInt()) worldIn.setBlockState(thisPos.east(), Blocks.STONE.getDefaultState());
-						if(rNoise.nextInt(100)<Config.nodulePartChance.getInt()) worldIn.setBlockState(thisPos.west(), Blocks.STONE.getDefaultState());
-						if(rNoise.nextInt(100)<Config.nodulePartChance.getInt()) worldIn.setBlockState(thisPos.north(), Blocks.STONE.getDefaultState());
-						if(rNoise.nextInt(100)<Config.nodulePartChance.getInt()) worldIn.setBlockState(thisPos.south(), Blocks.STONE.getDefaultState());
+						if (rNoise.nextInt(100) < Config.nodulePartChance.getInt())
+							worldIn.setBlockState(thisPos.up(), Blocks.STONE.getDefaultState());
+						if (rNoise.nextInt(100) < Config.nodulePartChance.getInt())
+							worldIn.setBlockState(thisPos.down(), Blocks.STONE.getDefaultState());
+						if (rNoise.nextInt(100) < Config.nodulePartChance.getInt())
+							worldIn.setBlockState(thisPos.east(), Blocks.STONE.getDefaultState());
+						if (rNoise.nextInt(100) < Config.nodulePartChance.getInt())
+							worldIn.setBlockState(thisPos.west(), Blocks.STONE.getDefaultState());
+						if (rNoise.nextInt(100) < Config.nodulePartChance.getInt())
+							worldIn.setBlockState(thisPos.north(), Blocks.STONE.getDefaultState());
+						if (rNoise.nextInt(100) < Config.nodulePartChance.getInt())
+							worldIn.setBlockState(thisPos.south(), Blocks.STONE.getDefaultState());
 					}
 
 					worldIn.setBlockState(thisPos, block.getDefaultState());
@@ -258,16 +270,17 @@ public class LavaLove {
 									targetPos.add(0, 0, targetPos.getZ() + 1);
 								}
 
-								if(Config.sourceBlock.getBoolean()) {
+								if (Config.sourceBlock.getBoolean()) {
 									worldIn.setBlockState(targetPos, Blocks.LAVA.getDefaultState());
-								} 
-//								else {
-//									worldIn.setBlockState(targetPos, Blocks.FLOWING_LAVA.getDefaultState());
-//								}
+								}
+								// else {
+								// worldIn.setBlockState(targetPos, Blocks.FLOWING_LAVA.getDefaultState());
+								// }
 
 							}
 
-							//explosions are generated when new lava is determined to be formed. It is now possible to witness exploding lava flows with out no new lava source blocks.
+							// explosions are generated when new lava is determined to be formed. It is now
+							// possible to witness exploding lava flows with out no new lava source blocks.
 							randomInt = r.nextInt(100);
 							float explosion = (float) ((r.nextFloat() * Config.maxExplosion.getDouble())
 									+ Config.minExplosion.getDouble());
@@ -286,7 +299,17 @@ public class LavaLove {
 			}
 		}
 	}
-	// }
+
+	private static boolean chunkNeighborsLoaded(World worldIn, BlockPos thisPos) {
+		int chunkX = worldIn.getChunkFromBlockCoords(thisPos).x;
+		int chunkZ = worldIn.getChunkFromBlockCoords(thisPos).z;
+
+		for (int x = -1; x <= 1; x++)
+			for (int z = -1; z <= 1; z++)
+				if (!worldIn.isChunkGeneratedAt(chunkX + x, chunkZ + z))
+					return false;
+		return true;
+	}
 
 	private static boolean do_erupt(World worldIn, BlockPos thisPos) {
 		Random chance = new Random();

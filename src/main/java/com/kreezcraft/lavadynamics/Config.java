@@ -60,12 +60,12 @@ public class Config {
 		lowNoise = cfg.get(CNOISE, "lowNoise", 0,
 				"The Minimum value for determining how many blocks above the current block is also lava before generating a wall component.\nDefault: 0");
 		highNoise = cfg.get(CNOISE, "highNoise", 2,
-				"The Maximum value for determining how many blocks above the current block is also lava before generating a wall component.\nDefault: 2");
+				"The Maximum value for determining how many blocks above the current block is also lava before generating a wall component.\nSetting this lower than 2 can cause lava to instantly turn to stone!\nDefault: 2");
 
 		cfg.addCustomCategoryComment(CEXPLOSIONS,
 				"Volcanoes have explosive quailities, these settings are for that feature");
 		maxExplosion = cfg.get(CEXPLOSIONS, "maxExplosion", 10.0,
-				"float value for determining strength of random explosions.\nDefault: 10.0");
+				"float value for determining strength of random explosions.\nNote: Values higher than 10 can cause lag!\nDefault: 10.0");
 		minExplosion = cfg.get(CEXPLOSIONS, "minExplosion", 1.0,
 				"The minimum value for determining strenth of random explosions.\nDefault: 1.0");
 		chanceExplosion = cfg.get(CEXPLOSIONS, "chanceExplosion", 5,
