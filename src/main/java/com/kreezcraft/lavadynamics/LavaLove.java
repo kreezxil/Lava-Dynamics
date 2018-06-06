@@ -251,7 +251,7 @@ public class LavaLove {
 				// if (blockFromTarget != null || blockFromTarget != Blocks.AIR) { // air as
 				// output? wtf?
 
-				if (blockTarget != Blocks.AIR && blockTarget != Blocks.LAVA && blockTarget != Blocks.FLOWING_LAVA) {
+				if (blockTarget != Blocks.AIR && blockTarget != Blocks.LAVA && blockTarget != Blocks.FLOWING_LAVA && getModID(blockTarget)!="biomesoplenty") {
 
 					// if (thisBlock == Blocks.LAVA || thisBlock == Blocks.FLOWING_LAVA) {
 					if (blockTarget.isFlammable(worldIn, targetPos, facing) || blockTarget == Blocks.COAL_ORE
@@ -303,6 +303,10 @@ public class LavaLove {
 				}
 			}
 		}
+	}
+
+	private static String getModID(Block blockTarget) {
+		return blockTarget.getRegistryName().getResourceDomain();
 	}
 
 	private static boolean chunkNeighborsLoaded(World worldIn, BlockPos thisPos) {
