@@ -87,22 +87,24 @@ public class LavaLove {
 			return;
 		// debug("after is populated test");
 
-//		if (player != null) {
-//			// if (Config.debugMode.getBoolean())
-//			// System.out.println("we have a player");
-//
-//			// if (thisPos.getX() >> 4 != player.chunkCoordX || thisPos.getZ() >> 4 !=
-//			// player.chunkCoordZ) {
-//			if (Math.abs(worldIn.getChunkFromBlockCoords(thisPos).x - player.chunkCoordX) <= 4
-//					|| Math.abs(worldIn.getChunkFromBlockCoords(thisPos).z - player.chunkCoordZ) <= 4) {
-//				// if (Math.abs(thisPos.getX() - player.getPosition().getX()) <= 100
-//				// || Math.abs(thisPos.getZ() - player.getPosition().getZ()) <= 100) {
-//				if (Config.debugMode.getBoolean())
-//					System.out.println("player not in range of block event");
-//				return;// player not in range
-//			}
-//
-//		}
+		// if (player != null) {
+		// // if (Config.debugMode.getBoolean())
+		// // System.out.println("we have a player");
+		//
+		// // if (thisPos.getX() >> 4 != player.chunkCoordX || thisPos.getZ() >> 4 !=
+		// // player.chunkCoordZ) {
+		// if (Math.abs(worldIn.getChunkFromBlockCoords(thisPos).x - player.chunkCoordX)
+		// <= 4
+		// || Math.abs(worldIn.getChunkFromBlockCoords(thisPos).z - player.chunkCoordZ)
+		// <= 4) {
+		// // if (Math.abs(thisPos.getX() - player.getPosition().getX()) <= 100
+		// // || Math.abs(thisPos.getZ() - player.getPosition().getZ()) <= 100) {
+		// if (Config.debugMode.getBoolean())
+		// System.out.println("player not in range of block event");
+		// return;// player not in range
+		// }
+		//
+		// }
 
 		if (Config.volcanoChance.getInt() > 0) {
 			// check for crafted and return if found
@@ -137,11 +139,12 @@ public class LavaLove {
 		if (worldIn.provider.getDimension() < -1 || worldIn.provider.getDimension() > 1)
 			return;
 
-		if(Config.preserveVillages.getBoolean() && worldIn.villageCollection.getNearestVillage(thisPos, Config.findVillageRange.getInt()) != null) {
-			//get out here, we're saving tha village!
+		if (Config.preserveVillages.getBoolean()
+				&& worldIn.villageCollection.getNearestVillage(thisPos, Config.findVillageRange.getInt()) != null) {
+			// get out of here, we're saving that village!
 			return;
 		}
-		
+
 		if (allowErupt) {
 			// if (do_erupt(worldIn, thisPos))
 			// return;
@@ -185,6 +188,12 @@ public class LavaLove {
 			targetState = worldIn.getBlockState(targetPos);
 			blockTarget = targetState.getBlock();
 			meta = blockTarget.getMetaFromState(targetState);
+
+			if (!compatible(blockTarget)) {
+				if (Config.debugMode.getBoolean())
+					System.out.println("Incompatible mod " + getModID(blockTarget) + " detected!");
+				return;
+			}
 
 			/*
 			 * build the volcanic walls
@@ -248,10 +257,7 @@ public class LavaLove {
 				blockFromTarget = Block.getBlockFromItem(targetOutput.getItem());
 				boolean furnaceRecipes = Config.furnaceRecipes.getBoolean();
 
-				// if (blockFromTarget != null || blockFromTarget != Blocks.AIR) { // air as
-				// output? wtf?
-
-				if (blockTarget != Blocks.AIR && blockTarget != Blocks.LAVA && blockTarget != Blocks.FLOWING_LAVA && getModID(blockTarget)!="biomesoplenty") {
+				if (blockTarget != Blocks.AIR && blockTarget != Blocks.LAVA && blockTarget != Blocks.FLOWING_LAVA) {
 
 					// if (thisBlock == Blocks.LAVA || thisBlock == Blocks.FLOWING_LAVA) {
 					if (blockTarget.isFlammable(worldIn, targetPos, facing) || blockTarget == Blocks.COAL_ORE
@@ -320,13 +326,18 @@ public class LavaLove {
 		return true;
 	}
 
-	private static boolean do_erupt(World worldIn, BlockPos thisPos) {
+	private static boolean compatible(Block target) {
+		String[] shitMods = Config.ignoreTheseMods.getString().split(",");
+		return !Arrays.asList(shitMods).contains(getModID(target));
+	}
+
+	private static void do_erupt(World worldIn, BlockPos thisPos) {
 		Random chance = new Random();
 		int Volcano = chance.nextInt(100);
 		// if (Config.debugMode.getBoolean())
 		// System.out.println("Volcano chance is " + Volcano);
 		if (Config.volcanoGen.getBoolean())
-			return false; // don't start another volcano until the current one is done
+			return; // don't start another volcano until the current one is done
 		if (Volcano <= Config.volcanoChance.getInt()) {
 			// if (Config.debugMode.getBoolean())
 			// System.out.println("checking to see if 2 blocks up is air");
@@ -334,22 +345,93 @@ public class LavaLove {
 					&& worldIn.getBlockState(thisPos.up(2)) != Blocks.AIR.getDefaultState()) {
 				// if (Config.debugMode.getBoolean())
 				// System.out.println("checking to see if lava is below y 69");
+				List<BlockPos> theShaft = new ArrayList();
+				String shaftType = Config.shaftSize.getString();
+				if(shaftType.equalsIgnoreCase("random")) {
+					switch (chance.nextInt(3)) {
+					case 0:
+						shaftType = "small";
+						break;
+					case 1:
+						shaftType = "medium";
+						break;
+					default:
+						shaftType = "large";
+					}
+				}
+				if (shaftType.equalsIgnoreCase("small")) {
+					theShaft.add(thisPos);
+				} else if (shaftType.equalsIgnoreCase("medium")) {
+					theShaft.add(thisPos);
+					if (worldIn.getBlockState(thisPos.east()).getBlock() == Blocks.LAVA)
+						theShaft.add(thisPos.east());
+
+					if (worldIn.getBlockState(thisPos.west()).getBlock() == Blocks.LAVA)
+						theShaft.add(thisPos.west());
+
+					if (worldIn.getBlockState(thisPos.south()).getBlock() == Blocks.LAVA)
+						theShaft.add(thisPos.south());
+
+					if (worldIn.getBlockState(thisPos.north()).getBlock() == Blocks.LAVA)
+						theShaft.add(thisPos.north());
+
+				} else if (shaftType.equalsIgnoreCase("large")) {
+					theShaft.add(thisPos);
+					if (worldIn.getBlockState(thisPos.east()).getBlock() == Blocks.LAVA)
+						theShaft.add(thisPos.east());
+
+					if (worldIn.getBlockState(thisPos.west()).getBlock() == Blocks.LAVA)
+						theShaft.add(thisPos.west());
+
+					if (worldIn.getBlockState(thisPos.south()).getBlock() == Blocks.LAVA)
+						theShaft.add(thisPos.south());
+
+					if (worldIn.getBlockState(thisPos.north()).getBlock() == Blocks.LAVA)
+						theShaft.add(thisPos.north());
+					// --------------------------------------
+					BlockPos temp = thisPos;
+					temp = thisPos.east();
+					temp = thisPos.north();
+					if (worldIn.getBlockState(temp).getBlock() == Blocks.LAVA)
+						theShaft.add(temp);
+
+					temp = thisPos.east();
+					temp = thisPos.south();
+					if (worldIn.getBlockState(temp).getBlock() == Blocks.LAVA)
+						theShaft.add(temp);
+
+					temp = thisPos.west();
+					temp = thisPos.north();
+					if (worldIn.getBlockState(temp).getBlock() == Blocks.LAVA)
+						theShaft.add(temp);
+
+					temp = thisPos.west();
+					temp = thisPos.south();
+					if (worldIn.getBlockState(temp).getBlock() == Blocks.LAVA)
+						theShaft.add(temp);
+
+				} else {
+					// you're a dumb ass that's not one of the config values!
+					return;// consider it done
+				}
 				if (thisPos.getY() <= Config.psuedoSurface.getInt()) {
 					Config.volcanoGen.set(true);
 					int diff = Config.psuedoSurface.getInt() - thisPos.getY();
 					int extra = chance.nextInt(Config.extraHt.getInt()) + Config.minHt.getInt();
 					int vent = chance.nextInt(diff + extra + Config.minHt.getInt());
 					for (int i = 0; i < vent; i++) {
-						// if (Config.debugMode.getBoolean())
-						// System.out.println("y=" + i);
-						worldIn.setBlockState(thisPos.up(i), Blocks.LAVA.getDefaultState());
+						for (int y = 0; y < theShaft.size(); y++) {
+							worldIn.setBlockState(theShaft.get(y).up(i), Blocks.AIR.getDefaultState());
+							worldIn.setBlockState(theShaft.get(y).up(i), Blocks.LAVA.getDefaultState());
+						}
+						// worldIn.setBlockState(thisPos.up(i), Blocks.LAVA.getDefaultState());
 					}
 					Config.volcanoGen.set(false);
-					return true;
+					return;
 				}
 			}
 		}
-		return false;
+		return;
 	}
 
 	private static IBlockState getRndOre() {

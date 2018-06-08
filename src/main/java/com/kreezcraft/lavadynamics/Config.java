@@ -1,5 +1,7 @@
 package com.kreezcraft.lavadynamics;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +16,7 @@ public class Config {
 
 	public static String CATEGORY_GENERAL = "general", CATEGORY_DIMENSIONS = "dimensions",
 			CATEGORY_CONVERSIONS = "conversions (mappings)", CVOLCANO = "Volcano Settings",
-			CPROTECTION = "protection";
+			CPROTECTION = "protection", CSHAFT = "Shaft Settings";
 	
 	public static String CNOISE = "noise", CEXPLOSIONS = "explosions", CPLUME = "plume height", CAT_OREGEN = "oreGen",
 			CLAVA = "justTheLava";
@@ -27,6 +29,9 @@ public class Config {
 	public static Property volcanoGen, lowNoise, highNoise, maxExplosion, minExplosion, chanceExplosion, lavaSpread,
 			psuedoSurface, extraHt, minHt, maxYlevel;
 	public static Property nodulePartChance, protection, maxChance, sourceBlock;
+	public static Property ignoreTheseMods;
+	
+	public static Property shaftSize;
 
 	// Call this from CommonProxy.preInit(). It will create our config if it doesn't
 	// exist yet and read the values if it does exist.
@@ -87,6 +92,8 @@ public class Config {
 				"The max y value to consider for turning lava into a magma vent.\nDefault: 10");
 		nodulePartChance = cfg.get(CVOLCANO, "nodulePartChance", 10,
 				"0 to 100 chance that part of the nodule is formed to protect the ore being generated");
+		ignoreTheseMods = cfg.get(CLAVA, "ignoreTheseMods", "biomesoplenty","A comma separated list of mod domains (modids) to ignore. Example: \"minecraft,biomesoplenty\"\nWhy? Because these mods especially Biomes O'Plenty don't play well with Lava Dynamics.");
+		
 		// cfg.addCustomCategoryComment(CATEGORY_DIMENSIONS, "Dimensions not listed are
 		// not allowed to function with Lava Dynamics. For instance don't
 		// list\n"+"Nether and you won't have a million blocks tyring to update their
@@ -118,6 +125,8 @@ public class Config {
 				"The integer value from 0 to 100 for determining the chance that lava will spread.\nDefault: 10");
 		sourceBlock = cfg.get(CLAVA, "sourceBlock", true, "If enabled source blocks are generated when lava encounters a consumable.\nOtherwise if false, no new source lava block is generated. \nIt's impossible to place a flowing lava, Minecraft turns it into a source block!\nDefault: true");
 
+		cfg.addCustomCategoryComment(CSHAFT, "Determine the size of the shaft, these settings effectively reduce the frequency of the volcanos, but make the experience more rewarding");
+		shaftSize = cfg.get(CSHAFT, "shaftSize", "large", "3 sizes available. small, medium, and large.\nsmall is single block shaft.\nmedium is 5 block shaft.\nlarge is 9 block shaft.\nRandom is anyone of the 3 above.\nNote: If all the positions in the pattern for the size as centered on the polled position \nis not lava source blocks then a volcano will not result.\nDefault: large");
 	}
 
 }
