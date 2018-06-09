@@ -22,7 +22,7 @@ public class Config {
 			CLAVA = "justTheLava";
 
 	public static Property debugMode, dimOverworld, dimNether, dimEnd, conversions, burping, furnaceRecipes,
-			partialBlock, volcanoChance, preserveVillages, findVillageRange;
+			partialBlock, volcanoChance, preserveVillages, findVillageRange, smeltingBlacklist;
 
 	public static Property dimensions; // a kludge for now
 
@@ -116,6 +116,9 @@ public class Config {
 		partialBlock = cfg.get(CATEGORY_CONVERSIONS, "partialBlock", false,
 				"Enable/Disable consuming of partial blocks such as leaves, grass, crops, etc ...");
 
+		smeltingBlacklist = cfg.get(CATEGORY_CONVERSIONS, "smeltingBlacklist", new String[0],
+				"A list of block ids not to smelt.");
+		
 		cfg.addCustomCategoryComment(CAT_OREGEN,
 				"The higher the value, the rarer all ores generating in the volcanic wall are. default: 500");
 		maxChance = cfg.get(CAT_OREGEN, "maxChance", 500,

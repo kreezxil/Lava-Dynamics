@@ -303,7 +303,10 @@ public class LavaLove {
 					}
 
 					// blockFromTarget.getBlockState()
-					beTheLava(worldIn, furnaceRecipes, targetPos, blockFromTarget, targetOutput, targetMeta, facing);
+					if(!Arrays.asList(Config.smeltingBlacklist.getStringList()).contains(blockTarget.getRegistryName().toString())) {
+						// Only smelt if blockTargets RegistryName is not in smeltingBlacklist
+						beTheLava(worldIn, furnaceRecipes, targetPos, blockFromTarget, targetOutput, targetMeta, facing);
+					}
 					makeEffect(worldIn, thisPos);
 
 				}
