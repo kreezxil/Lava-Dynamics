@@ -328,6 +328,7 @@ public class LavaLove {
 
 	private static boolean compatible(Block target) {
 		String[] shitMods = Config.ignoreTheseMods.getString().split(",");
+		if(shitMods == null) return true;
 		return !Arrays.asList(shitMods).contains(getModID(target));
 	}
 
