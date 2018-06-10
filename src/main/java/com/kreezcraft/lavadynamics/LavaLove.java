@@ -48,6 +48,7 @@ public class LavaLove {
 			System.out.println(msg);
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	@SubscribeEvent
 	public static void worldSmelting(BlockEvent event) {
 
@@ -87,25 +88,6 @@ public class LavaLove {
 			return;
 		// debug("after is populated test");
 
-		// if (player != null) {
-		// // if (Config.debugMode.getBoolean())
-		// // System.out.println("we have a player");
-		//
-		// // if (thisPos.getX() >> 4 != player.chunkCoordX || thisPos.getZ() >> 4 !=
-		// // player.chunkCoordZ) {
-		// if (Math.abs(worldIn.getChunkFromBlockCoords(thisPos).x - player.chunkCoordX)
-		// <= 4
-		// || Math.abs(worldIn.getChunkFromBlockCoords(thisPos).z - player.chunkCoordZ)
-		// <= 4) {
-		// // if (Math.abs(thisPos.getX() - player.getPosition().getX()) <= 100
-		// // || Math.abs(thisPos.getZ() - player.getPosition().getZ()) <= 100) {
-		// if (Config.debugMode.getBoolean())
-		// System.out.println("player not in range of block event");
-		// return;// player not in range
-		// }
-		//
-		// }
-
 		if (Config.volcanoChance.getInt() > 0) {
 			// check for crafted and return if found
 			// Chunk theChunk = worldIn.getChunkFromBlockCoords(player.getPosition());
@@ -132,12 +114,16 @@ public class LavaLove {
 
 		if (worldIn.provider.isSurfaceWorld() && !Config.dimOverworld.getBoolean())
 			return;
-
-		if (worldIn.provider.getDimension() == 1 && !Config.dimEnd.getBoolean())
+		
+		int dimension = worldIn.provider.getDimension();
+		
+		if (dimension == 1 && !Config.dimEnd.getBoolean())
 			return;
 
-		if (worldIn.provider.getDimension() < -1 || worldIn.provider.getDimension() > 1)
-			return;
+		if (dimension < -1 || dimension > 1) {
+			if (Config.dimsToAllow.isIntList() && !Arrays.asList(Config.dimsToAllow.getIntList()).contains(dimension))
+				return;
+		}
 
 		if (Config.preserveVillages.getBoolean()
 				&& worldIn.villageCollection.getNearestVillage(thisPos, Config.findVillageRange.getInt()) != null) {
@@ -146,8 +132,6 @@ public class LavaLove {
 		}
 
 		if (allowErupt) {
-			// if (do_erupt(worldIn, thisPos))
-			// return;
 			do_erupt(worldIn, thisPos);
 		}
 
@@ -202,7 +186,7 @@ public class LavaLove {
 			// volcanic wall construction
 			// because one of these might be true for blockTarget
 			// Blocks.AIR, Blocks.LAVA, Blocks.FLOWING_LAVA)
-			if (worldIn.getBlockState(thisPos.up(1)).getBlock() == Blocks.AIR && !Config.volcanoGen.getBoolean()) {
+			if (cardinalIsAir(worldIn, thisPos) && !Config.volcanoGen.getBoolean()) {
 				Random rNoise = new Random();
 				int lowNoise = Config.lowNoise.getInt();
 				int upCheck = rNoise.nextInt(Config.highNoise.getInt()) + lowNoise;
@@ -284,9 +268,6 @@ public class LavaLove {
 								if (Config.sourceBlock.getBoolean()) {
 									worldIn.setBlockState(targetPos, Blocks.LAVA.getDefaultState());
 								}
-								// else {
-								// worldIn.setBlockState(targetPos, Blocks.FLOWING_LAVA.getDefaultState());
-								// }
 
 							}
 
@@ -303,12 +284,26 @@ public class LavaLove {
 					}
 
 					// blockFromTarget.getBlockState()
-					beTheLava(worldIn, furnaceRecipes, targetPos, blockFromTarget, targetOutput, targetMeta, facing);
+					if (!Arrays.asList(Config.smeltingBlacklist.getStringList())
+							.contains(blockTarget.getRegistryName().toString())) {
+						// Only smelt if blockTargets RegistryName is not in smeltingBlacklist
+						beTheLava(worldIn, furnaceRecipes, targetPos, blockFromTarget, targetOutput, targetMeta,
+								facing);
+					}
 					makeEffect(worldIn, thisPos);
 
 				}
 			}
 		}
+	}
+
+	private static boolean cardinalIsAir(World worldIn, BlockPos thisPos) {
+		if (worldIn.getBlockState(thisPos.east()).getBlock() == Blocks.AIR
+				|| worldIn.getBlockState(thisPos.east()).getBlock() == Blocks.AIR
+				|| worldIn.getBlockState(thisPos.east()).getBlock() == Blocks.AIR
+				|| worldIn.getBlockState(thisPos.east()).getBlock() == Blocks.AIR)
+			return true;
+		return false;
 	}
 
 	private static String getModID(Block blockTarget) {
@@ -328,27 +323,25 @@ public class LavaLove {
 
 	private static boolean compatible(Block target) {
 		String[] shitMods = Config.ignoreTheseMods.getString().split(",");
-		if(shitMods == null) return true;
+		if (shitMods == null)
+			return true;
 		return !Arrays.asList(shitMods).contains(getModID(target));
 	}
 
 	private static void do_erupt(World worldIn, BlockPos thisPos) {
 		Random chance = new Random();
 		int Volcano = chance.nextInt(100);
-		// if (Config.debugMode.getBoolean())
-		// System.out.println("Volcano chance is " + Volcano);
+		// debug("Volcano chance is " + Volcano);
 		if (Config.volcanoGen.getBoolean())
 			return; // don't start another volcano until the current one is done
 		if (Volcano <= Config.volcanoChance.getInt()) {
-			// if (Config.debugMode.getBoolean())
-			// System.out.println("checking to see if 2 blocks up is air");
+			// debug("checking to see if 2 blocks up is air");
 			if (thisPos.getY() <= Config.maxYlevel.getInt()
 					&& worldIn.getBlockState(thisPos.up(2)) != Blocks.AIR.getDefaultState()) {
-				// if (Config.debugMode.getBoolean())
-				// System.out.println("checking to see if lava is below y 69");
+				// debug("checking to see if lava is below y 69");
 				List<BlockPos> theShaft = new ArrayList();
 				String shaftType = Config.shaftSize.getString();
-				if(shaftType.equalsIgnoreCase("random")) {
+				if (shaftType.equalsIgnoreCase("random")) {
 					switch (chance.nextInt(3)) {
 					case 0:
 						shaftType = "small";
