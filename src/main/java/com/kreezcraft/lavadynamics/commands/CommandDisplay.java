@@ -52,27 +52,10 @@ public class CommandDisplay extends CommandBase {
 	private void showWorlds(ICommandSender sender) {
 		printMsg(sender, "Allowed Dimensions - Dims not in list are not allowed");
 		printMsg(sender, "=======================");
-		printMsg(sender, Config.dimensions.getIntList().toString());
+		printMsg(sender, Config.dimsToAllow.getIntList().toString());
 		printMsg(sender, " ");
 	}
 
-	private void showGeneral(ICommandSender sender) {
-		printMsg(sender, "General");
-		printMsg(sender, "================");
-		printMsg(sender, "Debug Mode: " + Config.debugMode.getBoolean());
-		printMsg(sender, "Burping: " + Config.burping.getBoolean());
-		printMsg(sender, " ");
-	}
-
-	private void showMapping(ICommandSender sender) {
-		printMsg(sender, "Conversions Map");
-		printMsg(sender, "================");
-		String[] conversions = Config.conversions.getStringList();
-		for(int i=0;i<conversions.length;i++) {
-			printMsg(sender,conversions[i]);
-		}
-		printMsg(sender, " ");
-	}
 
 	@Override
 	public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, @Nonnull String[] args)
@@ -84,17 +67,17 @@ public class CommandDisplay extends CommandBase {
 		}
 		String action = args[0];
 
-		if (action.equalsIgnoreCase("all")) {
-			showWorlds(sender);
-			showGeneral(sender);
-		} else if (action.equalsIgnoreCase("dims")) {
-			showWorlds(sender);
-		} else if (action.equalsIgnoreCase("mapping")) {
-			showMapping(sender);
-		} else {
-			sender.sendMessage(new TextComponentString(getUsage(sender)));
-			return;
-		}
+//		if (action.equalsIgnoreCase("all")) {
+//			showWorlds(sender);
+//			showGeneral(sender);
+//		} else if (action.equalsIgnoreCase("dims")) {
+//			showWorlds(sender);
+//		} else if (action.equalsIgnoreCase("mapping")) {
+//			showMapping(sender);
+//		} else {
+//			sender.sendMessage(new TextComponentString(getUsage(sender)));
+//			return;
+//		}
 
 		return;
 	}

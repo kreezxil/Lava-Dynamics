@@ -54,13 +54,13 @@ public class CommandConfirm extends CommandBase {
 		} else if(LavaDynamics.destination == null) {
 			sender.sendMessage(new TextComponentString("Destination item/block not set"));
 		} else {
-			String combo = LavaDynamics.source + "@" + LavaDynamics.destination;
-			List<String> combos = Arrays.asList(Config.conversions.getStringList());
-			String[] map = null;
-			combos.add(combo);
-			combos.toArray(map);
-			Config.conversions.set(map);
-			sender.sendMessage(new TextComponentString(combo + "saved to conversions in config"));
+//			String combo = LavaDynamics.source + "@" + LavaDynamics.destination;
+//			List<String> combos = Arrays.asList(Config.conversions.getStringList());
+//			String[] map = null;
+//			combos.add(combo);
+//			combos.toArray(map);
+//			Config.conversions.set(map);
+//			sender.sendMessage(new TextComponentString(combo + "saved to conversions in config"));
 		}
 
 		if(Config.cfg.hasChanged()) {

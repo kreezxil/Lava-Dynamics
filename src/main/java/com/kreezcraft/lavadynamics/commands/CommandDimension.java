@@ -76,7 +76,7 @@ public class CommandDimension extends CommandBase {
 			return;
 		}
 		if (truth.equalsIgnoreCase("true")) {
-			int[] intList = Config.dimensions.getIntList();
+			int[] intList = Config.dimsToAllow.getIntList();
 			for(int i=0;i<intList.length;i++) {
 				if(intList[i]==dimension) {
 					sender.sendMessage(new TextComponentString("Dimension id "+dimension+" already allowed."));
@@ -86,10 +86,10 @@ public class CommandDimension extends CommandBase {
 			intList = Arrays.copyOf(intList, intList.length+1);
 			intList[intList.length-1] = dimension;
 			
-			Config.dimensions.setValues(intList);
+			Config.dimsToAllow.setValues(intList);
 		} else {
 			//because of the array check above this will be false
-			int[] intList = Config.dimensions.getIntList();
+			int[] intList = Config.dimsToAllow.getIntList();
 			List<int[]> temp = Arrays.asList(intList);
 			
 			if(temp.contains(dimension)) {
@@ -100,7 +100,7 @@ public class CommandDimension extends CommandBase {
 			
 			Integer[] ints = temp.toArray(new Integer[temp.size()]);
 			int[] whatIneed = ArrayUtils.toPrimitive(ints);
-			Config.dimensions.setValues(whatIneed);
+			Config.dimsToAllow.setValues(whatIneed);
 		}
 
 		if (Config.cfg.hasChanged())

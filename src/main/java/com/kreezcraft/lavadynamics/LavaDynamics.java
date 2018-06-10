@@ -81,7 +81,7 @@ public class LavaDynamics {
 		 * way too much time has been spent on commands and subcommands it is disabled
 		 * for now
 		 */
-		event.registerServerCommand(new cmdLavaDynamics());
+		//event.registerServerCommand(new cmdLavaDynamics());
 	}
 
 }
