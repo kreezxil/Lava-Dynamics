@@ -10,11 +10,72 @@ import org.apache.logging.log4j.Level;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
+@net.minecraftforge.common.config.Config(modid = LavaDynamics.MODID, category="")
 public class Config {
 
 	public static Configuration cfg = LavaDynamics.config;
-
-	public static String CDIMENSIONS = "Dimensions";
+	
+	@net.minecraftforge.common.config.Config.Comment({
+		"If any config setting is not preceded by comments #'s then you may delete that particular setting as it is no longer being used."
+	})
+	public static Notes notes = new Notes();
+	
+	@net.minecraftforge.common.config.Config.Comment({
+		"Overall mod behavior configuration that doesn't fit in a particular category yet."
+	})
+	public static General general = new General();
+	
+	@net.minecraftforge.common.config.Config.Comment({
+		"Attributes related to protecting things."
+	})
+	public static Protection protection = new Protection();
+	
+	@net.minecraftforge.common.config.Config.Comment({
+		"Controls how volatile and evil your volcanos are!"
+	})
+	@net.minecraftforge.common.config.Config.Name("Volcano Settings")
+	public static VolcanoSettings volcanoSettings = new VolcanoSettings();
+	
+	@net.minecraftforge.common.config.Config.Comment({
+		"Settings to help determine when walls and nodules get built"
+	})
+	public static Noise noise = new Noise();
+	
+	@net.minecraftforge.common.config.Config.Comment({
+		"Volcanoes have explosive qualities, these settings are for that feature"
+	})
+	public static Explosions explosions = new Explosions();
+	
+	@net.minecraftforge.common.config.Config.Comment({
+		"The lower and higher extra amount to randomly add to a vent to set the size of a plume"
+	})
+	public static Plumes plumes = new Plumes();
+	
+	@net.minecraftforge.common.config.Config.Comment({
+		"True or False to control if LavaDynamics runs in said dimension.",
+		"In the case of dimsToAllow, simply add a dimension ID to allow the mod in it."
+	})
+	public static Dimensions dimensions = new Dimensions();
+	
+	@net.minecraftforge.common.config.Config.Comment({
+		"In World Smelting Control for the lava"
+	})
+	@net.minecraftforge.common.config.Config.Name("Conversions (mappings)")
+	public static Mappings mappings = new Mappings();
+	@net.minecraftforge.common.config.Config.Comment({
+		"The higher the value, the rarer all ores generating in the volcanic wall are. default: 500"
+	})
+	@net.minecraftforge.common.config.Config.Name("Ore Gen")
+	public static OreGen oreGen = new OreGen();
+	
+	public static OnlyTheLava onlyTheLava = new OnlyTheLava();
+	@net.minecraftforge.common.config.Config.Comment({
+		"Determine the size of the shaft, these settings effectively reduce the frequency of the volcanos, but make the experience more rewarding"
+	})
+	@net.minecraftforge.common.config.Config.Name("Shaft Settings")
+	public static ShaftSettings shaftSettings = new ShaftSettings();
+	
+	/*public static String CDIMENSIONS = "Dimensions";
 	public static Property dimOverworld, dimNether, dimEnd, dimsToAllow;
 
 	public static String CGENERAL = "General";
@@ -45,11 +106,207 @@ public class Config {
 	public static Property maxChance;
 
 	public static String CSHAFT = "Shaft Settings";
-	public static Property shaftSize;
-
+	public static Property shaftSize;*/
+	
+	
+	
+	private static class Notes {
+		
+	}
+	
+	private static class General {
+		@net.minecraftforge.common.config.Config.Comment({
+			"If true it will print messages to the player based on what you are doing in the protected zone, useful for helping Kreezxil debug the mod"
+		})
+		public boolean debugMode = false;
+		
+		@net.minecraftforge.common.config.Config.Comment({
+			"A comma separated list of mod domains (modids) to ignore. Example: \"minecraft,biomesoplenty\"",
+			"Why? Because these mods especially Biomes O'Plenty don't play well with Lava Dynamics."
+		})
+		public String ignoreTheseMods = "biomesoplenty";
+	}
+	
+	private static class Protection {
+		@net.minecraftforge.common.config.Config.Comment({
+			"if true any tile entity will prevent a volcano from erupting in a chunk. Signs are tile entities btw. Setting this to false enables hardcore volcanoes. Meaning a play must neutralize lava pools below them to be truly safe."
+		})
+		public boolean protection = true;
+		
+		@net.minecraftforge.common.config.Config.Comment({
+			"Disable to allow Villages to be destroyed with volcanos"
+		})
+		public boolean preserveVillages = true;
+		
+		@net.minecraftforge.common.config.Config.Comment({
+			"The range from the lava event to scan for a village.",
+			"Default: 10"
+		})
+		public int findVillageRange = 10;
+	}
+	
+	private static class VolcanoSettings {
+		@net.minecraftforge.common.config.Config.Comment({
+			"Percent chance a volcano or magma vent will occur.",
+			"Default: 20"
+		})
+		public int volcanoChance = 20;
+		
+		@net.minecraftforge.common.config.Config.Comment({
+			"You can play with this value, but it's not for you.",
+			"Default: seriously it will ignore you"
+		})
+		public boolean volcanoGen = false;
+		
+		@net.minecraftforge.common.config.Config.Comment({
+			"The y level for the approximate level of your surface.",
+			"Default: 69"
+		})
+		public int psuedoSurface = 69;
+		
+		@net.minecraftforge.common.config.Config.Comment({
+			"The max y value to consider for turning lava into a magma vent.",
+			"Default: 10"
+		})
+		public int maxYlevel = 10;
+		
+		@net.minecraftforge.common.config.Config.Comment({
+			"0 to 100 chance that part of the nodule is formed to protect the ore being generated"
+		})
+		public int nodulePartChance = 10;
+	}
+	
+	private static class Noise {
+		@net.minecraftforge.common.config.Config.Comment({
+			"The Minimum value for determining how many blocks above the current block is also lava before generating a wall component.",
+			"Default: 5"
+		})
+		public int lowNoise = 5;
+		
+		@net.minecraftforge.common.config.Config.Comment({
+			"The Maximum value for determining how many blocks above the current block is also lava before generating a wall component.\nSetting this lower than 2 can cause lava to instantly turn to stone!",
+			"Default: 2"
+		})
+		public int highNoise = 2;
+	}
+	
+	private static class Explosions {
+		@net.minecraftforge.common.config.Config.Comment({
+			"Double value for determining strength of random explosions.",
+			"Note: Values higher than 10 can cause lag!",
+			"Default: 10.0"
+		})
+		public double maxExplosion = 10.0;
+		
+		@net.minecraftforge.common.config.Config.Comment({
+			"The minimum value for determining strenth of random explosions.",
+			"Default: 1.0"
+		})
+		public double minExplosion = 1.0;
+		
+		@net.minecraftforge.common.config.Config.Comment({
+			"Integer value from 0 to 100 for determining the chance that lava causes an explosion.",
+			"Default: 5"
+		})
+		public int chanceExplosion = 5;
+	}
+	
+	private static class Plumes {
+		@net.minecraftforge.common.config.Config.Comment({
+			"Extra amount of source blocks to add to the magma vent.",
+			"Default: 7"
+		})
+		public int extraHt = 7;
+		
+		@net.minecraftforge.common.config.Config.Comment({
+			"The minimum amount of source blocks to add to the magma vent.",
+			"Default: 3"
+		})
+		public int minHt = 3;
+	}
+	
+	private static class Dimensions {
+		@net.minecraftforge.common.config.Config.Comment({
+			"It's honestly meant to run here"
+		})
+		public boolean dimOverworld = true;
+		
+		@net.minecraftforge.common.config.Config.Comment({
+			"All that lava, probably you should allow it!"
+		})
+		public boolean dimNether = false;
+		
+		@net.minecraftforge.common.config.Config.Comment({
+			"I don't see why it can't run here"
+		})
+		public boolean dimEnd = true;
+		
+		@net.minecraftforge.common.config.Config.Comment({
+			"Other dimensions to allow lava dynamics to run in.",
+			"Default: empty list"
+		})
+		public int[] dimsToAllow = new int[0];
+	}
+	
+	private static class Mappings {
+		@net.minecraftforge.common.config.Config.Comment({
+			"Enable/Disable using smelting recipes for Lava Dynamics"
+		})
+		public boolean furnaceRecipes = true;
+		
+		@net.minecraftforge.common.config.Config.Comment({
+			"Enable/Disable consuming of partial blocks such as leaves, grass, crops, etc ..."
+		})
+		public boolean partialBlock = false;
+		
+		@net.minecraftforge.common.config.Config.Comment({
+			"A list of block ids not to smelt."
+		})
+		public String[] smeltingBlacklist = new String[0];
+	}
+	
+	private static class OreGen {
+		@net.minecraftforge.common.config.Config.Comment({
+			"A standard would be 100, but that make ore too common, so 500 makes it all 5x rarer"
+		})
+		public int maxChance = 500;
+		
+		
+	}
+	
+	private static class OnlyTheLava {
+		@net.minecraftforge.common.config.Config.Comment({
+			"The integer value from 0 to 100 for determining the chance that lava will spread.",
+			"Default: 10"
+		})
+		public int lavaSpread = 10;
+		
+		@net.minecraftforge.common.config.Config.Comment({
+			"If enabled source blocks are generated when lava encounters a consumable.",
+			"Otherwise if false, no new source lava block is generated.",
+			"It's impossible to place a flowing lava, Minecraft turns it into a source block!",
+			"Default: true"
+		})
+		public boolean sourceBlock = true;
+	}
+	
+	private static class ShaftSettings {
+		@net.minecraftforge.common.config.Config.Comment({
+			"3 sizes available. small, medium, and large.",
+			"small is single block shaft.",
+			"medium is 5 block shaft.",
+			"large is 9 block shaft.",
+			"Random is anyone of the 3 above.",
+			"Note: If all the positions in the pattern for the size as centered on the polled position ",
+			"is not lava source blocks then a volcano will not result.",
+			"Default: large"
+		})
+		public String shaftSize = "large";
+	}
+	
 	// Call this from CommonProxy.preInit(). It will create our config if it doesn't
 	// exist yet and read the values if it does exist.
-	public static void readConfig() {
+	/*public static void readConfig() {
 		try {
 			cfg.load();
 			initGeneralConfig(cfg);
@@ -146,6 +403,6 @@ public class Config {
 				"Determine the size of the shaft, these settings effectively reduce the frequency of the volcanos, but make the experience more rewarding");
 		shaftSize = cfg.get(CSHAFT, "shaftSize", "large",
 				"3 sizes available. small, medium, and large.\nsmall is single block shaft.\nmedium is 5 block shaft.\nlarge is 9 block shaft.\nRandom is anyone of the 3 above.\nNote: If all the positions in the pattern for the size as centered on the polled position \nis not lava source blocks then a volcano will not result.\nDefault: large");
-	}
+	}*/
 
 }
