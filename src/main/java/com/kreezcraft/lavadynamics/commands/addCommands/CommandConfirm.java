@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
-import com.kreezcraft.lavadynamics.Config;
+import com.kreezcraft.lavadynamics.LavaConfig;
 import com.kreezcraft.lavadynamics.LavaDynamics;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -55,17 +55,17 @@ public class CommandConfirm extends CommandBase {
 			sender.sendMessage(new TextComponentString("Destination item/block not set"));
 		} else {
 //			String combo = LavaDynamics.source + "@" + LavaDynamics.destination;
-//			List<String> combos = Arrays.asList(Config.conversions.getStringList());
+//			List<String> combos = Arrays.asList(LavaConfig.conversions.getStringList());
 //			String[] map = null;
 //			combos.add(combo);
 //			combos.toArray(map);
-//			Config.conversions.set(map);
+//			LavaConfig.conversions.set(map);
 //			sender.sendMessage(new TextComponentString(combo + "saved to conversions in config"));
 		}
 
-		if(Config.cfg.hasChanged()) {
-			Config.cfg.save();
-			if(Config.generalConfig.debugMode) {
+		if(LavaConfig.cfg.hasChanged()) {
+			LavaConfig.cfg.save();
+			if(LavaConfig.generalConfig.debugMode) {
 				sender.sendMessage(new TextComponentString("Mapping config updated"));
 			}
 		}

@@ -2,7 +2,6 @@ package com.kreezcraft.lavadynamics;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -10,11 +9,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.dispenser.IPosition;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -24,14 +21,12 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
+import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -46,15 +41,14 @@ public class LavaLove {
 	}
 
 	private static void debug(String msg) {
-		if (Config.general.debugMode)
+		if (LavaConfig.general.debugMode)
 			System.out.println(msg);
 	}
 	
 	@SubscribeEvent
 	public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
 		if (event.getModID().equals(LavaDynamics.MODID)) {
-			System.err.println("================== CONFIG CHANGED ===================");
-			ConfigManager.sync(LavaDynamics.MODID, net.minecraftforge.common.config.Config.Type.INSTANCE);
+			ConfigManager.sync(LavaDynamics.MODID, Config.Type.INSTANCE);
 		}
 	}
 
@@ -81,7 +75,7 @@ public class LavaLove {
 		thisBlock = event.getState().getBlock();
 		if (thisBlock != Blocks.LAVA && thisBlock != Blocks.FLOWING_LAVA) {
 			// it's not lava, get out here!
-			// if(Config.debugMode.getBoolean()) System.out.println("not lava!");
+			// if(LavaConfig.debugMode.getBoolean()) System.out.println("not lava!");
 			// this code block prevents unnecessary code execution
 			return;
 		}
@@ -98,18 +92,18 @@ public class LavaLove {
 			return;
 		// debug("after is populated test");
 
-		if (Config.volcanoSettings.volcanoChance > 0) {
+		if (LavaConfig.volcanoSettings.volcanoChance > 0) {
 			// check for crafted and return if found
 			// Chunk theChunk = worldIn.getChunkFromBlockCoords(player.getPosition());
 			Chunk theChunk = worldIn.getChunkFromBlockCoords(thisPos);
 			if (theChunk != null) {
 				// eclipse wanted a null check here?!!
-				if (Config.protection.protection) {
+				if (LavaConfig.protection.protection) {
 					Map<BlockPos, TileEntity> scanlist = theChunk.getTileEntityMap();
 					if (scanlist.isEmpty())
 						allowErupt = true;
 					else {
-						if (Config.general.debugMode)
+						if (LavaConfig.general.debugMode)
 							System.out.println("TileEntities were found, allowErupt is false!");
 					}
 				} else {
@@ -119,24 +113,24 @@ public class LavaLove {
 		}
 
 		// check for the 3 main dimensions, refuse all others for now
-		if (worldIn.provider.isNether() && !Config.dimensions.dimNether)
+		if (worldIn.provider.isNether() && !LavaConfig.dimensions.dimNether)
 			return;
 
-		if (worldIn.provider.isSurfaceWorld() && !Config.dimensions.dimOverworld)
+		if (worldIn.provider.isSurfaceWorld() && !LavaConfig.dimensions.dimOverworld)
 			return;
 		
 		int dimension = worldIn.provider.getDimension();
 		
-		if (dimension == 1 && !Config.dimensions.dimEnd)
+		if (dimension == 1 && !LavaConfig.dimensions.dimEnd)
 			return;
 
 		if (dimension < -1 || dimension > 1) {
-			if (!Arrays.asList(Config.dimensions.dimsToAllow).contains(dimension))
+			if (!Arrays.asList(LavaConfig.dimensions.dimsToAllow).contains(dimension))
 				return;
 		}
 
-		if (Config.protection.preserveVillages
-				&& worldIn.villageCollection.getNearestVillage(thisPos, Config.protection.findVillageRange) != null) {
+		if (LavaConfig.protection.preserveVillages
+				&& worldIn.villageCollection.getNearestVillage(thisPos, LavaConfig.protection.findVillageRange) != null) {
 			// get out of here, we're saving that village!
 			return;
 		}
@@ -184,7 +178,7 @@ public class LavaLove {
 			meta = blockTarget.getMetaFromState(targetState);
 
 			if (!compatible(blockTarget)) {
-				if (Config.general.debugMode)
+				if (LavaConfig.general.debugMode)
 					System.out.println("Incompatible mod " + getModID(blockTarget) + " detected!");
 				return;
 			}
@@ -196,12 +190,12 @@ public class LavaLove {
 			// volcanic wall construction
 			// because one of these might be true for blockTarget
 			// Blocks.AIR, Blocks.LAVA, Blocks.FLOWING_LAVA)
-			if (cardinalIsAir(worldIn, thisPos) && !Config.volcanoSettings.volcanoGen) {
+			if (cardinalIsAir(worldIn, thisPos) && !LavaConfig.volcanoSettings.volcanoGen) {
 				Random rNoise = new Random();
-				int lowNoise = Config.noise.lowNoise;
-				int upCheck = rNoise.nextInt(Config.noise.highNoise) + lowNoise;
+				int lowNoise = LavaConfig.noise.lowNoise;
+				int upCheck = rNoise.nextInt(LavaConfig.noise.highNoise) + lowNoise;
 				Block aboveMe = worldIn.getBlockState(thisPos.up(upCheck)).getBlock();
-				if (Config.general.debugMode)
+				if (LavaConfig.general.debugMode)
 					System.out.println("attempt to build a wall at " + thisPos.toString());
 				if (
 				// (blockTarget == Blocks.LAVA || blockTarget == Blocks.FLOWING_LAVA)
@@ -214,17 +208,17 @@ public class LavaLove {
 					Block block = getRndOre().getBlock();
 
 					if (block != Blocks.STONE) {
-						if (rNoise.nextInt(100) < Config.volcanoSettings.nodulePartChance)
+						if (rNoise.nextInt(100) < LavaConfig.volcanoSettings.nodulePartChance)
 							worldIn.setBlockState(thisPos.up(), Blocks.STONE.getDefaultState());
-						if (rNoise.nextInt(100) < Config.volcanoSettings.nodulePartChance)
+						if (rNoise.nextInt(100) < LavaConfig.volcanoSettings.nodulePartChance)
 							worldIn.setBlockState(thisPos.down(), Blocks.STONE.getDefaultState());
-						if (rNoise.nextInt(100) < Config.volcanoSettings.nodulePartChance)
+						if (rNoise.nextInt(100) < LavaConfig.volcanoSettings.nodulePartChance)
 							worldIn.setBlockState(thisPos.east(), Blocks.STONE.getDefaultState());
-						if (rNoise.nextInt(100) < Config.volcanoSettings.nodulePartChance)
+						if (rNoise.nextInt(100) < LavaConfig.volcanoSettings.nodulePartChance)
 							worldIn.setBlockState(thisPos.west(), Blocks.STONE.getDefaultState());
-						if (rNoise.nextInt(100) < Config.volcanoSettings.nodulePartChance)
+						if (rNoise.nextInt(100) < LavaConfig.volcanoSettings.nodulePartChance)
 							worldIn.setBlockState(thisPos.north(), Blocks.STONE.getDefaultState());
-						if (rNoise.nextInt(100) < Config.volcanoSettings.nodulePartChance)
+						if (rNoise.nextInt(100) < LavaConfig.volcanoSettings.nodulePartChance)
 							worldIn.setBlockState(thisPos.south(), Blocks.STONE.getDefaultState());
 					}
 
@@ -236,8 +230,8 @@ public class LavaLove {
 			 * end build the walls
 			 */
 
-			if (!targetState.isFullBlock() && !Config.mappings.partialBlock) {
-				if (Config.general.debugMode)
+			if (!targetState.isFullBlock() && !LavaConfig.mappings.partialBlock) {
+				if (LavaConfig.general.debugMode)
 					System.out.println("partial block detected");
 				return; // don't convert or consume partial blocks
 			}
@@ -249,7 +243,7 @@ public class LavaLove {
 			if (targetOutput != null) {
 
 				blockFromTarget = Block.getBlockFromItem(targetOutput.getItem());
-				boolean furnaceRecipes = Config.mappings.furnaceRecipes;
+				boolean furnaceRecipes = LavaConfig.mappings.furnaceRecipes;
 
 				if (blockTarget != Blocks.AIR && blockTarget != Blocks.LAVA && blockTarget != Blocks.FLOWING_LAVA) {
 
@@ -258,7 +252,7 @@ public class LavaLove {
 							|| blockTarget == Blocks.COAL_BLOCK) {
 						Random r = new Random();
 						int randomInt = r.nextInt(100) + 1;
-						if (randomInt < Config.onlyTheLava.lavaSpread) {
+						if (randomInt < LavaConfig.onlyTheLava.lavaSpread) {
 
 							worldIn.setBlockToAir(targetPos);
 
@@ -275,7 +269,7 @@ public class LavaLove {
 									targetPos.add(0, 0, targetPos.getZ() + 1);
 								}
 
-								if (Config.onlyTheLava.sourceBlock) {
+								if (LavaConfig.onlyTheLava.sourceBlock) {
 									worldIn.setBlockState(targetPos, Blocks.LAVA.getDefaultState());
 								}
 
@@ -284,9 +278,9 @@ public class LavaLove {
 							// explosions are generated when new lava is determined to be formed. It is now
 							// possible to witness exploding lava flows with out no new lava source blocks.
 							randomInt = r.nextInt(100);
-							float explosion = (float) ((r.nextFloat() * Config.explosions.maxExplosion)
-									+ Config.explosions.minExplosion);
-							if (randomInt < Config.explosions.chanceExplosion)
+							float explosion = (float) ((r.nextFloat() * LavaConfig.explosions.maxExplosion)
+									+ LavaConfig.explosions.minExplosion);
+							if (randomInt < LavaConfig.explosions.chanceExplosion)
 								worldIn.createExplosion(null, targetPos.getX(), targetPos.getY(), targetPos.getZ(),
 										explosion, false);
 							return;
@@ -294,7 +288,7 @@ public class LavaLove {
 					}
 
 					// blockFromTarget.getBlockState()
-					if (!Arrays.asList(Config.mappings.smeltingBlacklist)
+					if (!Arrays.asList(LavaConfig.mappings.smeltingBlacklist)
 							.contains(blockTarget.getRegistryName().toString())) {
 						// Only smelt if blockTargets RegistryName is not in smeltingBlacklist
 						beTheLava(worldIn, furnaceRecipes, targetPos, blockFromTarget, targetOutput, targetMeta,
@@ -332,7 +326,7 @@ public class LavaLove {
 	}
 
 	private static boolean compatible(Block target) {
-		String[] shitMods = Config.general.ignoreTheseMods.split(",");
+		String[] shitMods = LavaConfig.general.ignoreTheseMods.split(",");
 		if (shitMods == null)
 			return true;
 		return !Arrays.asList(shitMods).contains(getModID(target));
@@ -342,15 +336,15 @@ public class LavaLove {
 		Random chance = new Random();
 		int Volcano = chance.nextInt(100);
 		// debug("Volcano chance is " + Volcano);
-		if (Config.volcanoSettings.volcanoGen)
+		if (LavaConfig.volcanoSettings.volcanoGen)
 			return; // don't start another volcano until the current one is done
-		if (Volcano <= Config.volcanoSettings.volcanoChance) {
+		if (Volcano <= LavaConfig.volcanoSettings.volcanoChance) {
 			// debug("checking to see if 2 blocks up is air");
-			if (thisPos.getY() <= Config.volcanoSettings.maxYlevel
+			if (thisPos.getY() <= LavaConfig.volcanoSettings.maxYlevel
 					&& worldIn.getBlockState(thisPos.up(2)) != Blocks.AIR.getDefaultState()) {
 				// debug("checking to see if lava is below y 69");
 				List<BlockPos> theShaft = new ArrayList();
-				String shaftType = Config.shaftSettings.shaftSize;
+				String shaftType = LavaConfig.shaftSettings.shaftSize;
 				if (shaftType.equalsIgnoreCase("random")) {
 					switch (chance.nextInt(3)) {
 					case 0:
@@ -418,11 +412,11 @@ public class LavaLove {
 					// you're a dumb ass that's not one of the config values!
 					return;// consider it done
 				}
-				if (thisPos.getY() <= Config.volcanoSettings.psuedoSurface) {
-					Config.volcanoSettings.volcanoGen = true;
-					int diff = Config.volcanoSettings.psuedoSurface - thisPos.getY();
-					int extra = chance.nextInt(Config.plumes.extraHt) + Config.plumes.minHt;
-					int vent = chance.nextInt(diff + extra + Config.plumes.minHt);
+				if (thisPos.getY() <= LavaConfig.volcanoSettings.psuedoSurface) {
+					LavaConfig.volcanoSettings.volcanoGen = true;
+					int diff = LavaConfig.volcanoSettings.psuedoSurface - thisPos.getY();
+					int extra = chance.nextInt(LavaConfig.plumes.extraHt) + LavaConfig.plumes.minHt;
+					int vent = chance.nextInt(diff + extra + LavaConfig.plumes.minHt);
 					for (int i = 0; i < vent; i++) {
 						for (int y = 0; y < theShaft.size(); y++) {
 							worldIn.setBlockState(theShaft.get(y).up(i), Blocks.AIR.getDefaultState());
@@ -430,7 +424,7 @@ public class LavaLove {
 						}
 						// worldIn.setBlockState(thisPos.up(i), Blocks.LAVA.getDefaultState());
 					}
-					Config.volcanoSettings.volcanoGen = false;
+					LavaConfig.volcanoSettings.volcanoGen = false;
 					return;
 				}
 			}
@@ -520,7 +514,7 @@ public class LavaLove {
 			// smelt block into item and put in same place as original block
 			if (targetOutput != null && !targetOutput.getDisplayName().equals("Air")) {// this is not cool in my opinion
 																						// but it works
-				if (Config.general.debugMode)
+				if (LavaConfig.general.debugMode)
 					System.out.println("targetOutput should be " + targetOutput.getDisplayName());
 				worldIn.setBlockToAir(targetPos);
 				lavaSmelt(worldIn, targetOutput, ThreadLocalRandom.current().nextInt(1, 10), facing, targetPos);

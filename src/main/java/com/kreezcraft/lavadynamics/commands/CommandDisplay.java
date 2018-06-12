@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
-import com.kreezcraft.lavadynamics.Config;
+import com.kreezcraft.lavadynamics.LavaConfig;
 import com.kreezcraft.lavadynamics.LavaDynamics;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -52,7 +52,7 @@ public class CommandDisplay extends CommandBase {
 	private void showWorlds(ICommandSender sender) {
 		printMsg(sender, "Allowed Dimensions - Dims not in list are not allowed");
 		printMsg(sender, "=======================");
-		printMsg(sender, Config.dimensions.dimsToAllow.toString());
+		printMsg(sender, LavaConfig.dimensions.dimsToAllow.toString());
 		printMsg(sender, " ");
 	}
 

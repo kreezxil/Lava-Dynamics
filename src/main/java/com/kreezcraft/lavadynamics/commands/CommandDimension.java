@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.google.common.collect.Lists;
-import com.kreezcraft.lavadynamics.Config;
+import com.kreezcraft.lavadynamics.LavaConfig;
 import com.kreezcraft.lavadynamics.LavaDynamics;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -76,7 +76,7 @@ public class CommandDimension extends CommandBase {
 			return;
 		}
 		if (truth.equalsIgnoreCase("true")) {
-			int[] intList = Config.dimensions.dimsToAllow.clone();
+			int[] intList = LavaConfig.dimensions.dimsToAllow.clone();
 			for(int i=0;i<intList.length;i++) {
 				if(intList[i]==dimension) {
 					sender.sendMessage(new TextComponentString("Dimension id "+dimension+" already allowed."));
@@ -86,10 +86,10 @@ public class CommandDimension extends CommandBase {
 			intList = Arrays.copyOf(intList, intList.length+1);
 			intList[intList.length-1] = dimension;
 			
-			Config.dimensions.dimsToAllow = intList;
+			LavaConfig.dimensions.dimsToAllow = intList;
 		} else {
 			//because of the array check above this will be false
-			int[] intList = Config.dimensions.dimsToAllow.clone();
+			int[] intList = LavaConfig.dimensions.dimsToAllow.clone();
 			List<int[]> temp = Arrays.asList(intList);
 			
 			if(temp.contains(dimension)) {
@@ -100,15 +100,15 @@ public class CommandDimension extends CommandBase {
 			
 			Integer[] ints = temp.toArray(new Integer[temp.size()]);
 			int[] whatIneed = ArrayUtils.toPrimitive(ints);
-			Config.dimensions.dimsToAllow = whatIneed;
+			LavaConfig.dimensions.dimsToAllow = whatIneed;
 		}
 
-		if (Config.cfg.hasChanged())
+		if (LavaConfig.cfg.hasChanged())
 
 		{
 			sender.sendMessage(new TextComponentString("LavaDynamics for " + dimension + " set to " + truth));
 			sender.sendMessage(new TextComponentString("Config updated"));
-			Config.cfg.save();
+			LavaConfig.cfg.save();
 		} else {
 			sender.sendMessage(new TextComponentString("Config not updated"));
 		}

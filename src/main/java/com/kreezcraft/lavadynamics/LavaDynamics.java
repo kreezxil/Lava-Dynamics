@@ -52,7 +52,7 @@ public class LavaDynamics {
 	public static final String VERSION = "@VERSION@";
 
 	public static Logger logger;
-	public static Configuration config;
+//	public static Configuration config;
 	public static LavaDynamics instance;
 	public static Object source, destination;
 
@@ -61,9 +61,9 @@ public class LavaDynamics {
 		logger = event.getModLog();
 //		File directory = event.getModConfigurationDirectory();
 //		config = new Configuration(new File(directory.getPath(), "lavadynamics.cfg"));
-//		Config.readConfig();
-//		Config.volcanoGen.set(false);
-		Config.volcanoSettings.volcanoGen = false;
+//		LavaConfig.readConfig();
+//		LavaConfig.volcanoGen.set(false);
+		LavaConfig.volcanoSettings.volcanoGen = false;
 	}
 
 	@EventHandler

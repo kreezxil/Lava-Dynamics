@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
-import com.kreezcraft.lavadynamics.Config;
+import com.kreezcraft.lavadynamics.LavaConfig;
 import com.kreezcraft.lavadynamics.LavaDynamics;
 
 import net.minecraft.command.CommandBase;
@@ -64,9 +64,9 @@ public class CommandDebug extends CommandBase {
 		}
 		
 		sender.sendMessage(new TextComponentString("LavaDynamics Debug Mode is "+theTruth));
-		Config.generalConfig.debugMode = theTruth;
+		LavaConfig.generalConfig.debugMode = theTruth;
 		sender.sendMessage(new TextComponentString("Config updated"));
-		Config.cfg.save();
+		LavaConfig.cfg.save();
 
 		return;
 	
