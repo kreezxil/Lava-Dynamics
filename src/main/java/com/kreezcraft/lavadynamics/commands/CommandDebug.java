@@ -1,4 +1,4 @@
-package com.kreezcraft.lavadynamics.commands;
+/*package com.kreezcraft.lavadynamics.commands;
 
 import java.util.Collections;
 import java.util.List;
@@ -64,7 +64,7 @@ public class CommandDebug extends CommandBase {
 		}
 		
 		sender.sendMessage(new TextComponentString("LavaDynamics Debug Mode is "+theTruth));
-		Config.debugMode.set(theTruth);
+		Config.generalConfig.debugMode = theTruth;
 		sender.sendMessage(new TextComponentString("Config updated"));
 		Config.cfg.save();
 
@@ -91,3 +91,4 @@ public class CommandDebug extends CommandBase {
 	}
 
 }
+*/

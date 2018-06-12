@@ -1,4 +1,4 @@
-package com.kreezcraft.lavadynamics.commands;
+/*package com.kreezcraft.lavadynamics.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,7 +76,7 @@ public class CommandDimension extends CommandBase {
 			return;
 		}
 		if (truth.equalsIgnoreCase("true")) {
-			int[] intList = Config.dimsToAllow.getIntList();
+			int[] intList = Config.dimensions.dimsToAllow.clone();
 			for(int i=0;i<intList.length;i++) {
 				if(intList[i]==dimension) {
 					sender.sendMessage(new TextComponentString("Dimension id "+dimension+" already allowed."));
@@ -86,10 +86,10 @@ public class CommandDimension extends CommandBase {
 			intList = Arrays.copyOf(intList, intList.length+1);
 			intList[intList.length-1] = dimension;
 			
-			Config.dimsToAllow.setValues(intList);
+			Config.dimensions.dimsToAllow = intList;
 		} else {
 			//because of the array check above this will be false
-			int[] intList = Config.dimsToAllow.getIntList();
+			int[] intList = Config.dimensions.dimsToAllow.clone();
 			List<int[]> temp = Arrays.asList(intList);
 			
 			if(temp.contains(dimension)) {
@@ -100,7 +100,7 @@ public class CommandDimension extends CommandBase {
 			
 			Integer[] ints = temp.toArray(new Integer[temp.size()]);
 			int[] whatIneed = ArrayUtils.toPrimitive(ints);
-			Config.dimsToAllow.setValues(whatIneed);
+			Config.dimensions.dimsToAllow = whatIneed;
 		}
 
 		if (Config.cfg.hasChanged())
@@ -135,3 +135,4 @@ public class CommandDimension extends CommandBase {
 	}
 
 }
+*/

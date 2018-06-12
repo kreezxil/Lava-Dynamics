@@ -13,7 +13,7 @@ import net.minecraftforge.common.config.Property;
 @net.minecraftforge.common.config.Config(modid = LavaDynamics.MODID, category="")
 public class Config {
 
-	public static Configuration cfg = LavaDynamics.config;
+//	public static Configuration cfg = LavaDynamics.config;
 	
 	@net.minecraftforge.common.config.Config.Comment({
 		"If any config setting is not preceded by comments #'s then you may delete that particular setting as it is no longer being used."
@@ -110,11 +110,11 @@ public class Config {
 	
 	
 	
-	private static class Notes {
+	public static class Notes {
 		
 	}
 	
-	private static class General {
+	public static class General {
 		@net.minecraftforge.common.config.Config.Comment({
 			"If true it will print messages to the player based on what you are doing in the protected zone, useful for helping Kreezxil debug the mod"
 		})
@@ -127,7 +127,7 @@ public class Config {
 		public String ignoreTheseMods = "biomesoplenty";
 	}
 	
-	private static class Protection {
+	public static class Protection {
 		@net.minecraftforge.common.config.Config.Comment({
 			"if true any tile entity will prevent a volcano from erupting in a chunk. Signs are tile entities btw. Setting this to false enables hardcore volcanoes. Meaning a play must neutralize lava pools below them to be truly safe."
 		})
@@ -145,7 +145,7 @@ public class Config {
 		public int findVillageRange = 10;
 	}
 	
-	private static class VolcanoSettings {
+	public static class VolcanoSettings {
 		@net.minecraftforge.common.config.Config.Comment({
 			"Percent chance a volcano or magma vent will occur.",
 			"Default: 20"
@@ -176,7 +176,7 @@ public class Config {
 		public int nodulePartChance = 10;
 	}
 	
-	private static class Noise {
+	public static class Noise {
 		@net.minecraftforge.common.config.Config.Comment({
 			"The Minimum value for determining how many blocks above the current block is also lava before generating a wall component.",
 			"Default: 5"
@@ -190,7 +190,7 @@ public class Config {
 		public int highNoise = 2;
 	}
 	
-	private static class Explosions {
+	public static class Explosions {
 		@net.minecraftforge.common.config.Config.Comment({
 			"Double value for determining strength of random explosions.",
 			"Note: Values higher than 10 can cause lag!",
@@ -211,7 +211,7 @@ public class Config {
 		public int chanceExplosion = 5;
 	}
 	
-	private static class Plumes {
+	public static class Plumes {
 		@net.minecraftforge.common.config.Config.Comment({
 			"Extra amount of source blocks to add to the magma vent.",
 			"Default: 7"
@@ -225,20 +225,23 @@ public class Config {
 		public int minHt = 3;
 	}
 	
-	private static class Dimensions {
+	public static class Dimensions {
 		@net.minecraftforge.common.config.Config.Comment({
 			"It's honestly meant to run here"
 		})
+		@net.minecraftforge.common.config.Config.Name("OverWorld")
 		public boolean dimOverworld = true;
 		
 		@net.minecraftforge.common.config.Config.Comment({
 			"All that lava, probably you should allow it!"
 		})
+		@net.minecraftforge.common.config.Config.Name("Nether")
 		public boolean dimNether = false;
 		
 		@net.minecraftforge.common.config.Config.Comment({
 			"I don't see why it can't run here"
 		})
+		@net.minecraftforge.common.config.Config.Name("The End")
 		public boolean dimEnd = true;
 		
 		@net.minecraftforge.common.config.Config.Comment({
@@ -248,7 +251,7 @@ public class Config {
 		public int[] dimsToAllow = new int[0];
 	}
 	
-	private static class Mappings {
+	public static class Mappings {
 		@net.minecraftforge.common.config.Config.Comment({
 			"Enable/Disable using smelting recipes for Lava Dynamics"
 		})
@@ -265,7 +268,7 @@ public class Config {
 		public String[] smeltingBlacklist = new String[0];
 	}
 	
-	private static class OreGen {
+	public static class OreGen {
 		@net.minecraftforge.common.config.Config.Comment({
 			"A standard would be 100, but that make ore too common, so 500 makes it all 5x rarer"
 		})
@@ -274,7 +277,7 @@ public class Config {
 		
 	}
 	
-	private static class OnlyTheLava {
+	public static class OnlyTheLava {
 		@net.minecraftforge.common.config.Config.Comment({
 			"The integer value from 0 to 100 for determining the chance that lava will spread.",
 			"Default: 10"
@@ -290,7 +293,7 @@ public class Config {
 		public boolean sourceBlock = true;
 	}
 	
-	private static class ShaftSettings {
+	public static class ShaftSettings {
 		@net.minecraftforge.common.config.Config.Comment({
 			"3 sizes available. small, medium, and large.",
 			"small is single block shaft.",

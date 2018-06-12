@@ -1,4 +1,4 @@
-package com.kreezcraft.lavadynamics.commands;
+/*package com.kreezcraft.lavadynamics.commands;
 
 import com.kreezcraft.lavadynamics.commands.addCommands.CommandConfirm;
 import com.kreezcraft.lavadynamics.commands.addCommands.CommandDst;
@@ -28,4 +28,4 @@ public class cmdAdd extends CommandTreeBase {
 			   "    dst <item in hand>\n"+
 			   "    confirm - commit the combo conversion.";
 	}
-}
+}*/

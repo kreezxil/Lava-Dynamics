@@ -1,4 +1,4 @@
-package com.kreezcraft.lavadynamics.commands.addCommands;
+/*package com.kreezcraft.lavadynamics.commands.addCommands;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,7 +65,7 @@ public class CommandConfirm extends CommandBase {
 
 		if(Config.cfg.hasChanged()) {
 			Config.cfg.save();
-			if(Config.debugMode.getBoolean()) {
+			if(Config.generalConfig.debugMode) {
 				sender.sendMessage(new TextComponentString("Mapping config updated"));
 			}
 		}
@@ -92,3 +92,4 @@ public class CommandConfirm extends CommandBase {
 	}
 
 }
+*/

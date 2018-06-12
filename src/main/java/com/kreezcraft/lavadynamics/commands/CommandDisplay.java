@@ -1,4 +1,4 @@
-package com.kreezcraft.lavadynamics.commands;
+/*package com.kreezcraft.lavadynamics.commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,7 +52,7 @@ public class CommandDisplay extends CommandBase {
 	private void showWorlds(ICommandSender sender) {
 		printMsg(sender, "Allowed Dimensions - Dims not in list are not allowed");
 		printMsg(sender, "=======================");
-		printMsg(sender, Config.dimsToAllow.getIntList().toString());
+		printMsg(sender, Config.dimensions.dimsToAllow.toString());
 		printMsg(sender, " ");
 	}
 
@@ -95,3 +95,4 @@ public class CommandDisplay extends CommandBase {
 	}
 
 }
+*/

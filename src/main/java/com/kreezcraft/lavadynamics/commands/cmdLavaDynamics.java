@@ -1,4 +1,4 @@
-package com.kreezcraft.lavadynamics.commands;
+/*package com.kreezcraft.lavadynamics.commands;
 
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
@@ -37,4 +37,4 @@ public class cmdLavaDynamics extends CommandTreeBase {
 //	           "   dbg - manage debug messages";
 		return "/LavaDynamics debug <true|false>\n   prints messages to console";
 	}
-}
+}*/

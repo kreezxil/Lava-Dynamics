@@ -1,4 +1,4 @@
-package com.kreezcraft.lavadynamics.commands.addCommands;
+/*package com.kreezcraft.lavadynamics.commands.addCommands;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,3 +83,4 @@ public class CommandSrc extends CommandBase {
 	}
 
 }
+*/
