@@ -106,6 +106,7 @@ public class LavaConfig {
 			"Percent chance a volcano or magma vent will occur.",
 			"Default: 20"
 		})
+		@Config.RangeInt(min=0, max=100)
 		public int volcanoChance = 20;
 		
 		@Config.Comment({
@@ -129,6 +130,7 @@ public class LavaConfig {
 		@Config.Comment({
 			"0 to 100 chance that part of the nodule is formed to protect the ore being generated"
 		})
+		@Config.RangeInt(min=0, max=100)
 		public int nodulePartChance = 10;
 	}
 	
@@ -140,7 +142,8 @@ public class LavaConfig {
 		public int lowNoise = 5;
 		
 		@Config.Comment({
-			"The Maximum value for determining how many blocks above the current block is also lava before generating a wall component.\nSetting this lower than 2 can cause lava to instantly turn to stone!",
+			"The Maximum value for determining how many blocks above the current block is also lava before generating a wall component.",
+			"Setting this lower than 2 can cause lava to instantly turn to stone!",
 			"Default: 2"
 		})
 		public int highNoise = 2;
@@ -164,6 +167,7 @@ public class LavaConfig {
 			"Integer value from 0 to 100 for determining the chance that lava causes an explosion.",
 			"Default: 5"
 		})
+		@Config.RangeInt(min=0, max=100)
 		public int chanceExplosion = 5;
 	}
 	
@@ -243,6 +247,7 @@ public class LavaConfig {
 			"The integer value from 0 to 100 for determining the chance that lava will spread.",
 			"Default: 10"
 		})
+		@Config.RangeInt(min=0, max=100)
 		public int lavaSpread = 10;
 		
 		@Config.Comment({
