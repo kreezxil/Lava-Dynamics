@@ -32,12 +32,6 @@ import java.util.Random;
 
 import org.apache.logging.log4j.Logger;
 
-/*import com.kreezcraft.lavadynamics.commands.CommandDebug;
-import com.kreezcraft.lavadynamics.commands.CommandDimension;
-import com.kreezcraft.lavadynamics.commands.CommandDisplay;
-import com.kreezcraft.lavadynamics.commands.cmdLavaDynamics;
-import com.kreezcraft.lavadynamics.commands.addCommands.CommandSrc;*/
-
 @Mod(modid = LavaDynamics.MODID, name = LavaDynamics.NAME, version = LavaDynamics.VERSION)
 public class LavaDynamics {
 	/*
@@ -80,11 +74,7 @@ public class LavaDynamics {
 
 	@EventHandler
 	public void serverLoad(FMLServerStartingEvent event) {
-		/*
-		 * way too much time has been spent on commands and subcommands it is disabled
-		 * for now
-		 */
-		//event.registerServerCommand(new cmdLavaDynamics());
+		
 	}
 
 }
