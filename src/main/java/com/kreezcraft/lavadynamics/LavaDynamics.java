@@ -14,8 +14,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -29,12 +31,6 @@ import java.io.File;
 import java.util.Random;
 
 import org.apache.logging.log4j.Logger;
-
-import com.kreezcraft.lavadynamics.commands.CommandDebug;
-import com.kreezcraft.lavadynamics.commands.CommandDimension;
-import com.kreezcraft.lavadynamics.commands.CommandDisplay;
-import com.kreezcraft.lavadynamics.commands.cmdLavaDynamics;
-import com.kreezcraft.lavadynamics.commands.addCommands.CommandSrc;
 
 @Mod(modid = LavaDynamics.MODID, name = LavaDynamics.NAME, version = LavaDynamics.VERSION)
 public class LavaDynamics {
@@ -50,17 +46,18 @@ public class LavaDynamics {
 	public static final String VERSION = "@VERSION@";
 
 	public static Logger logger;
-	public static Configuration config;
+//	public static Configuration config;
 	public static LavaDynamics instance;
 	public static Object source, destination;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		logger = event.getModLog();
-		File directory = event.getModConfigurationDirectory();
-		config = new Configuration(new File(directory.getPath(), "lavadynamics.cfg"));
-		Config.readConfig();
-		Config.volcanoGen.set(false);
+//		File directory = event.getModConfigurationDirectory();
+//		config = new Configuration(new File(directory.getPath(), "lavadynamics.cfg"));
+//		LavaConfig.readConfig();
+//		LavaConfig.volcanoGen.set(false);
+		LavaConfig.volcanoSettings.volcanoGen = false;
 	}
 
 	@EventHandler
@@ -69,19 +66,15 @@ public class LavaDynamics {
 
 	@EventHandler
 	public void post(FMLPostInitializationEvent event) {
-		if (config.hasChanged()) {
+		/*if (config.hasChanged()) {
 			config.save();
-		}
+		}*/
 
 	}
 
 	@EventHandler
 	public void serverLoad(FMLServerStartingEvent event) {
-		/*
-		 * way too much time has been spent on commands and subcommands it is disabled
-		 * for now
-		 */
-		//event.registerServerCommand(new cmdLavaDynamics());
+		
 	}
 
 }
