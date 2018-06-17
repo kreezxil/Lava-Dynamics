@@ -1,0 +1,12 @@
+lavadynamics.notes.tooltip=Pokud některému nastavení konfigurace nepředchází komentáře #, pak můžete toto konkrétní nastavení smazat, protože se již nepoužívá.
+lavadynamics.general.tooltip=Celková konfigulace chování v modu, která se zatím ještě nevejde do určité kategorie.
+lavadynamics.protection.tooltip=Atributy týkající se ochrany věcí.
+lavadynamics.volcanosettings.tooltip=Ovládá jak volatilní a zlé jsou vaše vulkány!
+lavadynamics.noise.tooltip=Nastavení, které vám pomohou určit, kdy se stěny a uzly stavějí.
+lavadynamics.explosions.tooltip=Sopky mají výbušné vlastnosti, tato nastavení jsou pro tuto funkci.
+lavadynamics.plumes.tooltip=Nižší a vyšší částka, která náhodně přidá do odvzdušňovacího otvoru pro nastavení velikosti obruče.
+lavadynamics.dimensions.tooltip=Pravá nebo falešná pro kontrolu, zda běží LavaDynamics v uvedeném rozměru. V případě dimsToAllow jednoduše přidejte identifikační číslo kóty, které dovolí mod v něm.
+lavadynamics.mappings.tooltip=V programu World Smelting Control pro lávu.
+lavadynamics.oregen.tooltip=Čím vyšší je hodnota, tím je vzácnější generace rudy než vulkanické stěny. výchozí hodnota: 500.
+lavadynamics.shaftsettings.tooltip=Určuje velikost hřídele, toto nastavení efektivně snižuje frekvenci vulkanů, ale učiní zážitek více.
+lavadynamics.onlythelava.tooltip=Nastavení, která explicitně řídí chování standardní lávy ve vašem světě.

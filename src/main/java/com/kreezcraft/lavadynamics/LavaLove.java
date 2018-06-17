@@ -190,7 +190,8 @@ public class LavaLove {
 			// volcanic wall construction
 			// because one of these might be true for blockTarget
 			// Blocks.AIR, Blocks.LAVA, Blocks.FLOWING_LAVA)
-			if (cardinalIsAir(worldIn, thisPos) && !LavaConfig.volcanoSettings.volcanoGen) {
+			//if (cardinalIsAir(worldIn, thisPos) && !LavaDynamics.volcanoGen) {
+			if (cardinalIsAir(worldIn, thisPos)) { //walls should be built regardless if another volcano is being generated
 				Random rNoise = new Random();
 				int lowNoise = LavaConfig.noise.lowNoise;
 				int upCheck = rNoise.nextInt(LavaConfig.noise.highNoise) + lowNoise;
@@ -336,7 +337,7 @@ public class LavaLove {
 		Random chance = new Random();
 		int Volcano = chance.nextInt(100);
 		// debug("Volcano chance is " + Volcano);
-		if (LavaConfig.volcanoSettings.volcanoGen)
+		if (LavaDynamics.volcanoGen)
 			return; // don't start another volcano until the current one is done
 		if (Volcano <= LavaConfig.volcanoSettings.volcanoChance) {
 			// debug("checking to see if 2 blocks up is air");
@@ -413,7 +414,7 @@ public class LavaLove {
 					return;// consider it done
 				}
 				if (thisPos.getY() <= LavaConfig.volcanoSettings.psuedoSurface) {
-					LavaConfig.volcanoSettings.volcanoGen = true;
+					LavaDynamics.volcanoGen = true;
 					int diff = LavaConfig.volcanoSettings.psuedoSurface - thisPos.getY();
 					int extra = chance.nextInt(LavaConfig.plumes.extraHt) + LavaConfig.plumes.minHt;
 					int vent = chance.nextInt(diff + extra + LavaConfig.plumes.minHt);
@@ -424,7 +425,7 @@ public class LavaLove {
 						}
 						// worldIn.setBlockState(thisPos.up(i), Blocks.LAVA.getDefaultState());
 					}
-					LavaConfig.volcanoSettings.volcanoGen = false;
+					LavaDynamics.volcanoGen = false;
 					return;
 				}
 			}

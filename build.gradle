@@ -11,7 +11,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "1.12.2-2.10.17"
+version = "1.12.2-3.11.18"
 group = "com.kreezcraft.lavadynamics" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "lavadynamics"
 
@@ -21,14 +21,9 @@ compileJava {
 }
 
 minecraft {
-    version = "1.12.2-14.23.4.2707"
+    version = "1.12.2-14.23.4.2708"
     runDir = "run"
     
-    // the mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   snapshot are built nightly.
-    // stable_#            stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not always work.
-    // simply re-run your setup task after changing the mappings to update your workspace.
     mappings = "snapshot_20171003"
     
  	replace "@VERSION@",project.version

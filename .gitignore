@@ -1,0 +1,14 @@
+/bin/
+/build/
+/eclipse/
+/gradle/
+/Lava-Dynamics_Client.launch
+/Lava-Dynamics_Server.launch
+/gradle.properties
+/gradlew
+/gradlew.bat
+/run/
+
+\.gradle/
+
+\.settings/

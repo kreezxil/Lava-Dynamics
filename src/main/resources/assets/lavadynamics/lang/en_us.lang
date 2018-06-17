@@ -1,0 +1,13 @@
+lavadynamics.notes.tooltip=If any config setting is not preceded by comments #'s then you may delete that particular setting as it is no longer being used.
+lavadynamics.general.tooltip=Overall mod behavior configuration that doesn't fit in a particular category just yet.
+lavadynamics.protection.tooltip=Attributes related to protecting things.
+lavadynamics.volcanosettings.tooltip=Controls how volatile and evil your volcanos are!
+lavadynamics.noise.tooltip=Settings to help determine when walls and nodules get built.
+lavadynamics.explosions.tooltip=Volcanos have explosive qualities, these settings are for that feature.
+lavadynamics.plumes.tooltip=The lower and higher amount to randomly add to a vent to set the size of a plume.
+lavadynamics.dimensions.tooltip=True or False to control if LavaDynamics runs in said dimension. In the case of dimsToAllow, simply add a dimension ID to allow the mod in it.
+lavadynamics.mappings.tooltip=In World Smelting Control for the lava.
+lavadynamics.oregen.tooltip=The higher the value, the rarer the generation of ore sin the volcanic walls. default: 500.
+lavadynamics.shaftsettings.tooltip=Determines the size of the shaft, these settings effectively reduce the frequency of the volcanos, but make the experience more rewarding.
+lavadynamics.onlythelava.tooltip=Settings that explicitly control the behavior of standard lava in your world.
+

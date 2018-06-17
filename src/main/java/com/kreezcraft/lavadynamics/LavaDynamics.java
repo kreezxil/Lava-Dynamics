@@ -32,6 +32,8 @@ import java.util.Random;
 
 import org.apache.logging.log4j.Logger;
 
+import com.mojang.authlib.properties.Property;
+
 @Mod(modid = LavaDynamics.MODID, name = LavaDynamics.NAME, version = LavaDynamics.VERSION)
 public class LavaDynamics {
 	/*
@@ -49,6 +51,7 @@ public class LavaDynamics {
 //	public static Configuration config;
 	public static LavaDynamics instance;
 	public static Object source, destination;
+	public static boolean volcanoGen = false;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -57,7 +60,7 @@ public class LavaDynamics {
 //		config = new Configuration(new File(directory.getPath(), "lavadynamics.cfg"));
 //		LavaConfig.readConfig();
 //		LavaConfig.volcanoGen.set(false);
-		LavaConfig.volcanoSettings.volcanoGen = false;
+		//LavaConfig.volcanoSettings.volcanoGen = false;
 	}
 
 	@EventHandler

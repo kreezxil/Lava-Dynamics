@@ -6,18 +6,22 @@ import net.minecraftforge.common.config.Config;
 public class LavaConfig {
 	
 	@Config.Comment({
-		"If any config setting is not preceded by comments #'s then you may delete that particular setting as it is no longer being used."
+		"If any config setting is not preceded by comments #'s ",
+		"then you may delete that particular setting as it is no longer being used."
 	})
+	@Config.Name("Notes")
 	public static Notes notes = new Notes();
 	
 	@Config.Comment({
 		"Overall mod behavior configuration that doesn't fit in a particular category yet."
 	})
+	@Config.Name("General")
 	public static General general = new General();
 	
 	@Config.Comment({
 		"Attributes related to protecting things."
 	})
+	@Config.Name("Protection")
 	public static Protection protection = new Protection();
 	
 	@Config.Comment({
@@ -27,40 +31,51 @@ public class LavaConfig {
 	public static VolcanoSettings volcanoSettings = new VolcanoSettings();
 	
 	@Config.Comment({
-		"Settings to help determine when walls and nodules get built"
+		"Settings to help determine when walls and nodules get built."
 	})
+	@Config.Name("Walls and Stuff")
 	public static Noise noise = new Noise();
 	
 	@Config.Comment({
-		"Volcanoes have explosive qualities, these settings are for that feature"
+		"Volcanoes have explosive qualities, these settings are for that feature."
 	})
+	@Config.Name("Explosion Power")
 	public static Explosions explosions = new Explosions();
 	
 	@Config.Comment({
-		"The lower and higher extra amount to randomly add to a vent to set the size of a plume"
+		"The lower and higher extra amount to randomly add to a vent to set the size of a plume."
 	})
+	@Config.Name("Plume Control")
 	public static Plumes plumes = new Plumes();
 	
 	@Config.Comment({
 		"True or False to control if LavaDynamics runs in said dimension.",
 		"In the case of dimsToAllow, simply add a dimension ID to allow the mod in it."
 	})
+	@Config.Name("Dimensions")
 	public static Dimensions dimensions = new Dimensions();
 	
 	@Config.Comment({
-		"In World Smelting Control for the lava"
+		"In World Smelting Control for the lava."
 	})
 	@Config.Name("Conversions (mappings)")
 	public static Mappings mappings = new Mappings();
+	
 	@Config.Comment({
-		"The higher the value, the rarer all ores generating in the volcanic wall are. default: 500"
+		"The higher the value, the rarer the generation of ores in the volcanic walls.",
+		"default: 500"
 	})
 	@Config.Name("Ore Gen")
 	public static OreGen oreGen = new OreGen();
 	
+
+	@Config.Comment({ "Settings that explicitly control the behavior of standard lava in your world."})
+	@Config.Name("Lava Behavior")
 	public static OnlyTheLava onlyTheLava = new OnlyTheLava();
+	
 	@Config.Comment({
-		"Determine the size of the shaft, these settings effectively reduce the frequency of the volcanos, but make the experience more rewarding"
+		"Determines the size of the shaft, these settings effectively reduce the frequency ",
+		"of the volcanos, but make the experience more rewarding."
 	})
 	@Config.Name("Shaft Settings")
 	public static ShaftSettings shaftSettings = new ShaftSettings();
@@ -72,7 +87,9 @@ public class LavaConfig {
 	
 	public static class General {
 		@Config.Comment({
-			"If true it will print messages to the player based on what you are doing in the protected zone, useful for helping Kreezxil debug the mod"
+			"If true various debug messages that have been left in the code will activate",
+			"and then your console will soon be loaded with descriptive messages as well as",
+			"possibly slowing down your game."
 		})
 		public boolean debugMode = false;
 		
@@ -85,7 +102,9 @@ public class LavaConfig {
 	
 	public static class Protection {
 		@Config.Comment({
-			"if true any tile entity will prevent a volcano from erupting in a chunk. Signs are tile entities btw. Setting this to false enables hardcore volcanoes. Meaning a play must neutralize lava pools below them to be truly safe."
+			"if true any tile entity will prevent a volcano from erupting in a chunk. ",
+			"Signs are tile entities btw. Setting this to false enables hardcore ",
+			"volcanos. Meaning a player must neutralize lava pools below them to be truly safe."
 		})
 		public boolean protection = true;
 		
@@ -109,11 +128,11 @@ public class LavaConfig {
 		@Config.RangeInt(min=0, max=100)
 		public int volcanoChance = 20;
 		
-		@Config.Comment({
-			"You can play with this value, but it's not for you.",
-			"Default: seriously it will ignore you"
-		})
-		public boolean volcanoGen = false;
+//		@Config.Comment({
+//			"You can play with this value, but it's not for you.",
+//			"Default: seriously it will ignore you"
+//		})
+//		public boolean volcanoGen = false;
 		
 		@Config.Comment({
 			"The y level for the approximate level of your surface.",
@@ -128,7 +147,7 @@ public class LavaConfig {
 		public int maxYlevel = 10;
 		
 		@Config.Comment({
-			"0 to 100 chance that part of the nodule is formed to protect the ore being generated"
+			"0 to 100 chance that part of the nodule is formed to protect the ore being generated."
 		})
 		@Config.RangeInt(min=0, max=100)
 		public int nodulePartChance = 10;
@@ -136,13 +155,15 @@ public class LavaConfig {
 	
 	public static class Noise {
 		@Config.Comment({
-			"The Minimum value for determining how many blocks above the current block is also lava before generating a wall component.",
+			"The Minimum value for determining how many blocks above the current block is ",
+			"also lava before generating a wall component.",
 			"Default: 5"
 		})
 		public int lowNoise = 5;
 		
 		@Config.Comment({
-			"The Maximum value for determining how many blocks above the current block is also lava before generating a wall component.",
+			"The Maximum value for determining how many blocks above the current block ",
+			"is also lava before generating a wall component.",
 			"Setting this lower than 2 can cause lava to instantly turn to stone!",
 			"Default: 2"
 		})
@@ -266,8 +287,9 @@ public class LavaConfig {
 			"medium is 5 block shaft.",
 			"large is 9 block shaft.",
 			"Random is anyone of the 3 above.",
-			"Note: If all the positions in the pattern for the size as centered on the polled position ",
-			"is not lava source blocks then a volcano will not result.",
+			"Note: The pattern is placed over the center block. Each lava source in the pattern is registered",
+			" and a volcano results from what was found, meaning that medium or better results in a randomly",
+			" jagged looking volcano.",
 			"Default: large"
 		})
 		public String shaftSize = "large";

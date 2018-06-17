@@ -1,0 +1,12 @@
+lavadynamics.notes.tooltip=Wenn einer Konfigurationseinstellung keine Kommentare vorangestellt sind, können Sie diese Einstellung löschen, da sie nicht mehr verwendet wird.
+lavadynamics.general.tooltip=Konfiguration des gesamten Mod-Verhaltens, die noch nicht in eine bestimmte Kategorie passt.
+lavadynamics.protection.tooltip=Attribute zum Schutz von Dingen.
+lavadynamics.volcanosetings.tooltip=Steuert, wie volatil und böse deine Vulkane sind!
+lavadynamics.noise.tooltip=Einstellungen, um festzustellen, wann Wände und Knötchen entstehen.
+lavadynamics.explosions.tooltip=Vulkane haben explosive Eigenschaften, diese Einstellungen sind für diese Funktion.
+lavadynamics.plumes.tooltip=Der niedrigere und höhere Betrag, der zufallsbedingt zu einer Öffnung addiert wird, um die Größe einer Wolke festzulegen.
+lavadynamics.dimensions.tooltip=Wahr oder Falsch, um zu steuern, ob LavaDynamics in dieser Dimension ausgeführt wird. Im Fall von dimsToAllow, fügen Sie einfach eine Dimensions-ID hinzu, um den Mod darin zuzulassen.
+lavadynamics.mappings.tooltip=In World Smelting Control für die Lava.
+lavadynamics.oregen.tooltip=Je höher der Wert, desto seltener wird Erz an den Wänden des Vulkans erzeugt. Standard: 500.
+lavadynamics.shaftsettings.tooltip=Bestimmt die Größe der Welle, diese Einstellungen reduzieren effektiv die Häufigkeit der Vulkane, machen aber die Erfahrung lohnender.
+lavadynamics.onlythelava.tooltip=Einstellungen, die das Verhalten von Standard-Lava in deiner Welt explizit steuern.
