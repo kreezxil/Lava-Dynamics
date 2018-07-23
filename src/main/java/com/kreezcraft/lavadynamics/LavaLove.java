@@ -44,7 +44,7 @@ public class LavaLove {
 		if (LavaConfig.general.debugMode)
 			System.out.println(msg);
 	}
-	
+
 	@SubscribeEvent
 	public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
 		if (event.getModID().equals(LavaDynamics.MODID)) {
@@ -118,9 +118,9 @@ public class LavaLove {
 
 		if (worldIn.provider.isSurfaceWorld() && !LavaConfig.dimensions.dimOverworld)
 			return;
-		
+
 		int dimension = worldIn.provider.getDimension();
-		
+
 		if (dimension == 1 && !LavaConfig.dimensions.dimEnd)
 			return;
 
@@ -129,8 +129,8 @@ public class LavaLove {
 				return;
 		}
 
-		if (LavaConfig.protection.preserveVillages
-				&& worldIn.villageCollection.getNearestVillage(thisPos, LavaConfig.protection.findVillageRange) != null) {
+		if (LavaConfig.protection.preserveVillages && worldIn.villageCollection.getNearestVillage(thisPos,
+				LavaConfig.protection.findVillageRange) != null) {
 			// get out of here, we're saving that village!
 			return;
 		}
@@ -183,6 +183,8 @@ public class LavaLove {
 				return;
 			}
 
+			if (LavaDynamics.time == null)
+				LavaDynamics.time = worldIn.getWorldTime();
 			/*
 			 * build the volcanic walls
 			 */
@@ -190,8 +192,9 @@ public class LavaLove {
 			// volcanic wall construction
 			// because one of these might be true for blockTarget
 			// Blocks.AIR, Blocks.LAVA, Blocks.FLOWING_LAVA)
-			//if (cardinalIsAir(worldIn, thisPos) && !LavaDynamics.volcanoGen) {
-			if (cardinalIsAir(worldIn, thisPos)) { //walls should be built regardless if another volcano is being generated
+
+			if (cardinalIsAir(worldIn, thisPos)) { // walls should be built regardless if another volcano is being
+													// generated
 				Random rNoise = new Random();
 				int lowNoise = LavaConfig.noise.lowNoise;
 				int upCheck = rNoise.nextInt(LavaConfig.noise.highNoise) + lowNoise;
@@ -334,6 +337,13 @@ public class LavaLove {
 	}
 
 	private static void do_erupt(World worldIn, BlockPos thisPos) {
+		//System.out.print("got authorized to make a volcano");
+		Long t = worldIn.getTotalWorldTime();
+		if (t % (LavaConfig.volcanoSettings.minutes * 20) != 0) {
+			//System.out.println("modulo check was "+ t % (LavaConfig.volcanoSettings.minutes * 20));
+			return; // only every minute we check
+		}
+		//System.out.println("attempting to make a volcano");
 		Random chance = new Random();
 		int Volcano = chance.nextInt(100);
 		// debug("Volcano chance is " + Volcano);
@@ -418,11 +428,17 @@ public class LavaLove {
 					int diff = LavaConfig.volcanoSettings.psuedoSurface - thisPos.getY();
 					int extra = chance.nextInt(LavaConfig.plumes.extraHt) + LavaConfig.plumes.minHt;
 					int vent = chance.nextInt(diff + extra + LavaConfig.plumes.minHt);
-					for (int i = 0; i < vent; i++) {
-						for (int y = 0; y < theShaft.size(); y++) {
-							worldIn.setBlockState(theShaft.get(y).up(i), Blocks.AIR.getDefaultState());
-							worldIn.setBlockState(theShaft.get(y).up(i), Blocks.LAVA.getDefaultState());
+					int i;
+					int y;
+					for (i = 0; i < vent; i++) {
+						for (y = 0; y < theShaft.size(); y++) {
+							//worldIn.setBlockState(theShaft.get(y).up(i), Blocks.AIR.getDefaultState());
+							//worldIn.setBlockState(theShaft.get(y).up(i), Blocks.LAVA.getDefaultState());
+							worldIn.setBlockState(theShaft.get(y).up(i), Blocks.MAGMA.getDefaultState());
 						}
+						worldIn.setBlockState(theShaft.get(y-1).up(i-1), Blocks.LAVA.getDefaultState());
+						i=i-3;
+						worldIn.setBlockState(theShaft.get(y-1).up(i), Blocks.TNT.getDefaultState());
 						// worldIn.setBlockState(thisPos.up(i), Blocks.LAVA.getDefaultState());
 					}
 					LavaDynamics.volcanoGen = false;

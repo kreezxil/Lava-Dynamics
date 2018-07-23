@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Lava Dynamics</name>
+	<name>Lava-Dynamics</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>.link1</name>
+			<type>2</type>
+			<location>C:/Users/roger/.gradle/caches/minecraft/net/minecraftforge/forge/1.12.2-14.23.4.2739/start</location>
+		</link>
+	</linkedResources>
 </projectDescription>

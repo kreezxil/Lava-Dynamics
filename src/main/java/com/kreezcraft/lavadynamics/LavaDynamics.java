@@ -36,31 +36,19 @@ import com.mojang.authlib.properties.Property;
 
 @Mod(modid = LavaDynamics.MODID, name = LavaDynamics.NAME, version = LavaDynamics.VERSION)
 public class LavaDynamics {
-	/*
-	 * Adding Vulcanism to Minecraft through Block Update Detection
-	 * 
-	 * Specifically when lava flows on a block, if the block has a smeltable block
-	 * output recipe, the block will be dynamically updated to that output block.
-	 */
-
 	public static final String MODID = "lavadynamics";
 	public static final String NAME = "Lava Dynamics";
 	public static final String VERSION = "@VERSION@";
 
 	public static Logger logger;
-//	public static Configuration config;
 	public static LavaDynamics instance;
 	public static Object source, destination;
 	public static boolean volcanoGen = false;
+	public static Long time = null;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		logger = event.getModLog();
-//		File directory = event.getModConfigurationDirectory();
-//		config = new Configuration(new File(directory.getPath(), "lavadynamics.cfg"));
-//		LavaConfig.readConfig();
-//		LavaConfig.volcanoGen.set(false);
-		//LavaConfig.volcanoSettings.volcanoGen = false;
 	}
 
 	@EventHandler
@@ -69,15 +57,10 @@ public class LavaDynamics {
 
 	@EventHandler
 	public void post(FMLPostInitializationEvent event) {
-		/*if (config.hasChanged()) {
-			config.save();
-		}*/
-
 	}
 
 	@EventHandler
 	public void serverLoad(FMLServerStartingEvent event) {
-		
 	}
 
 }

@@ -2,7 +2,7 @@ package com.kreezcraft.lavadynamics;
 
 import net.minecraftforge.common.config.Config;
 
-@Config(modid = LavaDynamics.MODID, category="")
+@Config(modid=LavaDynamics.MODID, category="")
 public class LavaConfig {
 	
 	@Config.Comment({
@@ -121,18 +121,16 @@ public class LavaConfig {
 	}
 	
 	public static class VolcanoSettings {
+		@Config.Comment({"Number of minutes to wait before allowing an eruption check"})
+		@Config.RangeInt(min=1, max=1199)
+		public int minutes = 1;
+
 		@Config.Comment({
 			"Percent chance a volcano or magma vent will occur.",
 			"Default: 20"
 		})
 		@Config.RangeInt(min=0, max=100)
 		public int volcanoChance = 20;
-		
-//		@Config.Comment({
-//			"You can play with this value, but it's not for you.",
-//			"Default: seriously it will ignore you"
-//		})
-//		public boolean volcanoGen = false;
 		
 		@Config.Comment({
 			"The y level for the approximate level of your surface.",
@@ -248,10 +246,6 @@ public class LavaConfig {
 		})
 		public String[] smeltingBlacklist = new String[0];
 		
-//		@Config.Comment({
-//			"If this list is defined it will be used alongside the furnace recipes"
-//		})
-//		public String[] conversions = new String[] {"minecraft:cobblestone@minecraft:stone.1.0","minecraft:dirt.0@minecraft:stone.1.1"};
 	}
 	
 	public static class OreGen {
