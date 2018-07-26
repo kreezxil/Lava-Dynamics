@@ -9,15 +9,19 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -30,6 +34,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 @Mod.EventBusSubscriber
 public class LavaLove {
@@ -85,7 +90,7 @@ public class LavaLove {
 		// We don't do this during worldGen!
 
 		// debug("before chunk neighbor test");
-		if (!chunkNeighborsLoaded(worldIn, thisPos))
+		if (!Support.chunkNeighborsLoaded(worldIn, thisPos))
 			return;
 		// debug("after chunk neighbor test and before is populated test");
 		if (!worldIn.getChunkFromBlockCoords(thisPos).isPopulated())
@@ -136,7 +141,7 @@ public class LavaLove {
 		}
 
 		if (allowErupt) {
-			do_erupt(worldIn, thisPos);
+			Eruption.do_erupt(worldIn, thisPos);
 		}
 
 		for (int i = 0; i < 6; i++) {
@@ -177,9 +182,9 @@ public class LavaLove {
 			blockTarget = targetState.getBlock();
 			meta = blockTarget.getMetaFromState(targetState);
 
-			if (!compatible(blockTarget)) {
+			if (!Support.compatible(blockTarget)) {
 				if (LavaConfig.general.debugMode)
-					System.out.println("Incompatible mod " + getModID(blockTarget) + " detected!");
+					System.out.println("Incompatible mod " + Support.getModID(blockTarget) + " detected!");
 				return;
 			}
 
@@ -193,8 +198,9 @@ public class LavaLove {
 			// because one of these might be true for blockTarget
 			// Blocks.AIR, Blocks.LAVA, Blocks.FLOWING_LAVA)
 
-			if (cardinalIsAir(worldIn, thisPos)) { // walls should be built regardless if another volcano is being
-													// generated
+			if (Support.cardinalIsAir(worldIn, thisPos)) { // walls should be built regardless if another volcano is
+															// being
+				// generated
 				Random rNoise = new Random();
 				int lowNoise = LavaConfig.noise.lowNoise;
 				int upCheck = rNoise.nextInt(LavaConfig.noise.highNoise) + lowNoise;
@@ -209,7 +215,7 @@ public class LavaLove {
 				) {
 					// hopefully this means it's a perimeter lava block and not one in the core of a
 					// pool
-					Block block = getRndOre().getBlock();
+					Block block = Support.getRndOre().getBlock();
 
 					if (block != Blocks.STONE) {
 						if (rNoise.nextInt(100) < LavaConfig.volcanoSettings.nodulePartChance)
@@ -298,204 +304,11 @@ public class LavaLove {
 						beTheLava(worldIn, furnaceRecipes, targetPos, blockFromTarget, targetOutput, targetMeta,
 								facing);
 					}
-					makeEffect(worldIn, thisPos);
+					Support.makeEffect(worldIn, thisPos);
 
 				}
 			}
 		}
-	}
-
-	private static boolean cardinalIsAir(World worldIn, BlockPos thisPos) {
-		if (worldIn.getBlockState(thisPos.east()).getBlock() == Blocks.AIR
-				|| worldIn.getBlockState(thisPos.east()).getBlock() == Blocks.AIR
-				|| worldIn.getBlockState(thisPos.east()).getBlock() == Blocks.AIR
-				|| worldIn.getBlockState(thisPos.east()).getBlock() == Blocks.AIR)
-			return true;
-		return false;
-	}
-
-	private static String getModID(Block blockTarget) {
-		return blockTarget.getRegistryName().getResourceDomain();
-	}
-
-	private static boolean chunkNeighborsLoaded(World worldIn, BlockPos thisPos) {
-		int chunkX = worldIn.getChunkFromBlockCoords(thisPos).x;
-		int chunkZ = worldIn.getChunkFromBlockCoords(thisPos).z;
-
-		for (int x = -1; x <= 1; x++)
-			for (int z = -1; z <= 1; z++)
-				if (!worldIn.isChunkGeneratedAt(chunkX + x, chunkZ + z))
-					return false;
-		return true;
-	}
-
-	private static boolean compatible(Block target) {
-		String[] shitMods = LavaConfig.general.ignoreTheseMods.split(",");
-		if (shitMods == null)
-			return true;
-		return !Arrays.asList(shitMods).contains(getModID(target));
-	}
-
-	private static void do_erupt(World worldIn, BlockPos thisPos) {
-		//System.out.print("got authorized to make a volcano");
-		Long t = worldIn.getTotalWorldTime();
-		if (t % (LavaConfig.volcanoSettings.minutes * 20) != 0) {
-			//System.out.println("modulo check was "+ t % (LavaConfig.volcanoSettings.minutes * 20));
-			return; // only every minute we check
-		}
-		//System.out.println("attempting to make a volcano");
-		Random chance = new Random();
-		int Volcano = chance.nextInt(100);
-		// debug("Volcano chance is " + Volcano);
-		if (LavaDynamics.volcanoGen)
-			return; // don't start another volcano until the current one is done
-		if (Volcano <= LavaConfig.volcanoSettings.volcanoChance) {
-			// debug("checking to see if 2 blocks up is air");
-			if (thisPos.getY() <= LavaConfig.volcanoSettings.maxYlevel
-					&& worldIn.getBlockState(thisPos.up(2)) != Blocks.AIR.getDefaultState()) {
-				// debug("checking to see if lava is below y 69");
-				List<BlockPos> theShaft = new ArrayList();
-				String shaftType = LavaConfig.shaftSettings.shaftSize;
-				if (shaftType.equalsIgnoreCase("random")) {
-					switch (chance.nextInt(3)) {
-					case 0:
-						shaftType = "small";
-						break;
-					case 1:
-						shaftType = "medium";
-						break;
-					default:
-						shaftType = "large";
-					}
-				}
-				if (shaftType.equalsIgnoreCase("small")) {
-					theShaft.add(thisPos);
-				} else if (shaftType.equalsIgnoreCase("medium")) {
-					theShaft.add(thisPos);
-					if (worldIn.getBlockState(thisPos.east()).getBlock() == Blocks.LAVA)
-						theShaft.add(thisPos.east());
-
-					if (worldIn.getBlockState(thisPos.west()).getBlock() == Blocks.LAVA)
-						theShaft.add(thisPos.west());
-
-					if (worldIn.getBlockState(thisPos.south()).getBlock() == Blocks.LAVA)
-						theShaft.add(thisPos.south());
-
-					if (worldIn.getBlockState(thisPos.north()).getBlock() == Blocks.LAVA)
-						theShaft.add(thisPos.north());
-
-				} else if (shaftType.equalsIgnoreCase("large")) {
-					theShaft.add(thisPos);
-					if (worldIn.getBlockState(thisPos.east()).getBlock() == Blocks.LAVA)
-						theShaft.add(thisPos.east());
-
-					if (worldIn.getBlockState(thisPos.west()).getBlock() == Blocks.LAVA)
-						theShaft.add(thisPos.west());
-
-					if (worldIn.getBlockState(thisPos.south()).getBlock() == Blocks.LAVA)
-						theShaft.add(thisPos.south());
-
-					if (worldIn.getBlockState(thisPos.north()).getBlock() == Blocks.LAVA)
-						theShaft.add(thisPos.north());
-					// --------------------------------------
-					BlockPos temp = thisPos;
-					temp = thisPos.east();
-					temp = thisPos.north();
-					if (worldIn.getBlockState(temp).getBlock() == Blocks.LAVA)
-						theShaft.add(temp);
-
-					temp = thisPos.east();
-					temp = thisPos.south();
-					if (worldIn.getBlockState(temp).getBlock() == Blocks.LAVA)
-						theShaft.add(temp);
-
-					temp = thisPos.west();
-					temp = thisPos.north();
-					if (worldIn.getBlockState(temp).getBlock() == Blocks.LAVA)
-						theShaft.add(temp);
-
-					temp = thisPos.west();
-					temp = thisPos.south();
-					if (worldIn.getBlockState(temp).getBlock() == Blocks.LAVA)
-						theShaft.add(temp);
-
-				} else {
-					// you're a dumb ass that's not one of the config values!
-					return;// consider it done
-				}
-				if (thisPos.getY() <= LavaConfig.volcanoSettings.psuedoSurface) {
-					LavaDynamics.volcanoGen = true;
-					int diff = LavaConfig.volcanoSettings.psuedoSurface - thisPos.getY();
-					int extra = chance.nextInt(LavaConfig.plumes.extraHt) + LavaConfig.plumes.minHt;
-					int vent = chance.nextInt(diff + extra + LavaConfig.plumes.minHt);
-					int i;
-					int y;
-					for (i = 0; i < vent; i++) {
-						for (y = 0; y < theShaft.size(); y++) {
-							//worldIn.setBlockState(theShaft.get(y).up(i), Blocks.AIR.getDefaultState());
-							//worldIn.setBlockState(theShaft.get(y).up(i), Blocks.LAVA.getDefaultState());
-							worldIn.setBlockState(theShaft.get(y).up(i), Blocks.MAGMA.getDefaultState());
-						}
-						worldIn.setBlockState(theShaft.get(y-1).up(i-1), Blocks.LAVA.getDefaultState());
-						i=i-3;
-						worldIn.setBlockState(theShaft.get(y-1).up(i), Blocks.TNT.getDefaultState());
-						// worldIn.setBlockState(thisPos.up(i), Blocks.LAVA.getDefaultState());
-					}
-					LavaDynamics.volcanoGen = false;
-					return;
-				}
-			}
-		}
-		return;
-	}
-
-	private static IBlockState getRndOre() {
-		Random r = new Random();
-		int ore = r.nextInt(1000);
-
-		Block block;
-		// we should pull from the config at this point but for now it will be hard
-		// coded
-		// 20% chance to generate ore
-		// read the if statements for the chances
-
-		if (ore <= 25)
-			block = Blocks.COAL_ORE;
-		else if (ore >= 26 && ore <= 30)
-			block = Blocks.IRON_ORE;
-		else if (ore >= 31 && ore <= 32)
-			block = Blocks.GOLD_ORE;
-		else if (ore >= 33 && ore <= 34)
-			block = Blocks.QUARTZ_ORE;
-		else if (ore >= 35 && ore <= 36)
-			block = Blocks.LAPIS_ORE;
-		else if (ore >= 37 && ore <= 38)
-			block = Blocks.REDSTONE_ORE;
-		else if (ore == 39)
-			block = Blocks.DIAMOND_ORE;
-		else if (ore == 40)
-			block = Blocks.EMERALD_ORE;
-		else if (ore == 41)
-			block = Blocks.GOLD_ORE;
-		else if (ore == 42)
-			block = Blocks.REDSTONE_ORE;
-		else {
-			// this can pull from the config too for different types of non-ore blocks to
-			// place
-			block = Blocks.STONE;
-		}
-		return block.getDefaultState();
-	}
-
-	private static void makeEffect(World worldIn, BlockPos thisPos) {
-		worldIn.playSound((EntityPlayer) null, thisPos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F,
-				2.6F + (worldIn.rand.nextFloat() - worldIn.rand.nextFloat()) * 0.8F);
-
-		if (worldIn instanceof WorldServer) {
-			((WorldServer) worldIn).spawnParticle(EnumParticleTypes.SMOKE_LARGE, (double) thisPos.getX() + 0.5D,
-					(double) thisPos.getY() + 0.25D, (double) thisPos.getZ() + 0.5D, 8, 0.5D, 0.25D, 0.5D, 0.0D);
-		}
-
 	}
 
 	public static void lavaSmelt(World worldIn, ItemStack stack, int speed, EnumFacing facing, BlockPos position) {
@@ -537,7 +350,24 @@ public class LavaLove {
 				lavaSmelt(worldIn, targetOutput, ThreadLocalRandom.current().nextInt(1, 10), facing, targetPos);
 			}
 		}
-		// conversions from mappings here
-	}
 
+		// conversions from mappings here
+		// we don't need this to be an else block because we want them to be able to
+		// specify other things that could be inworld smelted.
+		if (!LavaConfig.mappings.conversions.isEmpty()) {
+			String key = blockFromTarget.getRegistryName().toString();
+			if (blockFromTarget != null && blockFromTarget != Blocks.AIR) {
+				// smelt block in place from furnace recipe
+				if (LavaConfig.mappings.conversions.containsKey(key)) {
+					if (LavaConfig.mappings.conversions.get(key) != null) {
+						ResourceLocation theItem = new ResourceLocation(LavaConfig.mappings.conversions.get(key));
+						targetOutput = ForgeRegistries.ITEMS.getValue(theItem).getDefaultInstance();
+						// smelt block into item and put in same place as original block
+						worldIn.setBlockToAir(targetPos);
+						lavaSmelt(worldIn, targetOutput, ThreadLocalRandom.current().nextInt(1, 10), facing, targetPos);
+					}
+				}
+			}
+		}
+	}
 }
