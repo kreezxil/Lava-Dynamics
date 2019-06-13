@@ -1,0 +1,18 @@
+package com.eleksploded.lavadynamics;
+
+import net.minecraft.world.World;
+import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+@Mod.EventBusSubscriber
+public class LavaThing {
+	
+	@SubscribeEvent
+	public static void Smelt(BlockEvent event) {
+		//Get World instance
+		World world = event.getWorld();
+		
+		System.out.println(world.getBlockState(event.getPos()).getBlock());
+	}
+}

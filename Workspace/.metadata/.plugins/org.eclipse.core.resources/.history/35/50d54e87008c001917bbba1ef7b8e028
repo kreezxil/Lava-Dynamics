@@ -1,0 +1,8 @@
+package com.eleksploded.lavadynamics;
+
+import net.minecraftforge.fml.common.Mod;
+
+@Mod(modid = Reference.MODID, version = Reference.Version)
+public class LavaDynamics {
+	
+}

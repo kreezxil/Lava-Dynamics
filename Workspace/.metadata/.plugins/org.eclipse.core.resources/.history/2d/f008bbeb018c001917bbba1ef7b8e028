@@ -1,0 +1,15 @@
+package com.eleksploded.lavadynamics;
+
+import net.minecraft.init.Blocks;
+import net.minecraft.world.World;
+import net.minecraftforge.event.world.BlockEvent;
+
+public class LavaThing {
+	
+	public static void Smelt(BlockEvent.FluidPlaceBlockEvent event) {
+		//Get World instance
+		World world = event.getWorld();
+		
+		world.setBlockState(event.getPos(), Blocks.STONE.getDefaultState());
+	}
+}

@@ -1,0 +1,16 @@
+[
+{
+  "modid": "lavadynamics",
+  "name": "Lava Dynamics",
+  "description": "Adding Vulcanism to Minecraft thru Block Update Detection (BUD)",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["kreezxil", "Eleksloded"],
+  "credits": "Microsoft for keeping Mojang and Forge projects alive.",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

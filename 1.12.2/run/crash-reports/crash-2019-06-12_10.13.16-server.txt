@@ -1,0 +1,96 @@
+---- Minecraft Crash Report ----
+// But it works on my machine.
+
+Time: 6/12/19 10:13 AM
+Description: Exception initializing level
+
+java.lang.ArrayIndexOutOfBoundsException: -137
+	at net.minecraft.world.chunk.Chunk.getHeightValue(Chunk.java:166)
+	at com.eleksploded.lavadynamics.Volcano.OnChunkLoad(Volcano.java:44)
+	at net.minecraftforge.fml.common.eventhandler.ASMEventHandler_7_Volcano_OnChunkLoad_Load.invoke(.dynamic)
+	at net.minecraftforge.fml.common.eventhandler.ASMEventHandler.invoke(ASMEventHandler.java:90)
+	at net.minecraftforge.fml.common.eventhandler.EventBus.post(EventBus.java:182)
+	at net.minecraft.world.chunk.Chunk.onLoad(Chunk.java:922)
+	at net.minecraft.world.gen.ChunkProviderServer.provideChunk(ChunkProviderServer.java:168)
+	at net.minecraft.world.World.getChunkFromChunkCoords(World.java:362)
+	at net.minecraft.world.World.getChunkFromBlockCoords(World.java:354)
+	at net.minecraft.world.World.getBlockState(World.java:995)
+	at net.minecraft.world.World.isAirBlock(World.java:279)
+	at net.minecraft.world.World.getGroundAboveSeaLevel(World.java:252)
+	at net.minecraft.world.WorldProvider.canCoordinateBeSpawn(WorldProvider.java:102)
+	at net.minecraft.world.WorldServer.createSpawnPosition(WorldServer.java:989)
+	at net.minecraft.world.WorldServer.initialize(WorldServer.java:908)
+	at net.minecraft.server.integrated.IntegratedServer.loadAllWorlds(IntegratedServer.java:124)
+	at net.minecraft.server.integrated.IntegratedServer.init(IntegratedServer.java:160)
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:552)
+	at java.lang.Thread.run(Thread.java:748)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Server thread
+Stacktrace:
+	at net.minecraft.world.chunk.Chunk.getHeightValue(Chunk.java:166)
+	at com.eleksploded.lavadynamics.Volcano.OnChunkLoad(Volcano.java:44)
+	at net.minecraftforge.fml.common.eventhandler.ASMEventHandler_7_Volcano_OnChunkLoad_Load.invoke(.dynamic)
+	at net.minecraftforge.fml.common.eventhandler.ASMEventHandler.invoke(ASMEventHandler.java:90)
+	at net.minecraftforge.fml.common.eventhandler.EventBus.post(EventBus.java:182)
+	at net.minecraft.world.chunk.Chunk.onLoad(Chunk.java:922)
+	at net.minecraft.world.gen.ChunkProviderServer.provideChunk(ChunkProviderServer.java:168)
+	at net.minecraft.world.World.getChunkFromChunkCoords(World.java:362)
+	at net.minecraft.world.World.getChunkFromBlockCoords(World.java:354)
+	at net.minecraft.world.World.getBlockState(World.java:995)
+	at net.minecraft.world.World.isAirBlock(World.java:279)
+	at net.minecraft.world.World.getGroundAboveSeaLevel(World.java:252)
+	at net.minecraft.world.WorldProvider.canCoordinateBeSpawn(WorldProvider.java:102)
+	at net.minecraft.world.WorldServer.createSpawnPosition(WorldServer.java:989)
+
+-- Affected level --
+Details:
+	Level name: New World
+	All players: 0 total; []
+	Chunk stats: ServerChunkCache: 1 Drop: 0
+	Level seed: 135347268802672884
+	Level generator: ID 00 - default, ver 1. Features enabled: true
+	Level generator options: 
+	Level spawn location: World: (0,0,0), Chunk: (at 0,0,0 in 0,0; contains blocks 0,0,0 to 15,255,15), Region: (0,0; contains chunks 0,0 to 31,31, blocks 0,0,0 to 511,255,511)
+	Level time: 0 game time, 0 day time
+	Level dimension: 0
+	Level storage version: 0x04ABD - Anvil
+	Level weather: Rain time: 0 (now: false), thunder time: 0 (now: false)
+	Level game mode: Game mode: creative (ID 1). Hardcore: false. Cheats: true
+Stacktrace:
+	at net.minecraft.world.WorldServer.initialize(WorldServer.java:908)
+	at net.minecraft.server.integrated.IntegratedServer.loadAllWorlds(IntegratedServer.java:124)
+	at net.minecraft.server.integrated.IntegratedServer.init(IntegratedServer.java:160)
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:552)
+	at java.lang.Thread.run(Thread.java:748)
+
+-- System Details --
+Details:
+	Minecraft Version: 1.12.2
+	Operating System: Mac OS X (x86_64) version 10.13.6
+	Java Version: 1.8.0_144, Oracle Corporation
+	Java VM Version: Java HotSpot(TM) 64-Bit Server VM (mixed mode), Oracle Corporation
+	Memory: 451290760 bytes (430 MB) / 825229312 bytes (787 MB) up to 1908932608 bytes (1820 MB)
+	JVM Flags: 0 total; 
+	IntCache: cache: 16, tcache: 0, allocated: 13, tallocated: 95
+	FML: MCP 9.42 Powered by Forge 14.23.5.2838 5 mods loaded, 5 mods active
+	States: 'U' = Unloaded 'L' = Loaded 'C' = Constructed 'H' = Pre-initialized 'I' = Initialized 'J' = Post-initialized 'A' = Available 'D' = Disabled 'E' = Errored
+
+	| State  | ID           | Version      | Source                           | Signature |
+	|:------ |:------------ |:------------ |:-------------------------------- |:--------- |
+	| LCHIJA | minecraft    | 1.12.2       | minecraft.jar                    | None      |
+	| LCHIJA | mcp          | 9.42         | minecraft.jar                    | None      |
+	| LCHIJA | FML          | 8.0.99.99    | forgeSrc-1.12.2-14.23.5.2838.jar | None      |
+	| LCHIJA | forge        | 14.23.5.2838 | forgeSrc-1.12.2-14.23.5.2838.jar | None      |
+	| LCHIJA | lavadynamics | 1.2          | bin                              | None      |
+
+	Loaded coremods (and transformers): 
+	GL info: ~~ERROR~~ RuntimeException: No OpenGL context found in the current thread.
+	Profiler Position: N/A (disabled)
+	Player Count: 0 / 8; []
+	Type: Integrated Server (map_client.txt)
+	Is Modded: Definitely; Client brand changed to 'fml,forge'

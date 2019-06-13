@@ -1,0 +1,37 @@
+package com.eleksploded.lavadynamics;
+
+import com.eleksploded.lavadynamics.proxy.CommonProxy;
+
+import net.minecraftforge.common.config.Configuration;
+
+public class Config {
+	//-----------Config: to be honest, not to sure how this code works, I just know it does-----------//
+	private static final String Volcano = "Volcano Settings";
+	private static final String Debug = "Debug Settings";
+
+    public static int volcanoChance = 20;
+    public static int volcanoYLevel = 10;
+    
+    public static boolean genVolcanoDebug = false;
+    
+    public static void readConfig() {
+        Configuration cfg = CommonProxy.config;
+        try {
+            cfg.load();
+            initGeneralConfig(cfg);
+        } catch (Exception e1) {
+            System.out.println("Problem loading config file! "+ e1);
+        } finally {
+            if (cfg.hasChanged()) {
+                cfg.save();
+            }
+        }
+    }
+
+    private static void initGeneralConfig(Configuration cfg) {    	
+    	volcanoChance = cfg.getInt("volcanoChance", Volcano, volcanoChance, 0, 100, "Precent chance of volcano to spawn (1~100)");
+    	volcanoYLevel = cfg.getInt("volcanoYLevel", Volcano, volcanoYLevel, 3, 255, "Approximate Y level of underground volcano lake");
+    	
+    	genVolcanoDebug = cfg.getBoolean("genVolcanoDebug", Debug, false, "Debug outputs from Volcano Generation");
+    }
+}

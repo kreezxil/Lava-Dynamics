@@ -1,0 +1,74 @@
+package com.eleksploded.lavadynamics;
+
+import java.util.Random;
+
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.event.world.ChunkEvent;
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+@Mod.EventBusSubscriber
+public class Volcano {
+	
+	private static boolean worldLoaded = false;
+	
+	@SubscribeEvent
+	public static void WorldLoaded(WorldEvent.Load event) {
+		worldLoaded = true;
+	}
+	
+	@SubscribeEvent
+	public static void WorldUnloaded(WorldEvent.Unload event) {
+		worldLoaded = false;
+	}
+	
+	@SubscribeEvent
+	public static void OnChunkLoad(ChunkEvent.Load event) {
+		//Get saved value for tested chunks
+		VolcanoData data = VolcanoData.get(event.getWorld());
+		//Get Chunk that was loaded
+		Chunk chunk = event.getChunk();
+		//Check if chunk is tested already
+		if(Config.genVolcanoDebug) {
+			LavaDynamics.Logger.info("Checking chunk at " + chunk.x + " " + chunk.z);
+		}
+		
+		boolean loaded = event.getChunk().isPopulated();
+		
+		boolean player = false;
+		if(loaded){
+			int x = (chunk.getPos().getXEnd() - chunk.getPos().getXStart())/2 + chunk.getPos().getXStart();
+			int z = (chunk.getPos().getZEnd() - chunk.getPos().getZStart())/2 + chunk.getPos().getZStart();	
+			int y = chunk.getHeightValue(x,z);
+			player = event.getWorld().isAnyPlayerWithinRangeAt(x, y, z, 100);
+		}
+		
+		if(!data.isChunkTested(chunk) && worldLoaded && loaded && player){
+			if(Config.genVolcanoDebug) {
+				LavaDynamics.Logger.info("Chunk at " + chunk.x + " " + chunk.z + " is not checked already");
+			}
+			Random rand = new Random();
+			//Random Chance to spawn a Volcano
+			if(rand.nextInt(100) <= Config.volcanoChance) {
+				//Spawn a volcano
+				if(Config.genVolcanoDebug) {
+					//LavaDynamics.Logger.info("VOLCANO!!!");
+				}
+				genVolcano(chunk, event.getWorld());
+			} else {
+				data.addTestedChunk(chunk);
+			}
+		} else {
+			if(Config.genVolcanoDebug) {
+				LavaDynamics.Logger.info("Chunk " + chunk.x + " " + chunk.z + " has already been checked");
+			}
+		}
+	}
+
+	public static void genVolcano(Chunk chunk, World world) {
+		VolcanoThread object = new VolcanoThread(chunk,world);
+		object.start();
+	}
+}

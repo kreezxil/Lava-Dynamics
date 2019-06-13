@@ -1,0 +1,38 @@
+package com.eleksploded.lavadynamics;
+
+import java.util.Random;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+
+public class VolcanoBlock extends Block {
+
+	public VolcanoBlock() {
+		super(Material.ROCK);
+		this.setRegistryName(new ResourceLocation(Reference.MODID, "VolcanoBlock"));
+		this.setUnlocalizedName(Reference.MODID + ":VolcanoBlock");
+	}
+	
+	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
+		
+		double distance = Integer.MAX_VALUE;
+		
+		for(EntityPlayer player : world.playerEntities) {
+			BlockPos Playerpos = player.getPosition();
+			double newdist = pos.getDistance(Playerpos.getX(),Playerpos.getY(),Playerpos.getZ());
+			if(distance < newdist) {
+				distance = newdist;
+			}
+		}
+		
+		//if(distance <= Config.distanceToGenerate) {
+			Volcano.genVolcano(world.getChunkFromBlockCoords(pos), world);
+		//}
+	}
+	 
+}

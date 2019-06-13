@@ -9,6 +9,7 @@ Join me on Discord at https://discord.gg/BKqEewj
 
 ## Description
 
+Rewritten and fixed by Eleksploded
  
 The goal of this mod is to allow vulcanism to exist in your world. What it does is when lava begins flowing near the player it will check to see if the block being flowed over has a smeltable output and if it does it converts that block.
 
