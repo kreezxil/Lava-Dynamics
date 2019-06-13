@@ -39,9 +39,9 @@ public class Volcano {
 			LavaDynamics.Logger.info("Checking chunk at " + chunk.x + " " + chunk.z);
 		}
 
-		boolean online = false;
-		if(event.getWorld().playerEntities.size() != 0){
-			online = true;
+		boolean player = false;
+		if(event.getWorld().playerEntities.size() !=0){
+			player = true;
 		}
 		
 		//Get Chunk Center
@@ -50,7 +50,7 @@ public class Volcano {
 		int y = chunk.getHeight(new BlockPos(x,70,z));
 
 		//Check if the chunk is already tested
-		if(!data.isChunkTested(chunk) && worldLoaded && online && !Config.Worldgen){
+		if(!data.isChunkTested(chunk) && worldLoaded && player && !Config.worldGen){
 			if(Config.genVolcanoDebug) {
 				LavaDynamics.Logger.info("Chunk at " + chunk.x + " " + chunk.z + " is not checked already");
 			}
