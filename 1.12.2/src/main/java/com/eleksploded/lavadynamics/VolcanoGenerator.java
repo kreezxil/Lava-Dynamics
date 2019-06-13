@@ -25,11 +25,12 @@ public class VolcanoGenerator extends WorldGenerator {
 			position = position.down();
 		}
 
-		if (worldIn.getBlockState(position).getBlock() != Blocks.LAVA)
-		{
-			return false;
-		}
-		else
+//		if (worldIn.getBlockState(position).getBlock() != Blocks.LAVA || worldIn.getBlockState(position).getBlock() != Blocks.MAGMA)
+//		{
+//			System.out.println("false");
+//			//return false;
+//		}
+//		else
 		{
 			//Edited Values, not sure what does what but these change the generation
 			position = position.up(rand.nextInt(4));
@@ -72,7 +73,7 @@ public class VolcanoGenerator extends WorldGenerator {
 								iblockstate = worldIn.getBlockState(position.add(i1, -k, j1));
 								block = iblockstate.getBlock();
 
-								if (iblockstate.getBlock().isAir(iblockstate, worldIn, position.add(i1, -k, j1)) || block == Blocks.LAVA || block == Blocks.FLOWING_LAVA)
+								if (iblockstate.getBlock().isAir(iblockstate, worldIn, position.add(i1, -k, j1)) || block == Blocks.LAVA || block == Blocks.FLOWING_LAVA || block == Blocks.MAGMA)
 								{
 									this.setBlockWithOre(worldIn, position.add(i1, -k, j1), Blocks.STONE.getDefaultState());
 								}

@@ -1,12 +1,16 @@
 package com.eleksploded.lavadynamics;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenLakes;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -16,10 +20,15 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class Volcano {
 
 	private static boolean worldLoaded = false;
+	static int timer = Config.volcanoCooldown;
+	static List<Integer> validDim = new ArrayList<Integer>();
 
 	//World Loading events
 	@SubscribeEvent
 	public static void WorldLoaded(WorldEvent.Load event) {
+		for(String name : Config.validDimensions){
+			validDim.add(getDim(name));
+		}
 		worldLoaded = true;
 	}
 
@@ -30,6 +39,27 @@ public class Volcano {
 
 	@SubscribeEvent
 	public static void OnChunkLoad(ChunkEvent.Load event) {
+		boolean player = false;
+		if(event.getWorld().playerEntities.size() !=0){
+			player = true;
+		}
+		if(!player){
+			return;
+		}
+		
+		if(!validDim.contains(event.getWorld().provider.getDimension())){
+			return;
+		}
+		
+		if(Config.genVolcanoDebug){
+			LavaDynamics.Logger.info(timer);
+		}
+		
+		if(timer != 0){
+			timer = timer-1;
+			return;
+		}
+		
 		//Get saved value for tested chunks
 		VolcanoData data = VolcanoData.get(event.getWorld());
 		//Get Chunk that was loaded
@@ -39,10 +69,7 @@ public class Volcano {
 			LavaDynamics.Logger.info("Checking chunk at " + chunk.x + " " + chunk.z);
 		}
 
-		boolean player = false;
-		if(event.getWorld().playerEntities.size() !=0){
-			player = true;
-		}
+		
 		
 		//Get Chunk Center
 		int x = (chunk.getPos().getXEnd() - chunk.getPos().getXStart())/2 + chunk.getPos().getXStart();
@@ -50,7 +77,7 @@ public class Volcano {
 		int y = chunk.getHeight(new BlockPos(x,70,z));
 
 		//Check if the chunk is already tested
-		if(!data.isChunkTested(chunk) && worldLoaded && player && !Config.worldGen){
+		if(!data.isChunkTested(chunk) && worldLoaded && !Config.worldGen){
 			if(Config.genVolcanoDebug) {
 				LavaDynamics.Logger.info("Chunk at " + chunk.x + " " + chunk.z + " is not checked already");
 			}
@@ -74,6 +101,7 @@ public class Volcano {
 				LavaDynamics.Logger.info("Chunk " + chunk.x + " " + chunk.z + " has already been checked");
 			}
 		}
+		timer = Config.volcanoCooldown;
 	}
 
 	public static void genVolcano(Chunk chunk, World world) {
@@ -124,7 +152,7 @@ public class Volcano {
 				LavaDynamics.Logger.info("Placing Lava at y=" + j);
 			}
 			//Set Block, which causes block updates to smelt things
-			world.setBlockState(new BlockPos(x,j,z), Blocks.LAVA.getDefaultState());
+			world.setBlockState(new BlockPos(x,j,z), Blocks.MAGMA.getDefaultState());
 			//Save TopY
 			topY = j;
 			//Pause for configured interval, I would use Timer() but I don't know how to set a fixed amount
@@ -151,7 +179,7 @@ public class Volcano {
 		}
 		//Fill the "Volcano" with lava
 		BlockPos fill = new BlockPos(x,topY,z);
-		while(world.getBlockState(fill).getBlock() != Blocks.LAVA || world.getBlockState(fill).getBlock() != Blocks.AIR) {
+		while(world.getBlockState(fill).getBlock() != Blocks.LAVA || world.getBlockState(fill).getBlock() != Blocks.AIR || world.getBlockState(fill).getBlock() != Blocks.MAGMA) {
 			if(debug) {
 				LavaDynamics.Logger.info("Block is " + world.getBlockState(fill).getBlock());
 				LavaDynamics.Logger.info("Setting " + fill + " to lava");
@@ -194,5 +222,16 @@ public class Volcano {
 			LavaDynamics.Logger.info("Done with crater");
 		}
 		//----------Done?----------//
+	}
+	
+	private static int getDim(String name){
+		
+		for(int dim : DimensionManager.getIDs()){
+			WorldProvider wp = DimensionManager.getProvider(dim);
+			if(name.toLowerCase().equals(wp.getDimensionType().getName().toLowerCase())){
+				return dim;
+			}
+		}
+		return 0;
 	}
 }
