@@ -16,6 +16,7 @@ public class Config {
     public static int volcanoYLevel;
     public static int craterSize;
     public static int distanceToGenerate;
+    public static boolean Worldgen;
     
     public static boolean genVolcanoDebug;
     
@@ -40,6 +41,7 @@ public class Config {
     	volcanoYLevel = cfg.getInt("volcanoYLevel", Volcano, 10, 3, 255, "Approximate Y level of underground volcano lake");
     	craterSize = cfg.getInt("craterSize", Volcano, 15, 1, 100, "Approximate size of the crater");
     	distanceToGenerate = cfg.getInt("distanceToGenerate", Volcano, 100, 20, 100000, "How close a player needs to be to generate a volcano");
+    	Worldgen = cfg.getBoolean("worldGen", Volcano, false, "Should volcanoes be generated in worldgen instead of dynamically?");
     	
     	genVolcanoDebug = cfg.getBoolean("genVolcanoDebug", Debug, false, "Debug outputs from Volcano Generation");
     }

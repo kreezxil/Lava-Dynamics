@@ -39,13 +39,18 @@ public class Volcano {
 			LavaDynamics.Logger.info("Checking chunk at " + chunk.x + " " + chunk.z);
 		}
 
+		boolean online = false;
+		if(event.getWorld().playerEntities.size() != 0){
+			online = true;
+		}
+		
 		//Get Chunk Center
 		int x = (chunk.getPos().getXEnd() - chunk.getPos().getXStart())/2 + chunk.getPos().getXStart();
 		int z = (chunk.getPos().getZEnd() - chunk.getPos().getZStart())/2 + chunk.getPos().getZStart();	
 		int y = chunk.getHeight(new BlockPos(x,70,z));
 
 		//Check if the chunk is already tested
-		if(!data.isChunkTested(chunk) && worldLoaded){
+		if(!data.isChunkTested(chunk) && worldLoaded && online && !Config.Worldgen){
 			if(Config.genVolcanoDebug) {
 				LavaDynamics.Logger.info("Chunk at " + chunk.x + " " + chunk.z + " is not checked already");
 			}

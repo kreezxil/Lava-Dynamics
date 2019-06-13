@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod(modid = Reference.MODID, version = Reference.Version)
@@ -34,6 +35,8 @@ public class LavaDynamics {
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
+		GameRegistry.registerWorldGenerator(new WorldGenVolcano(), 1);
+
 		proxy.preInit(event);
 	}
 
