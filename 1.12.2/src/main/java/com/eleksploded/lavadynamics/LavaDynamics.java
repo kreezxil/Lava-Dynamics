@@ -37,6 +37,8 @@ public class LavaDynamics {
 	public void preInit(FMLPreInitializationEvent event) {
 		GameRegistry.registerWorldGenerator(new WorldGenVolcano(), 1);
 		proxy.preInit(event);
+		
+		
 	}
 
 	@EventHandler
