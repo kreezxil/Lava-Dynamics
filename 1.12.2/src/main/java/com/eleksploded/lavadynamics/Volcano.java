@@ -60,6 +60,12 @@ public class Volcano {
 			return;
 		}
 		
+		if(Config.protectChunks){
+			if(event.getChunk().getTileEntityMap().size() > 0){
+				return;
+			}
+		}
+		
 		//Get saved value for tested chunks
 		VolcanoData data = VolcanoData.get(event.getWorld());
 		//Get Chunk that was loaded
@@ -68,8 +74,6 @@ public class Volcano {
 		if(Config.genVolcanoDebug) {
 			LavaDynamics.Logger.info("Checking chunk at " + chunk.x + " " + chunk.z);
 		}
-
-		
 		
 		//Get Chunk Center
 		int x = (chunk.getPos().getXEnd() - chunk.getPos().getXStart())/2 + chunk.getPos().getXStart();
@@ -193,16 +197,16 @@ public class Volcano {
 				break;
 			}
 		}
-		//Remove top lava source cause it looks weird
-		for(int i = 1; i != 4; i++){
-			world.setBlockToAir(fill.down(i));
+		
+		if(debug) {
+			LavaDynamics.Logger.info("Done filling, Spawning crater");
 		}
 		
-		BlockPos fill1 = fill.down(8);
+		BlockPos fill1 = fill.down(4);
 		
 		for(int radius = 3;radius != 0;radius--){
 			int x1 = fill1.getX();
-			int y1 = fill1.getY()-3;
+			int y1 = fill1.getY()-1;
 			int z1 = fill1.getZ();
 			
 			for(float i1 = 0; i1 < radius; i1 += 0.5) {
@@ -211,11 +215,9 @@ public class Volcano {
 			}
 			fill1 = fill1.down();
 		}
-		if(debug) {
-			LavaDynamics.Logger.info("Done filling, Spawning crater");
-		}
 
-		//Make our "crater"
+
+		//Make our "eruption"
 		world.newExplosion(null, fill.getX()-1, fill.getY()-3, fill.getZ(), Config.craterSize, true, true);
 
 		if(debug) {
