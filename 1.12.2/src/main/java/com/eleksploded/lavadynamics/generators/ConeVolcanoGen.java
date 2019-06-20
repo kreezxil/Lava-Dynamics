@@ -1,4 +1,4 @@
-package com.eleksploded.lavadynamics;
+package com.eleksploded.lavadynamics.generators;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,42 +6,45 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import com.eleksploded.lavadynamics.LavaConfig;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
 
-public class VolcanoGenerator extends WorldGenerator {
+public class ConeVolcanoGen extends WorldGenerator {
 
-	public VolcanoGenerator() {
+	public ConeVolcanoGen() {
 		//Be sure to update blocks around it, since we are after worldgen
 		super(true);
 	}
 
-	public boolean generate(World world, Random rand, BlockPos position)
+	public boolean generate(World world, Random random, BlockPos position)
 	{
+		Random rand = new Random();
 		while (world.isAirBlock(position) && position.getY() > 2)
 		{
 			position = position.down();
 		}
-
-		int height = (rand.nextInt((Config.volcanoHeightDeviation*2)+1)-Config.volcanoHeightDeviation) + Config.volcanoHeightBase;
+		System.out.println(LavaConfig.volcano.volcanoHeightMin);
+		int height = rand.nextInt(LavaConfig.volcano.volcanoHeightMax-LavaConfig.volcano.volcanoHeightMin+1) + LavaConfig.volcano.volcanoHeightMin;
 		if(height <= 0) {
 			return false;
 		}
 		
-		int caldera = (rand.nextInt((Config.calderadeviation*2)+1)-Config.calderadeviation) + Config.calderaradius;
+		System.out.println(height);
+		
+		int caldera = (rand.nextInt(LavaConfig.volcano.calderaMax-LavaConfig.volcano.calderaMin+1) + LavaConfig.volcano.calderaMin);
 		
 		BlockPos pos = position.up(height);
-		System.out.println(pos);
 		
 		int i = caldera;
 		int j = pos.getY();
 		while(true) {
 			BlockPos pos1 = new BlockPos(pos.getX(),j,pos.getZ());
 			if(isCornerAir(world,pos1,i)) {
-				System.out.println("In Loop " + pos1 + " with " + i);
 				circle(i,world,pos1,j);
 				setBlockWithOre(world, pos1);
 				i = i+1;
@@ -51,7 +54,17 @@ public class VolcanoGenerator extends WorldGenerator {
 			}
 		}
 		
-		BlockPos fill1 = pos.down(caldera-2);
+		BlockPos fill1 = position.up(height);
+		while(!world.isAirBlock(fill1)){
+			fill1=fill1.down();
+			if(world.isAirBlock(fill1)){
+				break;
+			}
+			if(fill1.getY()<=0){
+				break;
+			}
+		}
+		
 		for(int radius = caldera-1;radius != 0;radius--){
 			int x1 = fill1.getX();
 			int y1 = fill1.getY()-1;
@@ -63,7 +76,7 @@ public class VolcanoGenerator extends WorldGenerator {
 			}
 			fill1 = fill1.down();
 		}
-
+		
 		return true;
 	}
 
@@ -86,8 +99,6 @@ public class VolcanoGenerator extends WorldGenerator {
 		int y1 = fill1.getY();
 		int z1 = fill1.getZ();
 		
-		System.out.println("Center of Circle: " + new BlockPos(x1,y1,z1));
-
 		for(float i1 = 0; i1 < radius; i1 += 0.5) {
 			for(float j1 = 0; j1 < 2 * Math.PI * i1; j1 += 0.5)
 				setBlockWithOre(world,new BlockPos((int)Math.floor(x1 + Math.sin(j1) * i1), y1, (int)Math.floor(z1 + Math.cos(j1) * i1)));
@@ -99,7 +110,7 @@ public class VolcanoGenerator extends WorldGenerator {
 
 		Block block;
 		int ore = rand.nextInt(1000);
-		int chance = 1000-Config.oreChance;
+		int chance = 1000-LavaConfig.volcano.oreChance;
 
 		if(ore <= chance) {
 			block=Blocks.STONE;
@@ -114,11 +125,11 @@ public class VolcanoGenerator extends WorldGenerator {
 	private Block genRandOre(Random rand) {
 		List<Block> list = new ArrayList<Block>();
 		
-		List<String> names = Arrays.stream(Config.ores).collect(Collectors.toList());
+		List<String> names = Arrays.stream(LavaConfig.volcano.ores).collect(Collectors.toList());
 		
 		for(String name : names) {
 			Block block = Block.getBlockFromName(name);
-			int chance = Config.chance[names.indexOf(name)];
+			int chance = LavaConfig.volcano.chance[names.indexOf(name)];
 			for(int i = 0;i != chance;i++){
 				list.add(block);
 			}

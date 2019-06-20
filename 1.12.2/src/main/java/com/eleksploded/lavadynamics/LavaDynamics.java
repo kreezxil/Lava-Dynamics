@@ -32,12 +32,10 @@ public class LavaDynamics {
 	public static CommonProxy proxy;
 
 	public static final Logger Logger = LogManager.getLogger("LavaDynamics");
-
+	
 	@EventHandler
-	public void preInit(FMLPreInitializationEvent event) {
+	public void preInit(FMLPreInitializationEvent event) { 
 		GameRegistry.registerWorldGenerator(new WorldGenVolcano(), 1);
-		proxy.preInit(event);
-		
 		
 	}
 
@@ -48,7 +46,6 @@ public class LavaDynamics {
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
-		proxy.postInit(event);
 	}
 
 	@Mod.EventHandler

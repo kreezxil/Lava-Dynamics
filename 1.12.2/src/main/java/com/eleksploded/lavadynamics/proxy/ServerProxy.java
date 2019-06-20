@@ -5,7 +5,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-public class ServerProxy {
+public class ServerProxy extends CommonProxy {
     public static Configuration config;
 
     public void preInit(FMLPreInitializationEvent e) {

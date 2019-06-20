@@ -38,7 +38,7 @@ public class VolcanoBlock extends Block {
 	//Debug force Volcano
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
-		if(Config.genVolcanoDebug) {
+		if(LavaConfig.general.genVolcanoDebug) {
 			randomTick(worldIn,pos,state,new Random(worldIn.getSeed()));
 			return true;
 		} else {

@@ -1,16 +1,23 @@
 package com.eleksploded.lavadynamics;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
+import com.eleksploded.lavadynamics.generators.ConeVolcanoGen;
+import com.eleksploded.lavadynamics.generators.MountianVolcanoGen;
+import com.eleksploded.lavadynamics.generators.WaterVolcanoGen;
+
+import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenLakes;
-import net.minecraftforge.common.DimensionManager;
+import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -18,17 +25,17 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
 public class Volcano {
+	private static boolean active = false;
 
+	private static boolean water = false;
 	private static boolean worldLoaded = false;
-	static int timer = Config.volcanoCooldown;
-	static List<Integer> validDim = new ArrayList<Integer>();
+	static int timer = LavaConfig.volcano.volcanoCooldown;
+	static List<Integer> validDims = new ArrayList<Integer>();
 
 	//World Loading events
 	@SubscribeEvent
 	public static void WorldLoaded(WorldEvent.Load event) {
-		for(String name : Config.validDimensions){
-			validDim.add(getDim(name));
-		}
+		validDims = Arrays.stream(LavaConfig.volcano.validDimensions).boxed().collect(Collectors.toList());
 		worldLoaded = true;
 	}
 
@@ -47,11 +54,11 @@ public class Volcano {
 			return;
 		}
 		
-		if(!validDim.contains(event.getWorld().provider.getDimension())){
+		if(!validDims.contains(event.getWorld().provider.getDimension())){
 			return;
 		}
 		
-		if(Config.genVolcanoDebug){
+		if(LavaConfig.general.genVolcanoDebug){
 			LavaDynamics.Logger.info(timer);
 		}
 		
@@ -60,7 +67,7 @@ public class Volcano {
 			return;
 		}
 		
-		if(Config.protectChunks){
+		if(LavaConfig.volcano.protectChunks){
 			if(event.getChunk().getTileEntityMap().size() > 0){
 				return;
 			}
@@ -71,7 +78,7 @@ public class Volcano {
 		//Get Chunk that was loaded
 		Chunk chunk = event.getChunk();
 		//Check if chunk is tested already
-		if(Config.genVolcanoDebug) {
+		if(LavaConfig.general.genVolcanoDebug) {
 			LavaDynamics.Logger.info("Checking chunk at " + chunk.x + " " + chunk.z);
 		}
 		
@@ -81,16 +88,16 @@ public class Volcano {
 		int y = chunk.getHeight(new BlockPos(x,70,z));
 
 		//Check if the chunk is already tested
-		if(!data.isChunkTested(chunk) && worldLoaded && !Config.worldGen){
-			if(Config.genVolcanoDebug) {
+		if(!data.isChunkTested(chunk) && worldLoaded && !LavaConfig.volcano.worldGen){
+			if(LavaConfig.general.genVolcanoDebug) {
 				LavaDynamics.Logger.info("Chunk at " + chunk.x + " " + chunk.z + " is not checked already");
 			}
 			Random rand = new Random();
 			//Random Chance to spawn a Volcano
 			int num = rand.nextInt(100) + 1;
-			if(num <= Config.volcanoChance) {
+			if(num <= LavaConfig.volcano.volcanoChance) {
 				//Spawn a volcano
-				if(Config.genVolcanoDebug) {
+				if(LavaConfig.general.genVolcanoDebug) {
 					LavaDynamics.Logger.info("VOLCANO!!!");
 				}
 				//Add chunk to tested Chunks
@@ -101,23 +108,24 @@ public class Volcano {
 				data.addTestedChunk(chunk);
 			}
 		} else {
-			if(Config.genVolcanoDebug) {
+			if(LavaConfig.general.genVolcanoDebug) {
 				LavaDynamics.Logger.info("Chunk " + chunk.x + " " + chunk.z + " has already been checked");
 			}
 		}
-		timer = Config.volcanoCooldown;
+		timer = LavaConfig.volcano.volcanoCooldown;
 	}
 
 	public static void genVolcano(Chunk chunk, World world) {
 		//----------Setup----------//
-
-		boolean debug = Config.genVolcanoDebug;
+		if(active) { return; }
+		active = true;
+		boolean debug = LavaConfig.general.genVolcanoDebug;
 		Random rand = new Random(world.getSeed());
 		//Get the center of the chunk
 		int x = (chunk.getPos().getXEnd() - chunk.getPos().getXStart())/2 + chunk.getPos().getXStart();
 		int z = (chunk.getPos().getZEnd() - chunk.getPos().getZStart())/2 + chunk.getPos().getZStart();		
-		//Get random y level based on config value
-		int y = Config.volcanoYLevel + (rand.nextInt(5) - 2);
+		//Get random y level based on LavaConfig value
+		int y = LavaConfig.volcano.volcanoYLevel + (rand.nextInt(5) - 2);
 		//Get center of chunk into BlockPos
 		BlockPos center = new BlockPos(x,y,z);
 
@@ -159,13 +167,6 @@ public class Volcano {
 			world.setBlockState(new BlockPos(x,j,z), Blocks.MAGMA.getDefaultState());
 			//Save TopY
 			topY = j;
-			//Pause for configured interval, I would use Timer() but I don't know how to set a fixed amount
-			//Removed due to it making minecraft hang
-			/*try {
-						Thread.sleep(Config.timeToRise);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}*/
 		}
 		if(debug) {
 			LavaDynamics.Logger.info("Lava Pillar Done");
@@ -175,8 +176,10 @@ public class Volcano {
 		if(debug) {
 			LavaDynamics.Logger.info("Generate Volcano");
 		}
-		//Generate using Ice Spike Generator with edited values
-		VolcanoGenerator gen = new VolcanoGenerator();
+		
+		//Custom WorldGenerator
+		//WorldGenerator gen = getGenerator(world, new BlockPos(x, 255, z));
+		ConeVolcanoGen gen = new ConeVolcanoGen();
 		gen.generate(world, rand, new BlockPos(x, 255, z));
 		if(debug) {
 			LavaDynamics.Logger.info("Done Generating. Filling with lava...");
@@ -192,6 +195,7 @@ public class Volcano {
 			fill = fill.up();
 			//Check for air
 			if(world.getBlockState(fill).getBlock() == Blocks.AIR){ break; }
+			if(world.getBlockState(fill).getBlock() == Blocks.WATER && water){ break; }
 			//Cap at world limit, hopefully this should never happen though
 			if(fill.getY() >= 255) {
 				break;
@@ -218,22 +222,28 @@ public class Volcano {
 
 
 		//Make our "eruption"
-		world.newExplosion(null, fill.getX()-1, fill.getY()-3, fill.getZ(), Config.craterSize, true, true);
+		world.newExplosion(null, fill.getX(), fill.getY()+3, fill.getZ(), LavaConfig.volcano.craterSize, true, true);
 
 		if(debug) {
 			LavaDynamics.Logger.info("Done with crater");
 		}
+		active = false;
 		//----------Done?----------//
 	}
 	
-	private static int getDim(String name){
+	public static WorldGenerator getGenerator(World world, BlockPos pos) {
+		Biome biome = world.getBiome(pos);
+		System.out.println(biome);
 		
-		for(int dim : DimensionManager.getIDs()){
-			WorldProvider wp = DimensionManager.getProvider(dim);
-			if(name.toLowerCase().equals(wp.getDimensionType().getName().toLowerCase())){
-				return dim;
-			}
+		if(biome == Biomes.EXTREME_HILLS || biome == Biomes.EXTREME_HILLS_EDGE || biome == Biomes.EXTREME_HILLS_WITH_TREES || biome == Biomes.MUTATED_EXTREME_HILLS || biome == Biomes.MUTATED_EXTREME_HILLS_WITH_TREES) {
+			return new MountianVolcanoGen();
 		}
-		return 0;
+		
+		if(biome == Biomes.OCEAN || biome == Biomes.DEEP_OCEAN || biome == Biomes.FROZEN_OCEAN || biome == Biomes.RIVER || biome == Biomes.FROZEN_RIVER) {
+			water = true;
+			return new WaterVolcanoGen();
+		}
+		
+		return new ConeVolcanoGen();
 	}
 }

@@ -1,9 +1,5 @@
 package com.eleksploded.lavadynamics.proxy;
 
-import java.io.File;
-
-import com.eleksploded.lavadynamics.Config;
-
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
@@ -15,9 +11,6 @@ public class CommonProxy {
     public static Configuration config;
 
     public void preInit(FMLPreInitializationEvent e) {
-        File directory = e.getModConfigurationDirectory();
-        config = new Configuration(new File(directory.getPath(), "lavadynamics.cfg"));
-        Config.readConfig();
     }
 
     public void postInit(FMLPostInitializationEvent e) {
