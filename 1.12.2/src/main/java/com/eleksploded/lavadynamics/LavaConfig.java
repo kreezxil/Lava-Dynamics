@@ -58,6 +58,9 @@ public class LavaConfig {
 		@Config.Comment("Protect Chunks that contain a tile Entity?")
 		public boolean protectChunks = true;
 		
+		@Config.Comment("Type of volcanoes to generate in specific biomes")
+		public String[] noCone = {""};
+		
 		@Config.Comment("Chance a underwater vent turns into a full volcano")
 		@Config.RangeInt(min=0,max=100)
 		public int waterVolcanoChance = 30;

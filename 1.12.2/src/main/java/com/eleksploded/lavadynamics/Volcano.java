@@ -18,6 +18,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenLakes;
 import net.minecraft.world.gen.feature.WorldGenerator;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -46,6 +47,7 @@ public class Volcano {
 
 	@SubscribeEvent
 	public static void OnChunkLoad(ChunkEvent.Load event) {
+		
 		boolean player = false;
 		if(event.getWorld().playerEntities.size() !=0){
 			player = true;
@@ -118,6 +120,7 @@ public class Volcano {
 	public static void genVolcano(Chunk chunk, World world) {
 		//----------Setup----------//
 		if(active) { return; }
+		if(world.isRemote) { return; }
 		active = true;
 		boolean debug = LavaConfig.general.genVolcanoDebug;
 		Random rand = new Random(world.getSeed());
@@ -178,8 +181,8 @@ public class Volcano {
 		}
 		
 		//Custom WorldGenerator
-		//WorldGenerator gen = getGenerator(world, new BlockPos(x, 255, z));
-		ConeVolcanoGen gen = new ConeVolcanoGen();
+		WorldGenerator gen = getGenerator(world, new BlockPos(x, 255, z));
+		//ConeVolcanoGen gen = new ConeVolcanoGen();
 		gen.generate(world, rand, new BlockPos(x, 255, z));
 		if(debug) {
 			LavaDynamics.Logger.info("Done Generating. Filling with lava...");
@@ -188,7 +191,7 @@ public class Volcano {
 		BlockPos fill = new BlockPos(x,topY,z);
 		while(world.getBlockState(fill).getBlock() != Blocks.LAVA || world.getBlockState(fill).getBlock() != Blocks.AIR || world.getBlockState(fill).getBlock() != Blocks.MAGMA) {
 			if(debug) {
-				LavaDynamics.Logger.info("Block is " + world.getBlockState(fill).getBlock());
+				LavaDynamics.Logger.info("Block at " + fill + " is " + world.getBlockState(fill).getBlock());
 				LavaDynamics.Logger.info("Setting " + fill + " to lava");
 			}
 			world.setBlockState(fill, Blocks.LAVA.getDefaultState());
@@ -233,9 +236,8 @@ public class Volcano {
 	
 	public static WorldGenerator getGenerator(World world, BlockPos pos) {
 		Biome biome = world.getBiome(pos);
-		System.out.println(biome);
 		
-		if(biome == Biomes.EXTREME_HILLS || biome == Biomes.EXTREME_HILLS_EDGE || biome == Biomes.EXTREME_HILLS_WITH_TREES || biome == Biomes.MUTATED_EXTREME_HILLS || biome == Biomes.MUTATED_EXTREME_HILLS_WITH_TREES) {
+		if(biome == Biomes.EXTREME_HILLS || biome == Biomes.EXTREME_HILLS_EDGE || biome == Biomes.EXTREME_HILLS_WITH_TREES || biome == Biomes.MUTATED_EXTREME_HILLS || biome == Biomes.MUTATED_EXTREME_HILLS_WITH_TREES || biome == Biomes.SAVANNA_PLATEAU) {
 			return new MountianVolcanoGen();
 		}
 		

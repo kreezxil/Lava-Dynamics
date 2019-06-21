@@ -28,13 +28,11 @@ public class ConeVolcanoGen extends WorldGenerator {
 		{
 			position = position.down();
 		}
-		System.out.println(LavaConfig.volcano.volcanoHeightMin);
+		
 		int height = rand.nextInt(LavaConfig.volcano.volcanoHeightMax-LavaConfig.volcano.volcanoHeightMin+1) + LavaConfig.volcano.volcanoHeightMin;
 		if(height <= 0) {
 			return false;
 		}
-		
-		System.out.println(height);
 		
 		int caldera = (rand.nextInt(LavaConfig.volcano.calderaMax-LavaConfig.volcano.calderaMin+1) + LavaConfig.volcano.calderaMin);
 		
