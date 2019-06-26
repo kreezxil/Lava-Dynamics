@@ -27,7 +27,12 @@ public class VolcanoBlock extends Block {
 	
 	public void randomTick(World world, BlockPos pos, IBlockState state, Random random) {
 		//Random tick happened so spawn volcano
-		Volcano.genVolcano(world.getChunkFromBlockCoords(pos), world);
+		for(EntityPlayer player : world.playerEntities){
+			System.out.println(pos.getDistance((int)player.posX, (int)player.posY, (int)player.posZ));
+			if(pos.getDistance((int)player.posX, (int)player.posY, (int)player.posZ) >= LavaConfig.volcano.minimumDistance) {
+				Volcano.genVolcano(world.getChunkFromBlockCoords(pos), world);
+			}
+		}
 	}
 	
 	//Allow walking through

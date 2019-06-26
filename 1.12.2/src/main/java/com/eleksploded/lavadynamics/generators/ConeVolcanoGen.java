@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.eleksploded.lavadynamics.LavaConfig;
 
 import net.minecraft.block.Block;
@@ -23,6 +25,8 @@ public class ConeVolcanoGen extends WorldGenerator {
 
 	public boolean generate(World world, Random random, BlockPos position)
 	{
+		if(ArrayUtils.contains(LavaConfig.volcano.validDimensions, world.provider.getDimension())){ return false; }
+		
 		Random rand = new Random();
 		while (world.isAirBlock(position) && position.getY() > 2)
 		{

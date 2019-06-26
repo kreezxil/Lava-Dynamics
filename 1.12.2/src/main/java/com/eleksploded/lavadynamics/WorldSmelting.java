@@ -1,5 +1,9 @@
 package com.eleksploded.lavadynamics;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -9,11 +13,19 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
 public class WorldSmelting {
+	
+	private static List<String> blacklist = new ArrayList<String>();
+	
+	@SubscribeEvent
+	public static void worldLoad(WorldEvent.Load event){
+		Collections.addAll(blacklist, LavaConfig.worldSmelt.blacklist);
+	}
 	
 	@SubscribeEvent
 	public static void Smelt(BlockEvent event) {
@@ -67,6 +79,7 @@ public class WorldSmelting {
 			if(furn.getSmeltingResult(new ItemStack(block)).getItem() instanceof ItemBlock) {
 				//Set Resulting Block in world
 				Block set = Block.getBlockFromItem(furn.getSmeltingResult(new ItemStack(block)).getItem());
+				if(blacklist.contains(set.getRegistryName().toString())) { return; }
 				world.setBlockState(pos, set.getDefaultState());
 			}
 		}

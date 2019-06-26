@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.eleksploded.lavadynamics.LavaConfig;
 
 import net.minecraft.block.Block;
@@ -22,13 +24,14 @@ public class WaterVolcanoGen extends WorldGenerator {
 	
 	@Override
 	public boolean generate(World world, Random rand, BlockPos position) {
+		
+		if(ArrayUtils.contains(LavaConfig.volcano.validDimensions, world.provider.getDimension())){ return false; }
 		rand = new Random();
 		
 		boolean full = false;
 		if(rand.nextInt(100) + 1 <= LavaConfig.volcano.waterVolcanoChance){
 			full = true;
 		}
-		System.out.println("Water");
 		int height = rand.nextInt(LavaConfig.volcano.volcanoHeightMax-LavaConfig.volcano.volcanoHeightMin+1) + LavaConfig.volcano.volcanoHeightMin;
 		if(height <= 0) {
 			return false;

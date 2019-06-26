@@ -11,6 +11,9 @@ public class LavaConfig {
 	@Config.Name("Volcano Settings")
 	public static VolcanoSettings volcano = new VolcanoSettings();
 	
+	@Config.Name("World Smelting Settings")
+	public static WorldSmeltingOptions worldSmelt = new WorldSmeltingOptions();
+	
 	public static class General {
 		@Config.Comment("Enable debug outputs from Volcano Generation")
 		public boolean genVolcanoDebug = false;
@@ -24,6 +27,10 @@ public class LavaConfig {
 		@Config.Comment("Approximate Y level of underground volcano lake")
 		@Config.RangeInt(min=3,max=255)
 		public int volcanoYLevel = 10;
+		
+		@Config.Comment("Minimum distance to generate volcano")
+		@Config.RangeInt(min=0,max=5000)
+		public int minimumDistance = 100;
 		
 		@Config.Comment("Power of Initial Eruptuin")
 		@Config.RangeInt(min=1,max=128)
@@ -58,13 +65,12 @@ public class LavaConfig {
 		@Config.Comment("Protect Chunks that contain a tile Entity?")
 		public boolean protectChunks = true;
 		
-		@Config.Comment("Type of volcanoes to generate in specific biomes")
+		@Config.Comment("Type of volcanoes to generate in specific biomes, Not active yet")
 		public String[] noCone = {""};
 		
 		@Config.Comment("Chance a underwater vent turns into a full volcano")
 		@Config.RangeInt(min=0,max=100)
 		public int waterVolcanoChance = 30;
-
 
 		@Config.Comment("Chance for a stone to be an ore in a volcano (out of 1000), Default is 5%")
 		@Config.RangeInt(min=0,max=1000)
@@ -76,8 +82,17 @@ public class LavaConfig {
 
 		@Config.Comment("Amount of chances for said ore to spawn, be sure this matches ores (in order and length)")
 		public int[] chance = {15,4,3,2,2,3,1,1};
+		
+		@Config.Comment("Allow volcanoes to spawn in already checked chunks. May cause volcanoes to spawn on top of eachother")
+		public boolean disaster = false;
 	}
-
+	
+	public static class WorldSmeltingOptions {
+		
+		@Config.Comment({"Blocks to blacklist inworld smelting", 
+			"Add the result here. For example, to stop sand from smelting into glass, you would add glass to the list"})
+		public String[] blacklist = {};
+	}
 }
 
 

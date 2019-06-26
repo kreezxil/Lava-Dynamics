@@ -1,10 +1,8 @@
 package com.eleksploded.lavadynamics;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 import com.eleksploded.lavadynamics.generators.ConeVolcanoGen;
 import com.eleksploded.lavadynamics.generators.MountianVolcanoGen;
@@ -18,7 +16,6 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenLakes;
 import net.minecraft.world.gen.feature.WorldGenerator;
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -31,12 +28,10 @@ public class Volcano {
 	private static boolean water = false;
 	private static boolean worldLoaded = false;
 	static int timer = LavaConfig.volcano.volcanoCooldown;
-	static List<Integer> validDims = new ArrayList<Integer>();
 
 	//World Loading events
 	@SubscribeEvent
 	public static void WorldLoaded(WorldEvent.Load event) {
-		validDims = Arrays.stream(LavaConfig.volcano.validDimensions).boxed().collect(Collectors.toList());
 		worldLoaded = true;
 	}
 
@@ -48,15 +43,13 @@ public class Volcano {
 	@SubscribeEvent
 	public static void OnChunkLoad(ChunkEvent.Load event) {
 		
+		if(ArrayUtils.contains(LavaConfig.volcano.validDimensions, event.getWorld().provider.getDimension())){ return; }
+		
 		boolean player = false;
 		if(event.getWorld().playerEntities.size() !=0){
 			player = true;
 		}
 		if(!player){
-			return;
-		}
-		
-		if(!validDims.contains(event.getWorld().provider.getDimension())){
 			return;
 		}
 		
@@ -90,7 +83,7 @@ public class Volcano {
 		int y = chunk.getHeight(new BlockPos(x,70,z));
 
 		//Check if the chunk is already tested
-		if(!data.isChunkTested(chunk) && worldLoaded && !LavaConfig.volcano.worldGen){
+		if((!data.isChunkTested(chunk) && worldLoaded && !LavaConfig.volcano.worldGen) || (LavaConfig.volcano.disaster && worldLoaded)){
 			if(LavaConfig.general.genVolcanoDebug) {
 				LavaDynamics.Logger.info("Chunk at " + chunk.x + " " + chunk.z + " is not checked already");
 			}
@@ -185,7 +178,7 @@ public class Volcano {
 		//ConeVolcanoGen gen = new ConeVolcanoGen();
 		gen.generate(world, rand, new BlockPos(x, 255, z));
 		if(debug) {
-			LavaDynamics.Logger.info("Done Generating. Filling with lava...");
+			LavaDynamics.Logger.info("Done Generating. Filling with " + Blocks.LAVA);
 		}
 		//Fill the "Volcano" with lava
 		BlockPos fill = new BlockPos(x,topY,z);
