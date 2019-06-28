@@ -28,11 +28,11 @@ public class LavaConfig {
 		@Config.RangeInt(min=3,max=255)
 		public int volcanoYLevel = 10;
 		
-		@Config.Comment("Minimum distance to generate volcano")
+		@Config.Comment("Minimum distance from player required before generating a volcano")
 		@Config.RangeInt(min=0,max=5000)
 		public int minimumDistance = 100;
 		
-		@Config.Comment("Power of Initial Eruptuin")
+		@Config.Comment("Power of Initial Eruption")
 		@Config.RangeInt(min=1,max=128)
 		public int craterSize = 15;
 		
@@ -83,7 +83,7 @@ public class LavaConfig {
 		@Config.Comment("Amount of chances for said ore to spawn, be sure this matches ores (in order and length)")
 		public int[] chance = {15,4,3,2,2,3,1,1};
 		
-		@Config.Comment("Allow volcanoes to spawn in already checked chunks. May cause volcanoes to spawn on top of eachother")
+		@Config.Comment("Allow volcanoes to spawn in already checked chunks. May cause volcanoes to spawn inside eachother")
 		public boolean disaster = false;
 	}
 	
