@@ -15,11 +15,12 @@ public class VolcanoData extends WorldSavedData {
 	
 	//----------Actual saving stuff----------//
 	private static String dataName = Reference.MODID + "_VolcanoData";
-	static World world;
+	World world;
 	public List<Chunk> testedChunks = new ArrayList<Chunk>();
 	
-	public VolcanoData() {
+	public VolcanoData(World world) {
 		super(dataName);
+		this.world = world;
 		markDirty();
 	}
 
@@ -67,11 +68,10 @@ public class VolcanoData extends WorldSavedData {
 	//----------Data Access----------/
 	
 	public static VolcanoData get(World worldIn) {
-		world = worldIn;
-		MapStorage storage = world.getMapStorage();
+		MapStorage storage = worldIn.getMapStorage();
 		VolcanoData data = (VolcanoData)storage.getOrLoadData(VolcanoData.class, dataName);
 		if(data == null) {
-			data = new VolcanoData();
+			data = new VolcanoData(worldIn);
 		}
 		return data;
 	}

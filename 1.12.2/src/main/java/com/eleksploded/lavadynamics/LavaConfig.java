@@ -1,6 +1,10 @@
 package com.eleksploded.lavadynamics;
 
 import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Config(modid = Reference.MODID, category="")
 public class LavaConfig {
@@ -92,6 +96,16 @@ public class LavaConfig {
 		@Config.Comment({"Blocks to blacklist inworld smelting", 
 			"Add the result here. For example, to stop sand from smelting into glass, you would add glass to the list"})
 		public String[] blacklist = {};
+	}
+	
+	@Mod.EventBusSubscriber(modid = Reference.MODID)
+	private static class EventHandler {
+		@SubscribeEvent
+		public static void onConfigChanged(final ConfigChangedEvent.OnConfigChangedEvent event) {
+			if (event.getModID().equals(Reference.MODID)) {
+				ConfigManager.sync(Reference.MODID, Config.Type.INSTANCE);
+			}
+		}
 	}
 }
 

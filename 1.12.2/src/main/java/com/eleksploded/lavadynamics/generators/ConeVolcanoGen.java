@@ -25,12 +25,13 @@ public class ConeVolcanoGen extends WorldGenerator {
 
 	public boolean generate(World world, Random random, BlockPos position)
 	{
-		if(ArrayUtils.contains(LavaConfig.volcano.validDimensions, world.provider.getDimension())){ return false; }
+		//if(ArrayUtils.contains(LavaConfig.volcano.validDimensions, world.provider.getDimension())){ return false; }
 		
 		Random rand = new Random();
-		while (world.isAirBlock(position) && position.getY() > 2)
+		while (world.isAirBlock(position) && position.getY() > 15)
 		{
 			position = position.down();
+			System.out.println(position.getY());
 		}
 		
 		int height = rand.nextInt(LavaConfig.volcano.volcanoHeightMax-LavaConfig.volcano.volcanoHeightMin+1) + LavaConfig.volcano.volcanoHeightMin;

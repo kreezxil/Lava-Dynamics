@@ -43,13 +43,9 @@ public class Volcano {
 	@SubscribeEvent
 	public static void OnChunkLoad(ChunkEvent.Load event) {
 		
-		if(ArrayUtils.contains(LavaConfig.volcano.validDimensions, event.getWorld().provider.getDimension())){ return; }
+		if(!ArrayUtils.contains(LavaConfig.volcano.validDimensions, event.getWorld().provider.getDimension())){ return; }
 		
-		boolean player = false;
-		if(event.getWorld().playerEntities.size() !=0){
-			player = true;
-		}
-		if(!player){
+		if(event.getWorld().playerEntities.size() == 0){
 			return;
 		}
 		
@@ -63,7 +59,7 @@ public class Volcano {
 		}
 		
 		if(LavaConfig.volcano.protectChunks){
-			if(event.getChunk().getTileEntityMap().size() > 0){
+			if(hasTileEntity(event.getWorld(),event.getChunk())){
 				return;
 			}
 		}
@@ -81,7 +77,7 @@ public class Volcano {
 		int x = (chunk.getPos().getXEnd() - chunk.getPos().getXStart())/2 + chunk.getPos().getXStart();
 		int z = (chunk.getPos().getZEnd() - chunk.getPos().getZStart())/2 + chunk.getPos().getZStart();	
 		int y = chunk.getHeight(new BlockPos(x,70,z));
-
+		
 		//Check if the chunk is already tested
 		if((!data.isChunkTested(chunk) && worldLoaded && !LavaConfig.volcano.worldGen) || (LavaConfig.volcano.disaster && worldLoaded)){
 			if(LavaConfig.general.genVolcanoDebug) {
@@ -146,6 +142,9 @@ public class Volcano {
 
 		//Get hight and set pillar
 		int height = chunk.getHeight(new BlockPos(x,y+5,z)) - center.getY();
+		if(height <= 0){
+			height = 1;
+		}
 		if(debug){
 			LavaDynamics.Logger.info("Height for Generation is: " + height);
 		}
@@ -240,5 +239,14 @@ public class Volcano {
 		}
 		
 		return new ConeVolcanoGen();
+	}
+	
+	public static boolean hasTileEntity(World world, Chunk chunk){
+		for(BlockPos pos : chunk.getTileEntityMap().keySet()){
+			if(world.getChunkFromBlockCoords(pos).equals(chunk)){
+				return true;
+			}
+		}
+		return false;
 	}
 }
