@@ -7,6 +7,7 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -68,20 +69,22 @@ public class WorldSmelting {
 		}
 	}
 
+	
+	//Credit to SirLyle (https://github.com/SirLyle) for this code
 	private static void CheckNSmelt(World world, BlockPos pos) {
-		//Get Variables cause I'm a lazy programmer and don't want to type the things multiple times
-		Block block = world.getBlockState(pos).getBlock();
-		FurnaceRecipes furn = FurnaceRecipes.instance();
+		IBlockState state = world.getBlockState(pos);
+		Block block = state.getBlock();
 		
-		//Check if Block has a smelting result
-		if(furn.getSmeltingResult(new ItemStack(block)) != ItemStack.EMPTY) {
-			//Check if the result is a block
-			if(furn.getSmeltingResult(new ItemStack(block)).getItem() instanceof ItemBlock) {
-				//Set Resulting Block in world
-				Block set = Block.getBlockFromItem(furn.getSmeltingResult(new ItemStack(block)).getItem());
-				if(blacklist.contains(set.getRegistryName().toString())) { return; }
-				world.setBlockState(pos, set.getDefaultState());
-			}
-		}
+		ItemStack input = Item.getItemFromBlock(block).getHasSubtypes() ?
+                new ItemStack(block, 1, block.getMetaFromState(state)) : new ItemStack(block);
+        ItemStack result = FurnaceRecipes.instance().getSmeltingResult(input);
+        //Check if Block has a smelting result that is a block
+        if(!result.isEmpty() && result.getItem() instanceof ItemBlock) {
+            @SuppressWarnings("deprecation")
+			final IBlockState newState = ((ItemBlock) result.getItem()).getBlock().getStateFromMeta(result.getMetadata());
+            //Set Resulting Block in world
+            if(!blacklist.contains(newState.getBlock().getRegistryName().toString()))
+                world.setBlockState(pos,newState);
+        }
 	}
 }
