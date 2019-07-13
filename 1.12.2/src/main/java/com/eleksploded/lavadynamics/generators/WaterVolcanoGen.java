@@ -11,6 +11,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import com.eleksploded.lavadynamics.LavaConfig;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -110,27 +111,38 @@ public class WaterVolcanoGen extends WorldGenerator {
 	private void setBlockWithOre(World worldIn, BlockPos blockpos) {
 		Random rand = new Random();
 
-		Block block;
+		IBlockState block;
 		int ore = rand.nextInt(1000);
 		int chance = 1000-LavaConfig.volcano.oreChance;
 
 		if(ore <= chance) {
-			block=Blocks.STONE;
+			block=Blocks.STONE.getDefaultState();
 		} else {
 			block=genRandOre(rand);
 		}
 
-		this.setBlockAndNotifyAdequately(worldIn, blockpos, block.getDefaultState());
+		this.setBlockAndNotifyAdequately(worldIn, blockpos, block);
 
 	}
 
-	private Block genRandOre(Random rand) {
-		List<Block> list = new ArrayList<Block>();
+	@SuppressWarnings("deprecation")
+	private IBlockState genRandOre(Random rand) {
+		List<IBlockState> list = new ArrayList<IBlockState>();
 		
 		List<String> names = Arrays.stream(LavaConfig.volcano.ores).collect(Collectors.toList());
 		
 		for(String name : names) {
-			Block block = Block.getBlockFromName(name);
+			
+			String[] tmp = name.split("\\|");
+			if(tmp.length != 2){
+				error(name);
+			}
+			IBlockState block = Blocks.STONE.getDefaultState();
+			try{
+				block = Block.getBlockFromName(tmp[0]).getStateFromMeta(Integer.valueOf(tmp[1]));
+			} catch(NumberFormatException e) {
+				error(name);
+			}
 			int chance = LavaConfig.volcano.chance[names.indexOf(name)];
 			for(int i = 0;i != chance;i++){
 				list.add(block);
@@ -138,6 +150,10 @@ public class WaterVolcanoGen extends WorldGenerator {
 		}
 				
 		return list.get(rand.nextInt(list.size()));
+	}
+	
+	private void error(String name) {
+		throw new RuntimeException("Invalid Config at " + name);
 	}
 
 }

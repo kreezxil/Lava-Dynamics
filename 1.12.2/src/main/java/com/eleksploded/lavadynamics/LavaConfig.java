@@ -80,9 +80,9 @@ public class LavaConfig {
 		@Config.RangeInt(min=0,max=1000)
 		public int oreChance = 50;
 
-		@Config.Comment("Ores to generate in volcanoes. Be sure this matches chances (in order and length)")
-		public String[] ores = {"minecraft:coal_ore", "minecraft:iron_ore", "minecraft:gold_ore", "minecraft:quartz_ore", 
-				"minecraft:lapis_ore", "minecraft:redstone_ore", "minecraft:diamond_ore", "minecraft:emerald_ore"};
+		@Config.Comment("Ores to generate in volcanoes. Be sure this matches chances (in order and length). Syntax is \"modId:blockname|metadata\"")
+		public String[] ores = {"minecraft:coal_ore|0", "minecraft:iron_ore|0", "minecraft:gold_ore|0", "minecraft:quartz_ore|0", 
+				"minecraft:lapis_ore|0", "minecraft:redstone_ore|0", "minecraft:diamond_ore|0", "minecraft:emerald_ore|0"};
 
 		@Config.Comment("Amount of chances for said ore to spawn, be sure this matches ores (in order and length)")
 		public int[] chance = {15,4,3,2,2,3,1,1};
