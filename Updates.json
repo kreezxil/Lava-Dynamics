@@ -1,0 +1,19 @@
+{
+  "homepage": "<homepage/download page for your mod>",
+  "1.12.2": {
+    "5.5.15": "See Curse Page",
+    "5.5.14": "See Curse Page",
+    "5.5.13": "See Curse Page",
+    "5.5.12": "See Curse Page",
+    "5.5.11": "See Curse Page",
+    "5.5.10": "See Curse Page",
+    "5.5.9": "See Curse Page",
+    "5.5.8": "See Curse Page",
+    "5.5.7": "See Curse Page"
+  },
+  ...
+  "promos": {
+    "1.12.2-latest": "5.5.15",
+    "1.12.2-recommended": "5.5.15"
+  }
+}
