@@ -257,7 +257,7 @@ public class Volcano {
 		if(LavaConfig.volcano.disaster){
 			return worldLoaded;
 		} else {
-			if(CheckedStorage.isChecked(chunk) && worldLoaded && !LavaConfig.volcano.worldGen){
+			if(CheckedStorage.isChecked(chunk) && worldLoaded && VolcanoStorage.isVolcanoInRange(chunk) && !LavaConfig.volcano.worldGen){
 				return true;
 			} else {
 				return false;

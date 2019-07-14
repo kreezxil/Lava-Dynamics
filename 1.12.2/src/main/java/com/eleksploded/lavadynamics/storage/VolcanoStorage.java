@@ -6,8 +6,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.eleksploded.lavadynamics.LavaConfig;
 import com.eleksploded.lavadynamics.Reference;
 
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
@@ -72,5 +74,21 @@ public class VolcanoStorage {
 	
 	public static void addVolcano(Chunk chunk) {
 		chunks.add(chunk);
+	}
+	
+	public static boolean isVolcanoInRange(Chunk chunk){
+		int xIn = (chunk.getPos().getXEnd() - chunk.getPos().getXStart())/2 + chunk.getPos().getXStart();
+		int zIn = (chunk.getPos().getZEnd() - chunk.getPos().getZStart())/2 + chunk.getPos().getZStart();	
+		
+		for(Chunk chunkIn : chunks){
+			int x = (chunkIn.getPos().getXEnd() - chunkIn.getPos().getXStart())/2 + chunkIn.getPos().getXStart();
+			int z = (chunkIn.getPos().getZEnd() - chunkIn.getPos().getZStart())/2 + chunkIn.getPos().getZStart();	
+			BlockPos pos = new BlockPos(x,70,z);
+			
+			if(pos.getDistance(xIn, 70, zIn) <= LavaConfig.volcano.distance){
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -6,8 +6,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.eleksploded.lavadynamics.LavaConfig;
 import com.eleksploded.lavadynamics.Reference;
 
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;

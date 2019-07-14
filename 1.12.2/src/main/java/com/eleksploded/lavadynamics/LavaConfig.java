@@ -87,8 +87,12 @@ public class LavaConfig {
 		@Config.Comment("Amount of chances for said ore to spawn, be sure this matches ores (in order and length)")
 		public int[] chance = {15,4,3,2,2,3,1,1};
 		
-		@Config.Comment("Allow volcanoes to spawn in already checked chunks. May cause volcanoes to spawn inside eachother")
+		@Config.Comment("Allow volcanoes to spawn in already checked chunks. Also ignores distance entry. May cause volcanoes to spawn inside eachother")
 		public boolean disaster = false;
+		
+		@Config.Comment("Distance from other volcanoes needed to spawn a new volcano")
+		@Config.RangeInt(min=0,max=100000)
+		public int distance = 500;
 	}
 	
 	public static class WorldSmeltingOptions {
