@@ -5,7 +5,7 @@
   "description": "Adding Vulcanism to Minecraft thru Block Update Detection (BUD)",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "",
+  "url": "https://www.curseforge.com/minecraft/mc-mods/lava-dynamics",
   "updateUrl": "",
   "authorList": ["kreezxil", "Eleksloded"],
   "credits": "Microsoft for keeping Mojang and Forge projects alive.",

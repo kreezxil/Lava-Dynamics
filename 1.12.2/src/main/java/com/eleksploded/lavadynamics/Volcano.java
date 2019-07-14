@@ -7,6 +7,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import com.eleksploded.lavadynamics.generators.ConeVolcanoGen;
 import com.eleksploded.lavadynamics.generators.MountianVolcanoGen;
 import com.eleksploded.lavadynamics.generators.WaterVolcanoGen;
+import com.eleksploded.lavadynamics.storage.CheckedStorage;
+import com.eleksploded.lavadynamics.storage.VolcanoStorage;
 
 import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
@@ -64,8 +66,6 @@ public class Volcano {
 			}
 		}
 		
-		//Get saved value for tested chunks
-		VolcanoData data = VolcanoData.get(event.getWorld());
 		//Get Chunk that was loaded
 		Chunk chunk = event.getChunk();
 		//Check if chunk is tested already
@@ -79,7 +79,7 @@ public class Volcano {
 		int y = chunk.getHeight(new BlockPos(x,70,z));
 		
 		//Check if the chunk is already tested
-		if((!data.isChunkTested(chunk) && worldLoaded && !LavaConfig.volcano.worldGen) || (LavaConfig.volcano.disaster && worldLoaded)){
+		if(canSpawn(chunk)){
 			if(LavaConfig.general.genVolcanoDebug) {
 				LavaDynamics.Logger.info("Chunk at " + chunk.x + " " + chunk.z + " is not checked already");
 			}
@@ -92,11 +92,12 @@ public class Volcano {
 					LavaDynamics.Logger.info("VOLCANO!!!");
 				}
 				//Add chunk to tested Chunks
-				data.addTestedChunk(chunk);
+				CheckedStorage.addChecked(chunk);
+				VolcanoStorage.addVolcano(chunk);
 				event.getWorld().setBlockState(new BlockPos(x,y,z), LavaDynamics.VolcanoBlock.getDefaultState());
 			} else {
 				//Add chunk to tested Chunks
-				data.addTestedChunk(chunk);
+				CheckedStorage.addChecked(chunk);
 			}
 		} else {
 			if(LavaConfig.general.genVolcanoDebug) {
@@ -107,6 +108,8 @@ public class Volcano {
 	}
 
 	public static void genVolcano(Chunk chunk, World world) {
+		CheckedStorage.addChecked(chunk);
+		VolcanoStorage.addVolcano(chunk);
 		//----------Setup----------//
 		if(active) { return; }
 		if(world.isRemote) { return; }
@@ -248,5 +251,17 @@ public class Volcano {
 			}
 		}
 		return false;
+	}
+	
+	static boolean canSpawn(Chunk chunk){
+		if(LavaConfig.volcano.disaster){
+			return worldLoaded;
+		} else {
+			if(CheckedStorage.isChecked(chunk) && worldLoaded && !LavaConfig.volcano.worldGen){
+				return true;
+			} else {
+				return false;
+			}
+		}
 	}
 }

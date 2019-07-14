@@ -3,12 +3,18 @@ package com.eleksploded.lavadynamics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.eleksploded.lavadynamics.commands.VolcanoCommand;
 import com.eleksploded.lavadynamics.proxy.CommonProxy;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -20,7 +26,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 
-@Mod(modid = Reference.MODID, version = Reference.Version)
+@Mod(modid = Reference.MODID, version = Reference.Version, updateJSON = "https://raw.githubusercontent.com/kreezxil/Lava-Dynamics/1.12.2-fixed/Updates.json")
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class LavaDynamics {
 
@@ -55,7 +61,7 @@ public class LavaDynamics {
 
 	@SubscribeEvent
 	public static void blocks(RegistryEvent.Register<Block> event) {
-		if(true) {
+		if(LavaConfig.general.genVolcanoDebug) {
 			Logger.info("Registering Blocks");
 		}
 		//Register VolcanoBlck
@@ -74,5 +80,15 @@ public class LavaDynamics {
 		registry.register(itemblock);
 		Item item = Item.getItemFromBlock(VolcanoBlock);
 		proxy.registerItemModels(item, 0, "Inventory");
+	}
+	
+	@SubscribeEvent
+	void playerJoin(EntityJoinWorldEvent event){
+		boolean update = ForgeVersion.getResult(Loader.instance().activeModContainer()).status == ForgeVersion.Status.UP_TO_DATE ? false : true;
+		
+		if(event.getEntity() instanceof EntityPlayerSP && update){
+			EntityPlayerSP player = (EntityPlayerSP)event.getEntity();
+			player.sendMessage(new TextComponentString("Update avaliable for LavaDynamimics"));
+		}
 	}
 }

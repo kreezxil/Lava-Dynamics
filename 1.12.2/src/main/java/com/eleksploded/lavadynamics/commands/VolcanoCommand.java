@@ -1,4 +1,6 @@
-package com.eleksploded.lavadynamics;
+package com.eleksploded.lavadynamics.commands;
+
+import com.eleksploded.lavadynamics.Volcano;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;

@@ -18,13 +18,11 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 public class ConeVolcanoGen extends WorldGenerator {
 
 	public ConeVolcanoGen() {
-		//Be sure to update blocks around it, since we are after worldgen
-		super(true);
+		super(!LavaConfig.volcano.worldGen);
 	}
 
 	public boolean generate(World world, Random random, BlockPos position)
 	{
-		//if(ArrayUtils.contains(LavaConfig.volcano.validDimensions, world.provider.getDimension())){ return false; }
 		
 		Random rand = new Random();
 		while (world.isAirBlock(position) && position.getY() > 15)
