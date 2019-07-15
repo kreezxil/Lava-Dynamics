@@ -3,8 +3,11 @@ package com.eleksploded.lavadynamics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.eleksploded.lavadynamics.commands.CheckedAddCommand;
+import com.eleksploded.lavadynamics.commands.CheckedChunkCommand;
 import com.eleksploded.lavadynamics.commands.VolcanoCommand;
 import com.eleksploded.lavadynamics.proxy.CommonProxy;
+import com.eleksploded.lavadynamics.storage.StorageManager;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -46,17 +49,20 @@ public class LavaDynamics {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event){
-		//Dont really need this, but meh
+		
 	}
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
+		StorageManager.init();
 	}
 
 	@Mod.EventHandler
 	public void serverLoad(FMLServerStartingEvent event) {
 		//Register '/spawnvolcano' command
+		event.registerServerCommand(new CheckedAddCommand());
 		event.registerServerCommand(new VolcanoCommand());
+		event.registerServerCommand(new CheckedChunkCommand());
 	}
 
 	@SubscribeEvent

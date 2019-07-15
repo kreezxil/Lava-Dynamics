@@ -7,8 +7,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import com.eleksploded.lavadynamics.generators.ConeVolcanoGen;
 import com.eleksploded.lavadynamics.generators.MountianVolcanoGen;
 import com.eleksploded.lavadynamics.generators.WaterVolcanoGen;
-import com.eleksploded.lavadynamics.storage.CheckedStorage;
-import com.eleksploded.lavadynamics.storage.VolcanoStorage;
+import com.eleksploded.lavadynamics.storage.StorageManager;
 
 import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
@@ -21,6 +20,7 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
@@ -32,12 +32,12 @@ public class Volcano {
 	static int timer = LavaConfig.volcano.volcanoCooldown;
 
 	//World Loading events
-	@SubscribeEvent
+	@SubscribeEvent(priority=EventPriority.LOWEST)
 	public static void WorldLoaded(WorldEvent.Load event) {
 		worldLoaded = true;
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority=EventPriority.HIGHEST)
 	public static void WorldUnloaded(WorldEvent.Unload event) {
 		worldLoaded = false;
 	}
@@ -92,12 +92,14 @@ public class Volcano {
 					LavaDynamics.Logger.info("VOLCANO!!!");
 				}
 				//Add chunk to tested Chunks
-				CheckedStorage.addChecked(chunk);
-				VolcanoStorage.addVolcano(chunk);
-				event.getWorld().setBlockState(new BlockPos(x,y,z), LavaDynamics.VolcanoBlock.getDefaultState());
+				StorageManager.getCheckedStorage(event.getWorld().provider.getDimension()).addChecked(chunk); 
+				if(!StorageManager.getVolcanoStorage(event.getWorld().provider.getDimension()).isVolcanoInRange(chunk)){
+					StorageManager.getVolcanoStorage(event.getWorld().provider.getDimension()).addVolcano(chunk);
+					event.getWorld().setBlockState(new BlockPos(x,y,z), LavaDynamics.VolcanoBlock.getDefaultState());
+				}
 			} else {
 				//Add chunk to tested Chunks
-				CheckedStorage.addChecked(chunk);
+				StorageManager.getCheckedStorage(event.getWorld().provider.getDimension()).addChecked(chunk);
 			}
 		} else {
 			if(LavaConfig.general.genVolcanoDebug) {
@@ -108,8 +110,8 @@ public class Volcano {
 	}
 
 	public static void genVolcano(Chunk chunk, World world) {
-		CheckedStorage.addChecked(chunk);
-		VolcanoStorage.addVolcano(chunk);
+		StorageManager.getCheckedStorage(world.provider.getDimension()).addChecked(chunk);
+		StorageManager.getVolcanoStorage(world.provider.getDimension()).addVolcano(chunk);
 		//----------Setup----------//
 		if(active) { return; }
 		if(world.isRemote) { return; }
@@ -257,7 +259,7 @@ public class Volcano {
 		if(LavaConfig.volcano.disaster){
 			return worldLoaded;
 		} else {
-			if(CheckedStorage.isChecked(chunk) && worldLoaded && VolcanoStorage.isVolcanoInRange(chunk) && !LavaConfig.volcano.worldGen){
+			if(worldLoaded && !StorageManager.getCheckedStorage(chunk.getWorld().provider.getDimension()).isChecked(chunk) && !LavaConfig.volcano.worldGen) {
 				return true;
 			} else {
 				return false;
