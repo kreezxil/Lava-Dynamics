@@ -5,42 +5,43 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.eleksploded.lavadynamics.LavaConfig;
-import com.eleksploded.lavadynamics.Reference;
-
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod.EventBusSubscriber(modid = Reference.MODID)
 public class CheckedStorage {
-	static List<Chunk> chunks = new ArrayList<Chunk>();
-	static String fileName = "LD_CheckedStorage";
-
-	static File getFile(World world) {
+	List<Chunk> chunks = new CopyOnWriteArrayList<Chunk>();
+	String fileName = "LD_CheckedStorage";
+	int dimID;
+	
+	public CheckedStorage(int dimIDin){
+		dimID = dimIDin;
+	}
+	
+	File getFile() {
 		String tmp = DimensionManager.getCurrentSaveRootDirectory() + "/";
-		if(world.provider.getSaveFolder() != null) {
-			tmp = tmp + world.provider.getSaveFolder() + "/" + fileName;
+		if(DimensionManager.getProvider(dimID).getSaveFolder() != null) {
+			tmp = tmp + DimensionManager.getProvider(dimID).getSaveFolder() + "/" + fileName;
 		} else {
 			tmp = tmp + fileName;
 		}
 		return new File(tmp);
 	}
 	
-	@SubscribeEvent
-	static void load(WorldEvent.Load event){
+	public void load(WorldEvent.Load event){
+		if(event.getWorld().provider.getDimension() != dimID){ return; }
+		
 		try{
-			if(getFile(event.getWorld()).exists()){
-				Path path = getFile(event.getWorld()).toPath();
+			if(getFile().exists()){
+				Path path = getFile().toPath();
 				for(String in : Files.readAllLines(path)){
 					String[] tmp = in.split("\\|");
 					chunks.add(event.getWorld().getChunkFromChunkCoords(Integer.valueOf(tmp[0]), Integer.valueOf(tmp[1])));
 				}
+			} else {
+				getFile().createNewFile();
 			}
 		} catch(Exception e){
 			e.printStackTrace();
@@ -48,17 +49,20 @@ public class CheckedStorage {
 		}
 	}
 	
-	@SubscribeEvent
-	static void save(WorldEvent.Save event){
+	public void save(WorldEvent.Save event){
+		if(event.getWorld().provider.getDimension() != dimID){ return; }
+		
 		try{
-			if(getFile(event.getWorld()).exists()){
-				Path path = getFile(event.getWorld()).toPath();
+			if(getFile().exists()){
+				Path path = getFile().toPath();
 				List<String> list = new ArrayList<String>();
 				for(Chunk chunk : chunks){
 					String tmp = chunk.x + "|" + chunk.z;
 					if(!list.contains(tmp)){
 						list.add(tmp);
 					}
+					getFile().delete();
+					getFile().createNewFile();
 					Files.write(path, list);
 				}
 			}
@@ -68,11 +72,13 @@ public class CheckedStorage {
 		}
 	}
 	
-	public static boolean isChecked(Chunk chunk) {
+	public boolean isChecked(Chunk chunk) {
 		return chunks.contains(chunk);
 	}
 	
-	public static void addChecked(Chunk chunk) {
-		chunks.add(chunk);
+	public void addChecked(Chunk chunk) {
+		if(!chunks.contains(chunk)) {
+			chunks.add(chunk);
+		}
 	}
 }
