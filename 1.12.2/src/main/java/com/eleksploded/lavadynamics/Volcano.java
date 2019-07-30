@@ -94,7 +94,6 @@ public class Volcano {
 				//Add chunk to tested Chunks
 				StorageManager.getCheckedStorage(event.getWorld().provider.getDimension()).addChecked(chunk); 
 				if(!StorageManager.getVolcanoStorage(event.getWorld().provider.getDimension()).isVolcanoInRange(chunk)){
-					StorageManager.getVolcanoStorage(event.getWorld().provider.getDimension()).addVolcano(chunk);
 					event.getWorld().setBlockState(new BlockPos(x,y,z), LavaDynamics.VolcanoBlock.getDefaultState());
 				}
 			} else {
@@ -111,7 +110,6 @@ public class Volcano {
 
 	public static void genVolcano(Chunk chunk, World world) {
 		StorageManager.getCheckedStorage(world.provider.getDimension()).addChecked(chunk);
-		StorageManager.getVolcanoStorage(world.provider.getDimension()).addVolcano(chunk);
 		//----------Setup----------//
 		if(active) { return; }
 		if(world.isRemote) { return; }
@@ -200,6 +198,8 @@ public class Volcano {
 			if(fill.getY() >= 255) {
 				break;
 			}
+			
+			StorageManager.getVolcanoStorage(world.provider.getDimension()).addVolcano(chunk, fill.getY());
 		}
 		
 		if(debug) {

@@ -1,6 +1,7 @@
 package com.eleksploded.lavadynamics.commands;
 
 import com.eleksploded.lavadynamics.Volcano;
+import com.eleksploded.lavadynamics.storage.StorageManager;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;

@@ -22,13 +22,9 @@ public class CheckedStorage {
 	
 	File getFile() {
 		String tmp = DimensionManager.getCurrentSaveRootDirectory() + "/";
-<<<<<<< HEAD
+
 		if(DimensionManager.getProvider(dimID).getSaveFolder() != null) {
 			tmp = tmp + DimensionManager.getProvider(dimID).getSaveFolder() + "/" + fileName;
-=======
-		if(DimensionManager.createProviderFor(dimID).getSaveFolder() != null) {
-			tmp = tmp + DimensionManager.createProviderFor(dimID).getSaveFolder() + "/" + fileName;
->>>>>>> 1.12.2-fixed
 		} else {
 			tmp = tmp + fileName;
 		}

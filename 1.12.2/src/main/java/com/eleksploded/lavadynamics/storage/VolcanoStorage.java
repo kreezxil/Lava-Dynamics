@@ -4,7 +4,10 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.eleksploded.lavadynamics.LavaConfig;
 
@@ -14,7 +17,8 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.world.WorldEvent;
 
 public class VolcanoStorage {
-	List<Chunk> chunks = new ArrayList<Chunk>();
+	List<Chunk> chunks = new CopyOnWriteArrayList<Chunk>();
+	Map<Chunk,Integer> tops = new HashMap<Chunk,Integer>();
 	String fileName = "LD_VolcanoStorage";
 	int dimID;
 	
@@ -24,13 +28,9 @@ public class VolcanoStorage {
 
 	File getFile() {
 		String tmp = DimensionManager.getCurrentSaveRootDirectory() + "/";
-<<<<<<< HEAD
+
 		if(DimensionManager.getProvider(dimID).getSaveFolder() != null) {
 			tmp = tmp + DimensionManager.getProvider(dimID).getSaveFolder() + "/" + fileName;
-=======
-		if(DimensionManager.createProviderFor(dimID).getSaveFolder() != null) {
-			tmp = tmp + DimensionManager.createProviderFor(dimID).getSaveFolder() + "/" + fileName;
->>>>>>> 1.12.2-fixed
 		} else {
 			tmp = tmp + fileName;
 		}
@@ -45,7 +45,9 @@ public class VolcanoStorage {
 				Path path = getFile().toPath();
 				for(String in : Files.readAllLines(path)){
 					String[] tmp = in.split("\\|");
-					chunks.add(event.getWorld().getChunkFromChunkCoords(Integer.valueOf(tmp[0]), Integer.valueOf(tmp[1])));
+					Chunk chunk = event.getWorld().getChunkFromChunkCoords(Integer.valueOf(tmp[0]), Integer.valueOf(tmp[1]));
+					chunks.add(chunk);
+					tops.put(chunk, Integer.valueOf(tmp[2]));
 				}
 			} else {
 				getFile().createNewFile();
@@ -64,7 +66,7 @@ public class VolcanoStorage {
 				Path path = getFile().toPath();
 				List<String> list = new ArrayList<String>();
 				for(Chunk chunk : chunks){
-					String tmp = chunk.x + "|" + chunk.z;
+					String tmp = chunk.x + "|" + chunk.z + "|" + tops.get(chunk);
 					if(!list.contains(tmp)){
 						list.add(tmp);
 					}
@@ -80,11 +82,24 @@ public class VolcanoStorage {
 	}
 	
 	public boolean isVolcano(Chunk chunk) {
-		return chunks.contains(chunk);
+		if(!chunks.isEmpty()){
+			return chunks.contains(chunk);
+		} else {
+			return false;
+		}
 	}
 	
-	public void addVolcano(Chunk chunk) {
+	public int getTop(Chunk chunk){
+		if(tops.containsKey(chunk)){
+			return tops.get(chunk);
+		} else {
+			return 0;
+		}
+	}
+	
+	public void addVolcano(Chunk chunk, int top) {
 		chunks.add(chunk);
+		tops.put(chunk, top);
 	}
 	
 	public boolean isVolcanoInRange(Chunk chunk){
@@ -101,5 +116,9 @@ public class VolcanoStorage {
 			}
 		}
 		return false;
+	}
+	
+	public List<Chunk> getList() {
+		return chunks;
 	}
 }

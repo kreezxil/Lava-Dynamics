@@ -7,15 +7,14 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.eleksploded.lavadynamics.LavaConfig;
-import com.eleksploded.lavadynamics.Reference;
 
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@EventBusSubscriber(modid = Reference.MODID)
 public class StorageManager {
+	public static boolean loaded = false;
 	static Map<Integer, CheckedStorage> checked = new HashMap<Integer,CheckedStorage>();
 	static Map<Integer, VolcanoStorage> volcano = new HashMap<Integer,VolcanoStorage>();
 	
@@ -34,10 +33,13 @@ public class StorageManager {
 				volcano.put(id, new VolcanoStorage(id));
 			}
 		}
+		loaded = true;
 	}
-	
-	@SubscribeEvent
+	 
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	static void load(WorldEvent.Load event){
+		
+		
 		for(Entry<Integer, CheckedStorage> entry : checked.entrySet()){
 			entry.getValue().load(event);
 		}
@@ -54,5 +56,10 @@ public class StorageManager {
 		for(Entry<Integer, VolcanoStorage> entry : volcano.entrySet()){
 			entry.getValue().save(event);
 		}
+	}
+	
+	@SubscribeEvent
+	static void unload(WorldEvent.Unload event){
+		loaded = false;
 	}
 }

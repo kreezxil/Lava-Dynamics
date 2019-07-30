@@ -5,7 +5,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.eleksploded.lavadynamics.commands.CheckedAddCommand;
 import com.eleksploded.lavadynamics.commands.CheckedChunkCommand;
+import com.eleksploded.lavadynamics.commands.ForcePostGenEffect;
 import com.eleksploded.lavadynamics.commands.VolcanoCommand;
+import com.eleksploded.lavadynamics.postgen.PostGenEffectRegistry;
+import com.eleksploded.lavadynamics.postgen.RunEffects;
+import com.eleksploded.lavadynamics.postgen.effects.EruptEffect;
 import com.eleksploded.lavadynamics.proxy.CommonProxy;
 import com.eleksploded.lavadynamics.storage.StorageManager;
 
@@ -15,6 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.Loader;
@@ -45,6 +50,8 @@ public class LavaDynamics {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) { 
 		GameRegistry.registerWorldGenerator(new WorldGenVolcano(), 1);
+		MinecraftForge.EVENT_BUS.register(StorageManager.class);
+		MinecraftForge.EVENT_BUS.register(RunEffects.class);
 	}
 
 	@EventHandler
@@ -55,6 +62,8 @@ public class LavaDynamics {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		StorageManager.init();
+		
+		PostGenEffectRegistry.registerEffect(new EruptEffect());
 	}
 
 	@Mod.EventHandler
@@ -63,6 +72,7 @@ public class LavaDynamics {
 		event.registerServerCommand(new CheckedAddCommand());
 		event.registerServerCommand(new VolcanoCommand());
 		event.registerServerCommand(new CheckedChunkCommand());
+		event.registerServerCommand(new ForcePostGenEffect());
 	}
 
 	@SubscribeEvent

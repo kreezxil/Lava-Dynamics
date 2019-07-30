@@ -15,12 +15,27 @@ public class LavaConfig {
 	@Config.Name("Volcano Settings")
 	public static VolcanoSettings volcano = new VolcanoSettings();
 	
+	@Config.Name("PostGen Effect Settings")
+	public static PostGenEffectSettings postgen = new PostGenEffectSettings();
+	
 	@Config.Name("World Smelting Settings")
 	public static WorldSmeltingOptions worldSmelt = new WorldSmeltingOptions();
 	
 	public static class General {
 		@Config.Comment("Enable debug outputs from Volcano Generation")
 		public boolean genVolcanoDebug = false;
+		
+		@Config.Comment("Enable debug outputs from Post generation volcano effects")
+		public boolean postGenDebug = false;
+	}
+	
+	public static class PostGenEffectSettings{
+		@Config.Comment("List of effects to run")
+		public String[] effectList = {"erupt"};
+		
+		@Config.Comment("Chance of an effect occuring (out of 1000)")
+		@Config.RangeInt(min=0,max=1000)
+		public int chance = 5;
 	}
 
 	public static class VolcanoSettings {
