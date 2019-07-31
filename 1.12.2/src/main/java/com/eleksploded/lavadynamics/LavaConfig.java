@@ -36,6 +36,11 @@ public class LavaConfig {
 		@Config.Comment("Chance of an effect occuring (out of 1000)")
 		@Config.RangeInt(min=0,max=1000)
 		public int chance = 5;
+		
+		@Config.Comment("Time between effects (in minutes, given 20tps)")
+		@Config.RangeDouble
+		public double effectTime = 5;
+		
 	}
 
 	public static class VolcanoSettings {

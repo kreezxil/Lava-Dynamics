@@ -13,13 +13,13 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
 @Mod.EventBusSubscriber
 public class RunEffects {
-	
+
 	static int timer = 0;
-	
+
 	@SubscribeEvent
 	public static void load(WorldTickEvent event){
 		if(event.world.playerEntities.size() == 0){return;}
-		
+
 		if(timer != 0){
 			timer--;
 			return;
@@ -29,9 +29,11 @@ public class RunEffects {
 		if(rand.nextInt(999)+1 <= LavaConfig.postgen.chance){
 			VolcanoStorage storage = StorageManager.getVolcanoStorage(event.world.provider.getDimension());
 			if(storage != null){
-				Chunk chunk = storage.getList().get(rand.nextInt(storage.getList().size()));
-				PostGenEffectRegistry.runEffect(chunk, storage.getTop(chunk));
-				timer = 6000;
+				if(storage.getList().size() != 0){
+					Chunk chunk = storage.getList().get(rand.nextInt(storage.getList().size()));
+					PostGenEffectRegistry.runEffect(chunk, storage.getTop(chunk));
+					timer = (int)Math.round(LavaConfig.postgen.effectTime);
+				}
 			}
 		}
 	}
