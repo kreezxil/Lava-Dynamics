@@ -1,0 +1,16 @@
+[
+{
+  "modid": "ldcompat",
+  "name": "LD Compatibility Helper",
+  "description": "Lightweight compatibility and debugging helper for Lava Dynamics",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Eleksploded"],
+  "credits": "Kreezxil, the original creator of Lava Dynamics",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

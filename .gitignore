@@ -24,7 +24,20 @@ hs_err_pid*
 
 Workspace/*
 
+gradle/
+gradlew
+*.launch
+build/
+run/
+bin/
+.gradle/
+.project
+.classpath
+.settings/
+
+
 1.12.2/*
 !1.12.2/src/*
 1.12.2/src/.DS_Store
 5.5.15/
+/bin/
