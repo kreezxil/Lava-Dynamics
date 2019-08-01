@@ -39,7 +39,6 @@ public class StorageManager {
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	static void load(WorldEvent.Load event){
 		
-		
 		for(Entry<Integer, CheckedStorage> entry : checked.entrySet()){
 			entry.getValue().load(event);
 		}
@@ -58,7 +57,7 @@ public class StorageManager {
 		}
 	}
 	
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	static void unload(WorldEvent.Unload event){
 		loaded = false;
 	}

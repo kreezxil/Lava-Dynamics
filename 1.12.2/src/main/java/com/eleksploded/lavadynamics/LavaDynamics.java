@@ -17,7 +17,11 @@ import net.minecraft.block.Block;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.world.BossInfo.Color;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -99,12 +103,12 @@ public class LavaDynamics {
 	}
 	
 	@SubscribeEvent
-	void playerJoin(EntityJoinWorldEvent event){
+	static void playerJoin(EntityJoinWorldEvent event){
 		boolean update = ForgeVersion.getResult(Loader.instance().activeModContainer()).status == ForgeVersion.Status.UP_TO_DATE ? false : true;
 		
 		if(event.getEntity() instanceof EntityPlayerSP && update){
-			EntityPlayerSP player = (EntityPlayerSP)event.getEntity();
-			player.sendMessage(new TextComponentString("Update avaliable for LavaDynamimics"));
+			EntityPlayerSP player = (EntityPlayerSP)event.getEntity(); 
+			player.sendMessage(new TextComponentString("An update avaliable for ").appendSibling(new TextComponentString("LavaDynamics").setStyle(new Style().setColor(TextFormatting.GREEN).setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/lava-dynamics/files/")))));
 		}
 	}
 }

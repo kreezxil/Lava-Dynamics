@@ -30,17 +30,16 @@ public class LavaConfig {
 	}
 	
 	public static class PostGenEffectSettings{
-		@Config.Comment("List of effects to run")
-		public String[] effectList = {"erupt"};
+		@Config.Comment("List of effects to blacklist, just put the effect name here. Ex: \"erupt\"")
+		public String[] effectBlacklist = {};
 		
 		@Config.Comment("Chance of an effect occuring (out of 1000)")
 		@Config.RangeInt(min=0,max=1000)
 		public int chance = 5;
 		
-		@Config.Comment("Time between effects (in minutes, given 20tps)")
-		@Config.RangeDouble
-		public double effectTime = 5;
-		
+		@Config.Comment("Time between effect checks (in minutes, given 20tps)")
+		@Config.RangeDouble(min=.1D, max=60D)
+		public double effectTime = 2D;
 	}
 
 	public static class VolcanoSettings {
@@ -118,7 +117,7 @@ public class LavaConfig {
 	public static class WorldSmeltingOptions {
 		
 		@Config.Comment({"Blocks to blacklist inworld smelting", 
-			"Add the result here. For example, to stop sand from smelting into glass, you would add glass to the list"})
+			"Add the result here. For example, to stop sand from smelting into glass, you would add 'minecraft:glass' to the list"})
 		public String[] blacklist = {};
 	}
 	
