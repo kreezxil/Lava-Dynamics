@@ -1,13 +1,14 @@
 {
   "homepage": "https://www.curseforge.com/minecraft/mc-mods/lava-dynamics",
   "1.12.2": {
+  	"5.6.6": "Possible Performace Fix",
     "5.6.3": "Minor Effect Changes",
     "5.6.2": "Fix Crash",
     "5.6.1": "See Curse Page",
     "5.5.15": "See Curse Page"
   },
   "promos": {
-    "1.12.2-latest": "5.6.3",
-    "1.12.2-recommended": "5.6.3"
+    "1.12.2-latest": "5.6.6",
+    "1.12.2-recommended": "5.6.6"
   }
 }
