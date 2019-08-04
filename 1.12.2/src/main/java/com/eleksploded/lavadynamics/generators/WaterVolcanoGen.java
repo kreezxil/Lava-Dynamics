@@ -18,9 +18,34 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
 
 public class WaterVolcanoGen extends WorldGenerator {
-
+	
+	List<IBlockState> ores = new ArrayList<IBlockState>();
+	
+	//Credit to CplPibald#7182 on discord for pointing out possible performance issue
+	@SuppressWarnings("deprecation")
 	public WaterVolcanoGen() {
 		super(!LavaConfig.volcano.worldGen);
+		System.out.print("Test");
+		List<String> names = Arrays.stream(LavaConfig.volcano.ores).collect(Collectors.toList());
+		
+		for(String name : names) {
+			
+			String[] tmp = name.split("\\|");
+			if(tmp.length != 2){
+				error(name);
+			}
+			IBlockState block = Blocks.STONE.getDefaultState();
+			try{
+				block = Block.getBlockFromName(tmp[0]).getStateFromMeta(Integer.valueOf(tmp[1]));
+			} catch(NumberFormatException e) {
+				error(name);
+			}
+			int chance = LavaConfig.volcano.chance[names.indexOf(name)];
+			for(int i = 0;i != chance;i++){
+				ores.add(block);
+			}
+		}
+		
 	}
 	
 	@Override
@@ -59,7 +84,8 @@ public class WaterVolcanoGen extends WorldGenerator {
 		}
 		
 		BlockPos fill1 = position.up(height);
-		while(world.getBlockState(fill1).getBlock() != Blocks.WATER){
+		while(world.getBlockState(fill1).getBlock() == Blocks.WATER){
+			
 			fill1=fill1.down();
 			if(world.getBlockState(fill1).getBlock() != Blocks.WATER){
 				break;
@@ -68,6 +94,8 @@ public class WaterVolcanoGen extends WorldGenerator {
 				break;
 			}
 		}
+		float h = (float)height;
+		fill1=fill1.up(Math.round(h/2));
 		
 		for(int radius = caldera-1;radius != 0;radius--){
 			int x1 = fill1.getX();
@@ -118,38 +146,11 @@ public class WaterVolcanoGen extends WorldGenerator {
 		if(ore <= chance) {
 			block=Blocks.STONE.getDefaultState();
 		} else {
-			block=genRandOre(rand);
+			block=ores.get(rand.nextInt(ores.size()));
 		}
 
 		this.setBlockAndNotifyAdequately(worldIn, blockpos, block);
 
-	}
-
-	@SuppressWarnings("deprecation")
-	private IBlockState genRandOre(Random rand) {
-		List<IBlockState> list = new ArrayList<IBlockState>();
-		
-		List<String> names = Arrays.stream(LavaConfig.volcano.ores).collect(Collectors.toList());
-		
-		for(String name : names) {
-			
-			String[] tmp = name.split("\\|");
-			if(tmp.length != 2){
-				error(name);
-			}
-			IBlockState block = Blocks.STONE.getDefaultState();
-			try{
-				block = Block.getBlockFromName(tmp[0]).getStateFromMeta(Integer.valueOf(tmp[1]));
-			} catch(NumberFormatException e) {
-				error(name);
-			}
-			int chance = LavaConfig.volcano.chance[names.indexOf(name)];
-			for(int i = 0;i != chance;i++){
-				list.add(block);
-			}
-		}
-				
-		return list.get(rand.nextInt(list.size()));
 	}
 	
 	private void error(String name) {

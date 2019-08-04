@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -79,7 +80,7 @@ public class WorldSmelting {
                 new ItemStack(block, 1, block.getMetaFromState(state)) : new ItemStack(block);
         ItemStack result = FurnaceRecipes.instance().getSmeltingResult(input);
         //Check if Block has a smelting result that is a block
-        if(!result.isEmpty() && result.getItem() instanceof ItemBlock && result.getItem() != new ItemBlock(Blocks.AIR)) {
+        if(!result.isEmpty() && result.getItem() instanceof ItemBlock && block instanceof BlockAir) {
             @SuppressWarnings("deprecation")
 			final IBlockState newState = ((ItemBlock) result.getItem()).getBlock().getStateFromMeta(result.getMetadata());
             //Set Resulting Block in world

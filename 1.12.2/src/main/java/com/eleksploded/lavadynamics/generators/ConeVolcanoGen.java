@@ -17,8 +17,30 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 
 public class ConeVolcanoGen extends WorldGenerator {
 
+	List<IBlockState> ores = new ArrayList<IBlockState>();
+	
+	//Credit to CplPibald#7182 on discord for pointing out possible performance issue
+	@SuppressWarnings("deprecation")
 	public ConeVolcanoGen() {
 		super(!LavaConfig.volcano.worldGen);
+		List<String> names = Arrays.stream(LavaConfig.volcano.ores).collect(Collectors.toList());
+		
+		for(String name : names) {
+			String[] tmp = name.split("\\|");
+			if(tmp.length != 2){
+				error(name);
+			}
+			IBlockState block = Blocks.STONE.getDefaultState();
+			try{
+				block = Block.getBlockFromName(tmp[0]).getStateFromMeta(Integer.valueOf(tmp[1]));
+			} catch(NumberFormatException e) {
+				error(name);
+			}
+			int chance = LavaConfig.volcano.chance[names.indexOf(name)];
+			for(int i = 0;i != chance;i++){
+				ores.add(block);
+			}
+		}
 	}
 
 	public boolean generate(World world, Random random, BlockPos position)
@@ -115,43 +137,13 @@ public class ConeVolcanoGen extends WorldGenerator {
 		if(ore <= chance) {
 			block=Blocks.STONE.getDefaultState();
 		} else {
-			block=genRandOre(rand);
+			block= ores.get(rand.nextInt(ores.size()));
 		}
 
 		this.setBlockAndNotifyAdequately(worldIn, blockpos, block);
-
-	}
-
-	@SuppressWarnings("deprecation")
-	private IBlockState genRandOre(Random rand) {
-		List<IBlockState> list = new ArrayList<IBlockState>();
-		
-		List<String> names = Arrays.stream(LavaConfig.volcano.ores).collect(Collectors.toList());
-		
-		for(String name : names) {
-			
-			String[] tmp = name.split("\\|");
-			if(tmp.length != 2){
-				error(name);
-			}
-			IBlockState block = Blocks.STONE.getDefaultState();
-			try{
-				block = Block.getBlockFromName(tmp[0]).getStateFromMeta(Integer.valueOf(tmp[1]));
-			} catch(NumberFormatException e) {
-				error(name);
-			}
-			int chance = LavaConfig.volcano.chance[names.indexOf(name)];
-			for(int i = 0;i != chance;i++){
-				list.add(block);
-			}
-		}
-		
-		return list.get(rand.nextInt(list.size()));
 	}
 	
 	private void error(String name) {
 		throw new RuntimeException("Invalid Config at " + name);
 	}
-
-
 }

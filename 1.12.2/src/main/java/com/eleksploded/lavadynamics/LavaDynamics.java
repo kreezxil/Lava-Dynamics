@@ -71,9 +71,8 @@ public class LavaDynamics {
 		PostGenEffectRegistry.registerEffect(new EruptEffect());
 	}
 
-	@Mod.EventHandler
+	@EventHandler
 	public void serverLoad(FMLServerStartingEvent event) {
-		//Register '/spawnvolcano' command
 		event.registerServerCommand(new CheckedAddCommand());
 		event.registerServerCommand(new VolcanoCommand());
 		event.registerServerCommand(new CheckedChunkCommand());
