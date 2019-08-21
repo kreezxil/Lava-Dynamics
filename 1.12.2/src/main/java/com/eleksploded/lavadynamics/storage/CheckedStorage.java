@@ -45,6 +45,7 @@ public class CheckedStorage {
 				getFile().createNewFile();
 			}
 		} catch(Exception e){
+			
 			e.printStackTrace();
 			throw new RuntimeException("Error loading CheckedStorage. Please report this on the github page.");
 		}

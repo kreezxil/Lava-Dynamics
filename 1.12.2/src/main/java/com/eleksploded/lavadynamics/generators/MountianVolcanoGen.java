@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.eleksploded.lavadynamics.LavaConfig;
+import com.eleksploded.lavadynamics.LavaDynamics;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -32,13 +33,15 @@ public class MountianVolcanoGen extends WorldGenerator {
 			
 			String[] tmp = name.split("\\|");
 			if(tmp.length != 2){
-				error(name);
+				LavaDynamics.Logger.error("Skipping invalid Config at " + name);
+				continue;
 			}
 			IBlockState block = Blocks.STONE.getDefaultState();
 			try{
 				block = Block.getBlockFromName(tmp[0]).getStateFromMeta(Integer.valueOf(tmp[1]));
-			} catch(NumberFormatException e) {
-				error(name);
+			} catch(NumberFormatException | NullPointerException e) {
+				LavaDynamics.Logger.error("Skipping invalid Config at " + name);
+				continue;
 			}
 			int chance = LavaConfig.volcano.chance[names.indexOf(name)];
 			for(int i = 0;i != chance;i++){
@@ -102,10 +105,6 @@ public class MountianVolcanoGen extends WorldGenerator {
 		}
 
 		this.setBlockAndNotifyAdequately(worldIn, blockpos, block);
-	}
-	
-	private void error(String name) {
-		throw new RuntimeException("Invalid Config at " + name);
 	}
 
 }

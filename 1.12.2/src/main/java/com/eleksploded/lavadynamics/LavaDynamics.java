@@ -9,7 +9,9 @@ import com.eleksploded.lavadynamics.commands.ForcePostGenEffect;
 import com.eleksploded.lavadynamics.commands.VolcanoCommand;
 import com.eleksploded.lavadynamics.postgen.PostGenEffectRegistry;
 import com.eleksploded.lavadynamics.postgen.RunEffects;
-import com.eleksploded.lavadynamics.postgen.effects.EruptEffect;
+import com.eleksploded.lavadynamics.postgen.effects.RumbleEffect;
+import com.eleksploded.lavadynamics.postgen.effects.erupt.DamageFallingBlock;
+import com.eleksploded.lavadynamics.postgen.effects.erupt.EruptEffect;
 import com.eleksploded.lavadynamics.proxy.CommonProxy;
 import com.eleksploded.lavadynamics.storage.StorageManager;
 
@@ -17,11 +19,12 @@ import net.minecraft.block.Block;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.world.BossInfo.Color;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.common.MinecraftForge;
@@ -30,13 +33,18 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod(modid = Reference.MODID, version = Reference.Version, updateJSON = "https://raw.githubusercontent.com/kreezxil/Lava-Dynamics/1.12.2-fixed/Updates.json")
@@ -51,24 +59,29 @@ public class LavaDynamics {
 	public static CommonProxy proxy;
 
 	public static final Logger Logger = LogManager.getLogger("LavaDynamics");
-	
+
+	@Instance
+	public static LavaDynamics instance;
+
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) { 
 		GameRegistry.registerWorldGenerator(new WorldGenVolcano(), 1);
 		MinecraftForge.EVENT_BUS.register(StorageManager.class);
+		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.register(RunEffects.class);
 	}
 
 	@EventHandler
 	public void init(FMLInitializationEvent event){
-		
 	}
 
+	RumbleEffect rumbleEffect = new RumbleEffect();
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		StorageManager.init();
-		
+
 		PostGenEffectRegistry.registerEffect(new EruptEffect());
+		PostGenEffectRegistry.registerEffect(rumbleEffect);
 	}
 
 	@EventHandler
@@ -101,14 +114,37 @@ public class LavaDynamics {
 		Item item = Item.getItemFromBlock(VolcanoBlock);
 		proxy.registerItemModels(item, 0, "Inventory");
 	}
-	
+
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	static void playerJoin(EntityJoinWorldEvent event){
+
 		Status update = ForgeVersion.getResult(Loader.instance().activeModContainer()).status;
-		
-		if(event.getEntity() instanceof EntityPlayerSP && update == ForgeVersion.Status.OUTDATED){
-			EntityPlayerSP player = (EntityPlayerSP)event.getEntity(); 
-			player.sendMessage(new TextComponentString("An update avaliable for ").appendSibling(new TextComponentString("LavaDynamics").setStyle(new Style().setColor(TextFormatting.GREEN).setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/lava-dynamics/files/")))));
+		try{
+			if(event.getEntity() instanceof EntityPlayerSP && update == ForgeVersion.Status.OUTDATED){
+				EntityPlayerSP player = (EntityPlayerSP)event.getEntity(); 
+				player.sendMessage(new TextComponentString("An update avaliable for ").appendSibling(new TextComponentString("LavaDynamics").setStyle(new Style().setColor(TextFormatting.GREEN).setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/lava-dynamics/files/")))));
+			}
+		} catch(NoClassDefFoundError e){
+			Logger.info("New update avalable for LavaDynamics");
 		}
+	}
+
+	@SubscribeEvent
+	public void registerSoundEvents(RegistryEvent.Register<SoundEvent> event) {	
+		event.getRegistry().register(rumbleEffect.event.setRegistryName(Reference.MODID, "rumble"));		
+	}
+
+	@SubscribeEvent
+	public void registerEntity(RegistryEvent.Register<EntityEntry> event) {
+		EntityEntry damageFallingBlock = EntityEntryBuilder.create().entity(DamageFallingBlock.class)
+				.id(new ResourceLocation(Reference.MODID, "DamageFallingBlock"), 0)
+				.name("DamageFallingBlock")
+				.tracker(80, 3, true)
+				.build();
+
+		IForgeRegistry<EntityEntry> reg = event.getRegistry();
+
+		reg.register(damageFallingBlock);
 	}
 }

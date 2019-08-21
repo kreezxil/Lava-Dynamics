@@ -1,5 +1,10 @@
 package com.eleksploded.lavadynamics.commands;
 
+import java.util.Collections;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import com.eleksploded.lavadynamics.postgen.IPostGenEffect;
 import com.eleksploded.lavadynamics.postgen.PostGenEffectRegistry;
 import com.eleksploded.lavadynamics.storage.StorageManager;
@@ -9,6 +14,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.chunk.Chunk;
 
@@ -27,7 +33,6 @@ public class ForcePostGenEffect extends CommandBase {
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		Chunk chunk = sender.getEntityWorld().getChunkFromBlockCoords(sender.getPosition());
-		System.out.println("r" + chunk);
 
 		if(!StorageManager.getVolcanoStorage(sender.getEntityWorld().provider.getDimension()).isVolcano(chunk)){
 			sender.sendMessage(new TextComponentString("Chunk does not contain a volcano. Please run this in a chunk that contains a volcamo."));
@@ -47,5 +52,13 @@ public class ForcePostGenEffect extends CommandBase {
 			}
 		}
 	}
-
+	
+	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
+    {
+        if(args.length == 1){
+        	return getListOfStringsMatchingLastWord(args, PostGenEffectRegistry.getAllNames());
+        } else {
+        	return Collections.emptyList();
+        }
+    }
 }

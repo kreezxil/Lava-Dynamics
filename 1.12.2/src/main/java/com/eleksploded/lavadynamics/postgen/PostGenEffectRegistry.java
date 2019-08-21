@@ -24,7 +24,7 @@ public class PostGenEffectRegistry {
 	 */
 	public static IPostGenEffect getByName(String name){
 		for(IPostGenEffect effect : effects){
-			if(effect.getName().toLowerCase() == name.toLowerCase()){
+			if(effect.getName().equalsIgnoreCase(name)){
 				return effect;
 			}
 		}
@@ -37,5 +37,17 @@ public class PostGenEffectRegistry {
 		if(!ArrayUtils.contains(LavaConfig.postgen.effectBlacklist, effects.get(index))){
 			effects.get(index).execute(chunk, top);
 		}
+	}
+	
+	/**
+	 * Returns a list of all effects register by name
+	 * @return List<String> of all effect names
+	 */
+	public static List<String> getAllNames(){
+		List<String> list = new ArrayList<String>();
+		for(IPostGenEffect effect : effects){
+			list.add(effect.getName());
+		}
+		return list;
 	}
 }

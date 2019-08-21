@@ -34,7 +34,7 @@ public class WorldSmelting {
 		//Get World instance & Block
 		World world = event.getWorld();
 		IBlockState state = world.getBlockState(event.getPos());
-		
+				
 		//Check for lava
 		if(state.getBlock() == Blocks.LAVA || state.getBlock() == Blocks.FLOWING_LAVA){
 			//Check 'n Smelt in all directions
@@ -70,7 +70,6 @@ public class WorldSmelting {
 		}
 	}
 
-	
 	//Credit to SirLyle (https://github.com/SirLyle) for this code
 	private static void CheckNSmelt(World world, BlockPos pos) {
 		IBlockState state = world.getBlockState(pos);

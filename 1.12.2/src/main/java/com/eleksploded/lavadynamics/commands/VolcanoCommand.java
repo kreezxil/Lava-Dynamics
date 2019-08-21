@@ -1,11 +1,11 @@
 package com.eleksploded.lavadynamics.commands;
 
 import com.eleksploded.lavadynamics.Volcano;
-import com.eleksploded.lavadynamics.storage.StorageManager;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.chunk.Chunk;
@@ -27,20 +27,20 @@ public class VolcanoCommand extends CommandBase {
 		Chunk chunk = sender.getEntityWorld().getChunkFromBlockCoords(sender.getPosition());
 		boolean bypass;
 		if(args.length == 1){
-			if(args[0] == "true"){
-				bypass = true;
-			} else {
-				bypass = false;
+			try {
+				bypass = CommandBase.parseBoolean(args[0]);
+			} catch (CommandException e) {
+				throw new WrongUsageException(getUsage(sender), "true","false","0","1");
 			}
-		} else {
+		} else if(args == null || args.length == 0) {
 			bypass = false;
+		} else {
+			throw new WrongUsageException(getUsage(sender), "true","false","0","1");
 		}
 		
-		if(Volcano.hasTileEntity(sender.getEntityWorld(), chunk)){
+		if(Volcano.hasTileEntity(sender.getEntityWorld(), chunk) && !bypass){
 			sender.sendMessage(new TextComponentString("Chunk contains tile entity so a volcano was not generated"));
-			if(!bypass){
-				return;
-			}
+			return;
 		}
 			
 		Volcano.genVolcano(chunk, sender.getEntityWorld());

@@ -1,4 +1,4 @@
-package com.eleksploded.lavadynamics.postgen.effects;
+package com.eleksploded.lavadynamics.postgen.effects.erupt;
 
 import java.util.Random;
 
@@ -20,7 +20,7 @@ public class EruptEffect implements IPostGenEffect {
 	public void execute(Chunk chunk, int topIn){
 		World world = chunk.getWorld();
 		if(world.isRemote) return;
-		
+		  
 		Random rand = new Random();
 		int x = (chunk.getPos().getXEnd() - chunk.getPos().getXStart())/2 + chunk.getPos().getXStart();
 		int z = (chunk.getPos().getZEnd() - chunk.getPos().getZStart())/2 + chunk.getPos().getZStart();	
@@ -33,7 +33,7 @@ public class EruptEffect implements IPostGenEffect {
 				entity.fallTime = 1;
 				entity.addVelocity(range(rand,-1,1), range(rand,.1F,1), range(rand,-1,1));
 			}	
-		}
+		} 
 		world.newExplosion(null, x, topIn+2, z, 5, true,true);
 	}
 	
