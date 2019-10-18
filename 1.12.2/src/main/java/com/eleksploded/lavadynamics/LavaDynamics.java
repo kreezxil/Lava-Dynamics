@@ -82,6 +82,7 @@ public class LavaDynamics {
 
 		PostGenEffectRegistry.registerEffect(new EruptEffect());
 		PostGenEffectRegistry.registerEffect(rumbleEffect);
+		
 	}
 
 	@EventHandler
@@ -126,7 +127,9 @@ public class LavaDynamics {
 				player.sendMessage(new TextComponentString("An update avaliable for ").appendSibling(new TextComponentString("LavaDynamics").setStyle(new Style().setColor(TextFormatting.GREEN).setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/lava-dynamics/files/")))));
 			}
 		} catch(NoClassDefFoundError e){
-			Logger.info("New update avalable for LavaDynamics");
+			if(update == ForgeVersion.Status.OUTDATED) {
+				Logger.info("New update avalable for LavaDynamics");
+			}
 		}
 	}
 

@@ -1,7 +1,10 @@
 package com.eleksploded.lavadynamics.postgen;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -11,10 +14,10 @@ import com.eleksploded.lavadynamics.LavaConfig;
 import net.minecraft.world.chunk.Chunk;
 
 public class PostGenEffectRegistry {
-	static List<IPostGenEffect> effects = new ArrayList<IPostGenEffect>();
+	static Map<String,IPostGenEffect> effects = new HashMap<String,IPostGenEffect>();
 	
 	public static void registerEffect(IPostGenEffect in){
-		effects.add(in);
+		effects.put(in.getName(), in);
 	}
 	
 	/**
@@ -23,9 +26,9 @@ public class PostGenEffectRegistry {
 	 * @return PostGenEffect by name
 	 */
 	public static IPostGenEffect getByName(String name){
-		for(IPostGenEffect effect : effects){
-			if(effect.getName().equalsIgnoreCase(name)){
-				return effect;
+		for(Entry<String, IPostGenEffect> effect : effects.entrySet()){
+			if(effect.getKey().equalsIgnoreCase(name)){
+				return effect.getValue();
 			}
 		}
 		return null;
@@ -33,9 +36,10 @@ public class PostGenEffectRegistry {
 	
 	public static void runEffect(Chunk chunk, int top){
 		Random rand = new Random();
-		int index = rand.nextInt(effects.size());
-		if(!ArrayUtils.contains(LavaConfig.postgen.effectBlacklist, effects.get(index))){
-			effects.get(index).execute(chunk, top);
+		int index = rand.nextInt(effects.keySet().size());
+		List<String> list = new ArrayList<String>(effects.keySet());
+		if(!ArrayUtils.contains(LavaConfig.postgen.effectBlacklist, list.get(index))) {
+			effects.get(list.get(index)).execute(chunk, top);
 		}
 	}
 	
@@ -44,10 +48,6 @@ public class PostGenEffectRegistry {
 	 * @return List<String> of all effect names
 	 */
 	public static List<String> getAllNames(){
-		List<String> list = new ArrayList<String>();
-		for(IPostGenEffect effect : effects){
-			list.add(effect.getName());
-		}
-		return list;
+		return new ArrayList<String>(effects.keySet());
 	}
 }

@@ -51,7 +51,7 @@ dependencies {
     //deobfCompile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
     //deobfProvided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
     
-    deobfCompile 'com.eleksploded:ldcompat:1.0'
+    //deobfCompile 'com.eleksploded:ldcompat:1.0'
 
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
