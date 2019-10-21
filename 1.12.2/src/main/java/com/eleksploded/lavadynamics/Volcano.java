@@ -109,8 +109,13 @@ public class Volcano {
 	}
 
 	public static void genVolcano(Chunk chunk, World world) {
-		StorageManager.getCheckedStorage(world.provider.getDimension()).addChecked(chunk);
-		//----------Setup----------//
+		try {
+			StorageManager.getCheckedStorage(world.provider.getDimension()).addChecked(chunk);
+		} catch (NullPointerException e) {
+			LavaDynamics.Logger.error("Must be running via command, or generation is taking place in an invalid dimension. "
+					+ "If it is an invalid dimension, please report on the github page.");
+		}
+		//----------Setup----------// 
 		if(active) { return; }
 		if(world.isRemote) { return; }
 		active = true;
@@ -194,12 +199,16 @@ public class Volcano {
 			//Check for air
 			if(world.getBlockState(fill).getBlock() == Blocks.AIR){ break; }
 			if(world.getBlockState(fill).getBlock() == Blocks.WATER && water){ break; }
-			//Cap at world limit, hopefully this should never happen though
-			if(fill.getY() >= 255) {
+			//Cap at world limits, hopefully this should never happen though
+			if(fill.getY() >= 255 || fill.getY() <= 3) {
 				break;
 			}
-			
-			StorageManager.getVolcanoStorage(world.provider.getDimension()).addVolcano(chunk, fill.getY());
+			try {
+				StorageManager.getVolcanoStorage(world.provider.getDimension()).addVolcano(chunk, fill.getY());
+			} catch (NullPointerException e) {
+				LavaDynamics.Logger.error("Must be running via command, or generation is taking place in an invalid dimension. "
+						+ "If it is an invalid dimension, please report on the github page.");
+			}
 		}
 		
 		if(debug) {

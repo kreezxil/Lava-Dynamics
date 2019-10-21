@@ -155,9 +155,4 @@ public class WaterVolcanoGen extends WorldGenerator {
 		this.setBlockAndNotifyAdequately(worldIn, blockpos, block);
 
 	}
-	
-	private void error(String name) {
-		throw new RuntimeException("Invalid Config at " + name);
-	}
-
 }

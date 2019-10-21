@@ -59,8 +59,12 @@ public class MountianVolcanoGen extends WorldGenerator {
 		while (world.isAirBlock(position) && position.getY() > 2)
 		{
 			position = position.down();
+			//Cap at world limits, hopefully this should never happen though
+			if(position.getY() >= 255 || position.getY() <= 16) {
+				break;
+			}
 		}
-		System.out.println("Mountian");
+		//System.out.println("Mountian");
 		int caldera = (rand.nextInt(LavaConfig.volcano.calderaMax-LavaConfig.volcano.calderaMin+1) + LavaConfig.volcano.calderaMin);
 		BlockPos pos = position;
 		

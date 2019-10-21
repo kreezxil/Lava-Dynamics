@@ -53,23 +53,31 @@ public class ConeVolcanoGen extends WorldGenerator {
 		while (world.isAirBlock(position) && position.getY() > 15)
 		{
 			position = position.down();
-			System.out.println(position.getY());
+			//Cap at world limits, hopefully this should never happen though
+			if(position.getY() >= 255 || position.getY() <= 16) {
+				break;
+			}
 		}
 		
 		int height = rand.nextInt(LavaConfig.volcano.volcanoHeightMax-LavaConfig.volcano.volcanoHeightMin+1) + LavaConfig.volcano.volcanoHeightMin;
 		if(height <= 0) {
 			return false;
 		}
-		
+
 		int caldera = (rand.nextInt(LavaConfig.volcano.calderaMax-LavaConfig.volcano.calderaMin+1) + LavaConfig.volcano.calderaMin);
-		
+
 		BlockPos pos = position.up(height);
-		
+
 		int i = caldera;
 		int j = pos.getY();
 		while(true) {
+			
+			if(j >= 255 || j <= 3) {
+				break;
+			}
+			
 			BlockPos pos1 = new BlockPos(pos.getX(),j,pos.getZ());
-			if(isCornerAir(world,pos1,i)) {
+			if(isCornerAir(world,pos1,i) || pos1.getY() >= 255 || pos.getY() <= 3) {
 				circle(i,world,pos1,j);
 				setBlockWithOre(world, pos1);
 				i = i+1;
@@ -77,8 +85,9 @@ public class ConeVolcanoGen extends WorldGenerator {
 			} else {
 				break;
 			}
+			
 		}
-		
+
 		BlockPos fill1 = position.up(height);
 		while(!world.isAirBlock(fill1)){
 			fill1=fill1.down();
@@ -89,7 +98,7 @@ public class ConeVolcanoGen extends WorldGenerator {
 				break;
 			}
 		}
-		
+
 		for(int radius = caldera-1;radius != 0;radius--){
 			int x1 = fill1.getX();
 			int y1 = fill1.getY()-1;
@@ -101,7 +110,7 @@ public class ConeVolcanoGen extends WorldGenerator {
 			}
 			fill1 = fill1.down();
 		}
-		
+
 		return true;
 	}
 
