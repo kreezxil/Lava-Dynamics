@@ -48,7 +48,6 @@ public class WaterVolcanoGen extends WorldGenerator {
 				ores.add(block);
 			}
 		}
-		
 	}
 	
 	@Override

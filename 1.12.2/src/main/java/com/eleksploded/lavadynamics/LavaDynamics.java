@@ -119,7 +119,6 @@ public class LavaDynamics {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	static void playerJoin(EntityJoinWorldEvent event){
-
 		Status update = ForgeVersion.getResult(Loader.instance().activeModContainer()).status;
 		try{
 			if(event.getEntity() instanceof EntityPlayerSP && update == ForgeVersion.Status.OUTDATED){

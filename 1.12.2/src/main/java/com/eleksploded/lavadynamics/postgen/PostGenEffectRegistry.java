@@ -16,6 +16,10 @@ import net.minecraft.world.chunk.Chunk;
 public class PostGenEffectRegistry {
 	static Map<String,IPostGenEffect> effects = new HashMap<String,IPostGenEffect>();
 	
+	/**
+	 * Register an effect
+	 * @param in
+	 */
 	public static void registerEffect(IPostGenEffect in){
 		effects.put(in.getName(), in);
 	}
@@ -34,6 +38,11 @@ public class PostGenEffectRegistry {
 		return null;
 	}
 	
+	/**
+	 * Runs a random effect
+	 * @param chunk
+	 * @param top
+	 */
 	public static void runEffect(Chunk chunk, int top){
 		Random rand = new Random();
 		int index = rand.nextInt(effects.keySet().size());
