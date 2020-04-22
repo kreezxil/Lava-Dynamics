@@ -47,6 +47,10 @@ public class Volcano {
 		
 		if(!ArrayUtils.contains(LavaConfig.volcano.validDimensions, event.getWorld().provider.getDimension())){ return; }
 		
+		if(event.getWorld().isRemote) {
+			return;
+		}
+		
 		if(event.getWorld().playerEntities.size() == 0){
 			return;
 		}

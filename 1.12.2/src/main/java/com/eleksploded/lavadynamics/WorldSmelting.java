@@ -31,10 +31,19 @@ public class WorldSmelting {
 	
 	@SubscribeEvent
 	public static void Smelt(BlockEvent event) {
+		//System.out.println("Place");
+		if(LavaDynamics.mineralogy) {
+			//return;
+		}
+		
 		//Get World instance & Block
 		World world = event.getWorld();
 		IBlockState state = world.getBlockState(event.getPos());
-				
+		
+		if(state.getBlock() == Blocks.AIR) {
+			return;
+		}
+		
 		//Check for lava
 		if(state.getBlock() == Blocks.LAVA || state.getBlock() == Blocks.FLOWING_LAVA){
 			//Check 'n Smelt in all directions

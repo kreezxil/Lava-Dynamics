@@ -35,6 +35,11 @@ public class StorageManager {
 	
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	static void load(WorldEvent.Load event){
+		
+		if(event.getWorld().isRemote) {
+			return;
+		}
+		
 		for(CheckedStorage store : checked.values()) {
 			store.load(event);
 		}
@@ -45,6 +50,11 @@ public class StorageManager {
 	
 	@SubscribeEvent
 	static void save(WorldEvent.Save event){
+		
+		if(event.getWorld().isRemote) {
+			return;
+		}
+		
 		for(CheckedStorage store : checked.values()) {
 			store.save(event);
 		}

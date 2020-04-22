@@ -33,7 +33,7 @@ public class LavaConfig {
 		@Config.Comment("List of effects to blacklist, just put the effect name here. Ex: \"erupt\"")
 		public String[] effectBlacklist = {};
 		
-		@Config.Comment("Chance of an effect occuring (out of 1000)")
+		@Config.Comment("Chance of an effect occuring (out of 1000). Set to 0 to disable.")
 		@Config.RangeInt(min=0,max=1000)
 		public int chance = 5;
 		
@@ -46,6 +46,13 @@ public class LavaConfig {
 		@Config.Comment("Precent chance of volcano to spawn")
 		@Config.RangeInt(min=0,max=100)
 		public int volcanoChance = 5;
+		
+		@Config.Comment("Allow spawning of volcanoes in spawn chunks")
+		public boolean spawnChunks = false;
+		
+		@Config.Comment("Distance from spawn a volcano must obey")
+		@Config.RangeInt(min=1, max = 100000)
+		public int spawnDistance = 500;
 		
 		@Config.Comment("Approximate Y level of underground volcano lake")
 		@Config.RangeInt(min=3,max=255)

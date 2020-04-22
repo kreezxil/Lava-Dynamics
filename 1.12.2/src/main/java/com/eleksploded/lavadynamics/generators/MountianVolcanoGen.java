@@ -29,6 +29,11 @@ public class MountianVolcanoGen extends WorldGenerator {
 		
 		List<String> names = Arrays.stream(LavaConfig.volcano.ores).collect(Collectors.toList());
 		
+		if(names.size() != LavaConfig.volcano.chance.length) {
+			LavaDynamics.Logger.error("Detected Invalid Config: Ores do not match OreChance in config. Disabling ore generation in volcanoes");
+			names.clear();
+		}
+		
 		for(String name : names) {
 			
 			String[] tmp = name.split("\\|");

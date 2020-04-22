@@ -26,15 +26,20 @@ public class ConeVolcanoGen extends WorldGenerator {
 		super(!LavaConfig.volcano.worldGen);
 		List<String> names = Arrays.stream(LavaConfig.volcano.ores).collect(Collectors.toList());
 		
+		if(names.size() != LavaConfig.volcano.chance.length) {
+			LavaDynamics.Logger.error("Detected Invalid Config: Ores do not match OreChance in config. Disabling ore generation in volcanoes");
+			names.clear();
+		}
+		
 		for(String name : names) {
-			String[] tmp = name.split("\\|");
-			if(tmp.length != 2){
+			String[] split = name.split("\\|");
+			if(split.length != 2){
 				LavaDynamics.Logger.error("Skipping invalid Config at " + name);
 				continue;
 			}
 			IBlockState block = Blocks.STONE.getDefaultState();
 			try{
-				block = Block.getBlockFromName(tmp[0]).getStateFromMeta(Integer.valueOf(tmp[1]));
+				block = Block.getBlockFromName(split[0]).getStateFromMeta(Integer.valueOf(split[1]));
 			} catch(NumberFormatException | NullPointerException e) {
 				LavaDynamics.Logger.error("Skipping invalid Config at " + name);
 				continue;

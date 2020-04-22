@@ -63,6 +63,8 @@ public class LavaDynamics {
 	@Instance
 	public static LavaDynamics instance;
 
+	public static boolean mineralogy = false;
+	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) { 
 		GameRegistry.registerWorldGenerator(new WorldGenVolcano(), 1);
@@ -78,6 +80,11 @@ public class LavaDynamics {
 	RumbleEffect rumbleEffect = new RumbleEffect();
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
+		
+		if(Loader.isModLoaded("mineralogy")) {
+			//mineralogy = true;
+		}
+		
 		StorageManager.init();
 
 		PostGenEffectRegistry.registerEffect(new EruptEffect());
