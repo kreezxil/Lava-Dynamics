@@ -82,6 +82,9 @@ public class WorldSmelting {
 	//Credit to SirLyle (https://github.com/SirLyle) for this code
 	private static void CheckNSmelt(World world, BlockPos pos) {
 		IBlockState state = world.getBlockState(pos);
+		if(state.getBlock() == Blocks.AIR) {
+			return;
+		}
 		Block block = state.getBlock();
 		
 		ItemStack input = Item.getItemFromBlock(block).getHasSubtypes() ?

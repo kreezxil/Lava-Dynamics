@@ -1,6 +1,7 @@
 {
   "homepage": "https://www.curseforge.com/minecraft/mc-mods/lava-dynamics",
   "1.12.2": {
+  	"5.6.12": "Air Check Fix",
 	"5.6.11": "Min Distance from Spawn",
 	"5.6.10": "World Gen Fix",
 	"5.6.9": "Server Launch Fix",
@@ -13,7 +14,7 @@
     "5.5.15": "See Curse Page"
   },
   "promos": {
-    "1.12.2-latest": "5.6.11",
-    "1.12.2-recommended": "5.6.11"
+    "1.12.2-latest": "5.6.12",
+    "1.12.2-recommended": "5.6.12"
   }
 }
