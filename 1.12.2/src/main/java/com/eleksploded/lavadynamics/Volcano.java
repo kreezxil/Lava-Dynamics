@@ -56,7 +56,7 @@ public class Volcano {
 		}
 		
 		if(LavaConfig.general.genVolcanoDebug){
-			LavaDynamics.Logger.info(timer);
+			LavaDynamics.Logger.debug(timer);
 		}
 		
 		if(timer != 0){

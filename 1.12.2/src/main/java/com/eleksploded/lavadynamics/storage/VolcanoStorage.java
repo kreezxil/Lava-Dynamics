@@ -106,11 +106,11 @@ public class VolcanoStorage {
 		int xIn = (chunk.getPos().getXEnd() - chunk.getPos().getXStart())/2 + chunk.getPos().getXStart();
 		int zIn = (chunk.getPos().getZEnd() - chunk.getPos().getZStart())/2 + chunk.getPos().getZStart();	
 		
-		BlockPos spawnpos = new BlockPos(chunk.getWorld().getSpawnPoint().getX(), 70, chunk.getWorld().getSpawnPoint().getZ());
-		
-		if(!LavaConfig.volcano.spawnChunks && (spawnpos.getDistance(xIn, 70, zIn) <= LavaConfig.volcano.spawnDistance)){
-		} else {
-			return false;
+		if(!LavaConfig.volcano.spawnChunks) {
+			BlockPos spawnpos = new BlockPos(chunk.getWorld().getSpawnPoint().getX(), 70, chunk.getWorld().getSpawnPoint().getZ());
+			if(spawnpos.getDistance(xIn, 70, zIn) <= LavaConfig.volcano.spawnDistance) {
+				return true;
+			}	
 		}
 		
 		for(Chunk chunkIn : chunks){
