@@ -16,6 +16,11 @@ public class VolcanoCommand extends CommandBase {
 	public String getName() {
 		return "spawnvolcano";
 	}
+	
+	public int getRequiredPermissionLevel()
+    {
+        return 4;
+    }
 
 	@Override
 	public String getUsage(ICommandSender sender) {

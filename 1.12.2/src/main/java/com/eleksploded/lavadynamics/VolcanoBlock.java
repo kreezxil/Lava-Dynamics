@@ -52,6 +52,10 @@ public class VolcanoBlock extends Block {
 		}
     }
 	
+	public void forceSpawn(World world, BlockPos pos) {
+		Volcano.genVolcano(world.getChunkFromBlockCoords(pos), world);
+	}
+	
 	public EnumBlockRenderType getRenderType(IBlockState state)
     {
         return EnumBlockRenderType.INVISIBLE;

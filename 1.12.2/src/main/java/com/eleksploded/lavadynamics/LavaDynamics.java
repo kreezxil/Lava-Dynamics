@@ -3,6 +3,8 @@ package com.eleksploded.lavadynamics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.eleksploded.lavadynamics.arrow.EntityVolcanoArrow;
+import com.eleksploded.lavadynamics.arrow.VolcanoArrow;
 import com.eleksploded.lavadynamics.commands.CheckedAddCommand;
 import com.eleksploded.lavadynamics.commands.CheckedChunkCommand;
 import com.eleksploded.lavadynamics.commands.ForcePostGenEffect;
@@ -53,6 +55,8 @@ public class LavaDynamics {
 
 	//Init Volcano Block
 	public static final Block VolcanoBlock = new VolcanoBlock();
+	
+	public static final VolcanoArrow volcanoarrow = new VolcanoArrow();
 
 	//Init Proxies
 	@SidedProxy(modId=Reference.MODID,clientSide=Reference.cproxy, serverSide=Reference.sproxy)
@@ -71,10 +75,12 @@ public class LavaDynamics {
 		MinecraftForge.EVENT_BUS.register(StorageManager.class);
 		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.register(RunEffects.class);
+		proxy.preInit(event);
 	}
 
 	@EventHandler
 	public void init(FMLInitializationEvent event){
+		proxy.init(event);
 	}
 
 	RumbleEffect rumbleEffect = new RumbleEffect();
@@ -121,6 +127,9 @@ public class LavaDynamics {
 		registry.register(itemblock);
 		Item item = Item.getItemFromBlock(VolcanoBlock);
 		proxy.registerItemModels(item, 0, "Inventory");
+		
+		registry.register(volcanoarrow);
+		proxy.registerItemModels(volcanoarrow, 0, "Inventory");
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -151,9 +160,16 @@ public class LavaDynamics {
 				.name("DamageFallingBlock")
 				.tracker(80, 3, true)
 				.build();
-
+		EntityEntry volcanoArrow = EntityEntryBuilder.create().entity(EntityVolcanoArrow.class)
+				.id(new ResourceLocation(Reference.MODID,  "volcanoarrow"), 33)
+				.name("VolcanoArrow")
+				.tracker(80, 1, true)
+				.build();
+		
 		IForgeRegistry<EntityEntry> reg = event.getRegistry();
 
 		reg.register(damageFallingBlock);
+		reg.register(volcanoArrow);
+
 	}
 }
