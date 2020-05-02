@@ -12,6 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class EntityVolcanoArrow extends EntityArrow {
 
@@ -40,7 +41,7 @@ public class EntityVolcanoArrow extends EntityArrow {
         EntityPlayer player = (EntityPlayer) shootingEntity;
         
         if(entity == null) {
-        	if(player.canUseCommand(4, "spawnvolcano")) {
+        	if(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getOppedPlayers().getEntry(player.getGameProfile()) != null) {
         		BlockPos blockpos = raytraceResultIn.getBlockPos();
                 world.setBlockState(blockpos, LavaDynamics.VolcanoBlock.getDefaultState());
                 Chunk chunk = world.getChunkFromBlockCoords(blockpos);
