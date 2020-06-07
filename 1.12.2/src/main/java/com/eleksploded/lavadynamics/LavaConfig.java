@@ -66,6 +66,9 @@ public class LavaConfig {
 		@Config.RangeInt(min=1,max=128)
 		public int craterSize = 15;
 		
+		@Config.Comment("Should the inital explosion cause fire?")
+		public boolean initialFire = true;
+		
 		@Config.Comment("Generate volcanoes at worldgen instead of after")
 		public boolean worldGen = false;
 		
@@ -119,6 +122,12 @@ public class LavaConfig {
 		@Config.Comment("Distance from other volcanoes needed to spawn a new volcano")
 		@Config.RangeInt(min=0,max=100000)
 		public int distance = 500;
+		
+		@Config.Comment("Use Biome Blocks for volcano generation")
+		public boolean useBiome = true;
+		
+		@Config.Comment("How far in should biome filler blocks go? Set to 0 to disable use of filler blocks")
+		public int fillerSize = 2;
 	}
 	
 	public static class WorldSmeltingOptions {

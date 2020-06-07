@@ -16,6 +16,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.WorldGenerator;
 
 public class MountianVolcanoGen extends WorldGenerator {
@@ -80,7 +81,7 @@ public class MountianVolcanoGen extends WorldGenerator {
 			
 			for(float i1 = 0; i1 < radius; i1 += 0.5) {
 				for(float j1 = 0; j1 < 2 * Math.PI * i1; j1 += 0.5)
-					setBlockWithOre(world, new BlockPos((int)Math.floor(x1 + Math.sin(j1) * i1), y1 + radius, (int)Math.floor(z1 + Math.cos(j1) * i1)));
+					setBlockWithOre(world, new BlockPos((int)Math.floor(x1 + Math.sin(j1) * i1), y1 + radius, (int)Math.floor(z1 + Math.cos(j1) * i1)), false);
 			}
 			pos = pos.down();
 		}
@@ -92,7 +93,11 @@ public class MountianVolcanoGen extends WorldGenerator {
 			
 			for(float i1 = 0; i1 < radius; i1 += 0.5) {
 				for(float j1 = 0; j1 < 2 * Math.PI * i1; j1 += 0.5)
-					world.setBlockState(new BlockPos((int)Math.floor(x1 + Math.sin(j1) * i1), y1 + radius, (int)Math.floor(z1 + Math.cos(j1) * i1)), Blocks.LAVA.getDefaultState());
+					if(LavaConfig.volcano.useBiome && i1 == radius-.5) {
+						setBlockWithBiomeTop(world,new BlockPos((int)Math.floor(x1 + Math.sin(j1) * i1), y1, (int)Math.floor(z1 + Math.cos(j1) * i1)));
+					} else {
+						setBlockWithOre(world,new BlockPos((int)Math.floor(x1 + Math.sin(j1) * i1), y1, (int)Math.floor(z1 + Math.cos(j1) * i1)), LavaConfig.volcano.useBiome && i1 >= (radius-((LavaConfig.volcano.fillerSize) + .5F)));
+					}
 			}
 			position = position.down();
 		}
@@ -100,7 +105,7 @@ public class MountianVolcanoGen extends WorldGenerator {
 		return true;
 	}
 	
-	private void setBlockWithOre(World worldIn, BlockPos blockpos) {
+	private void setBlockWithOre(World worldIn, BlockPos blockpos, boolean useFiller) {
 		Random rand = new Random();
 
 		IBlockState block;
@@ -108,12 +113,22 @@ public class MountianVolcanoGen extends WorldGenerator {
 		int chance = 1000-LavaConfig.volcano.oreChance;
 
 		if(ore <= chance) {
-			block=Blocks.STONE.getDefaultState();
+			if(useFiller) {
+				block = worldIn.getBiome(blockpos).fillerBlock;
+			} else {
+				block=Blocks.STONE.getDefaultState();
+			}
 		} else {
 			block= ores.get(rand.nextInt(ores.size()));
 		}
 
 		this.setBlockAndNotifyAdequately(worldIn, blockpos, block);
+	}
+	
+	private void setBlockWithBiomeTop(World world, BlockPos blockpos) {
+		Biome biome = world.getBiome(blockpos);
+		
+		this.setBlockAndNotifyAdequately(world, blockpos, biome.topBlock);
 	}
 
 }
