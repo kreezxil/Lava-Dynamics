@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.io.FileUtils;
 
@@ -15,7 +13,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
 
 public class CheckedStorage {
-	List<Chunk> chunks = new CopyOnWriteArrayList<Chunk>();
 	String fileName = "LD_CheckedStorage";
 	int dimID;
 
@@ -61,7 +58,7 @@ public class CheckedStorage {
 	}
 
 	public void addChecked(Chunk chunk) {
-		if(!chunks.contains(chunk)) {
+		if(!isChecked(chunk)) {
 			String toWrite = "\r\n" + chunk.x + "|" + chunk.z;
 
 			try {

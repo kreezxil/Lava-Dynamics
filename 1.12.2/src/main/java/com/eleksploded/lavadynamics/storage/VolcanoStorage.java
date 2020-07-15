@@ -23,8 +23,6 @@ public class VolcanoStorage {
 
 	public VolcanoStorage(int dimid){
 		dimID = dimid;
-
-		
 	}
 
 	File getFile() {
