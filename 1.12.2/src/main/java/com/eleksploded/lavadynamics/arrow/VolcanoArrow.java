@@ -13,7 +13,6 @@ public class VolcanoArrow extends ItemArrow {
 	
 	public VolcanoArrow() {
 		this.setRegistryName(Reference.MODID, "VolcanoArrow");
-		this.setUnlocalizedName(this.getRegistryName().toString());
 		this.setCreativeTab(CreativeTabs.MISC);
 	}
 	

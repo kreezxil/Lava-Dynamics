@@ -123,7 +123,6 @@ public class LavaDynamics {
 		//Register VolcanoBlock Item, cause why not
 		ItemBlock itemblock = new ItemBlock(VolcanoBlock);
 		itemblock.setRegistryName(VolcanoBlock.getRegistryName());
-		itemblock.setUnlocalizedName(VolcanoBlock.getUnlocalizedName());
 		registry.register(itemblock);
 		Item item = Item.getItemFromBlock(VolcanoBlock);
 		proxy.registerItemModels(item, 0, "Inventory");

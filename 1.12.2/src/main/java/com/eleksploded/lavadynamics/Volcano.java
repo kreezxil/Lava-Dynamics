@@ -261,7 +261,7 @@ public class Volcano {
 	
 	public static boolean hasTileEntity(World world, Chunk chunk){
 		for(BlockPos pos : chunk.getTileEntityMap().keySet()){
-			if(world.getChunkFromBlockCoords(pos).equals(chunk)){
+			if(world.getChunk(pos).equals(chunk)){
 				return true;
 			}
 		}

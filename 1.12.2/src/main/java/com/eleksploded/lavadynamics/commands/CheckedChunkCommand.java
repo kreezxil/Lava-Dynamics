@@ -23,7 +23,7 @@ public class CheckedChunkCommand extends CommandBase {
 
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-		Chunk chunk = sender.getEntityWorld().getChunkFromBlockCoords(sender.getPosition());
+		Chunk chunk = sender.getEntityWorld().getChunk(sender.getPosition());
 		if(StorageManager.getCheckedStorage(sender.getEntityWorld().provider.getDimension()).isChecked(chunk)){
 			sender.sendMessage(new TextComponentString("Chunk [" + chunk.x + "," + chunk.z + "] has been checked"));
 		} else {

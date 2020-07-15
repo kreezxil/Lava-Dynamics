@@ -20,7 +20,6 @@ public class VolcanoBlock extends Block {
 	public VolcanoBlock() {
 		super(Material.ROCK);
 		this.setRegistryName(new ResourceLocation(Reference.MODID, "VolcanoBlock"));
-		this.setUnlocalizedName(Reference.MODID + ":VolcanoBlock");
 		//Needed to receive random ticks
 		this.setTickRandomly(true);
 	}
@@ -30,7 +29,7 @@ public class VolcanoBlock extends Block {
 		for(EntityPlayer player : world.playerEntities){
 			System.out.println(pos.getDistance((int)player.posX, (int)player.posY, (int)player.posZ));
 			if(pos.getDistance((int)player.posX, (int)player.posY, (int)player.posZ) >= LavaConfig.volcano.minimumDistance) {
-				Volcano.genVolcano(world.getChunkFromBlockCoords(pos), world);
+				Volcano.genVolcano(world.getChunk(pos), world);
 			}
 		}
 	}
@@ -53,7 +52,7 @@ public class VolcanoBlock extends Block {
     }
 	
 	public void forceSpawn(World world, BlockPos pos) {
-		Volcano.genVolcano(world.getChunkFromBlockCoords(pos), world);
+		Volcano.genVolcano(world.getChunk(pos), world);
 	}
 	
 	public EnumBlockRenderType getRenderType(IBlockState state)

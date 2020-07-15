@@ -44,7 +44,7 @@ public class EntityVolcanoArrow extends EntityArrow {
         	if(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getOppedPlayers().getEntry(player.getGameProfile()) != null) {
         		BlockPos blockpos = raytraceResultIn.getBlockPos();
                 world.setBlockState(blockpos, LavaDynamics.VolcanoBlock.getDefaultState());
-                Chunk chunk = world.getChunkFromBlockCoords(blockpos);
+                Chunk chunk = world.getChunk(blockpos);
                 Volcano.genVolcano(chunk, world);
                 this.setDead();
         	} else {

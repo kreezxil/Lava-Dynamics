@@ -1,29 +1,37 @@
 package com.eleksploded.lavadynamics.storage;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+import javax.annotation.Nullable;
+
+import org.apache.commons.io.FileUtils;
 
 import com.eleksploded.lavadynamics.LavaConfig;
+import com.google.common.io.Files;
 
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.event.world.WorldEvent;
 
 public class VolcanoStorage {
-	List<Chunk> chunks = new CopyOnWriteArrayList<Chunk>();
-	Map<Chunk,Integer> tops = new HashMap<Chunk,Integer>();
 	String fileName = "LD_VolcanoStorage";
 	int dimID;
-	
+
 	public VolcanoStorage(int dimid){
 		dimID = dimid;
+
+		if(!getFile().exists()) {
+			try {
+				getFile().createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new RuntimeException("Error creating VolcanoStorage. Please report this on the github page.");
+			}
+		}
 	}
 
 	File getFile() {
@@ -37,95 +45,131 @@ public class VolcanoStorage {
 		return new File(tmp);
 	}
 
-	public void load(WorldEvent.Load event){
-		if(event.getWorld().provider.getDimension() != dimID){ return; }
-		
-		try{
-			if(getFile().exists()){
-				Path path = getFile().toPath();
-				for(String in : Files.readAllLines(path)){
-					String[] tmp = in.split("\\|");
-					Chunk chunk = event.getWorld().getChunkFromChunkCoords(Integer.valueOf(tmp[0]), Integer.valueOf(tmp[1]));
-					chunks.add(chunk);
-					tops.put(chunk, Integer.valueOf(tmp[2]));
-				}
-			} else {
-				getFile().createNewFile();
-			}
-		} catch(Exception e){
-			e.printStackTrace();
-			throw new RuntimeException("Error loading VolcanoStorage. Please report this on the github page.");
-		}
-	}
-	
-	public void save(WorldEvent.Save event){
-		if(event.getWorld().provider.getDimension() != dimID){ return; }
-		
-		try{
-			if(getFile().exists()){
-				Path path = getFile().toPath();
-				List<String> list = new ArrayList<String>();
-				for(Chunk chunk : chunks){
-					String tmp = chunk.x + "|" + chunk.z + "|" + tops.get(chunk);
-					if(!list.contains(tmp)){
-						list.add(tmp);
-					}
-					getFile().delete();
-					getFile().createNewFile();
-					Files.write(path, list);
+
+
+	public boolean isVolcano(Chunk c) {
+		try {
+			String chunk = c.x + "|" + c.z + "|";
+			BufferedReader r = Files.newReader(getFile(), StandardCharsets.UTF_8);
+			String line;
+			while((line = r.readLine()) != null) {
+				if(line.startsWith(chunk)) {
+					return true;
 				}
 			}
-		} catch(Exception e){
-			e.printStackTrace();
-			throw new RuntimeException("Error saving VolcanoStorage. Please report this on the github page.");
-		}
-	}
-	
-	public boolean isVolcano(Chunk chunk) {
-		if(!chunks.isEmpty()){
-			return chunks.contains(chunk);
-		} else {
 			return false;
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Error checking VolcanoStorage. Please report this on the github page.");
 		}
 	}
-	
-	public int getTop(Chunk chunk){
-		if(tops.containsKey(chunk)){
-			return tops.get(chunk);
-		} else {
-			return 0;
+
+	@SuppressWarnings("null")
+	@Nullable
+	public int getTop(Chunk c){
+		try {
+			String chunk = c.x + "|" + c.z + "|";
+			BufferedReader r = Files.newReader(getFile(), StandardCharsets.UTF_8);
+			String line;
+			while((line = r.readLine()) != null) {
+				if(line.startsWith(chunk)) {
+					String s[] = line.split("\\|");
+					try {
+						return Integer.valueOf(s[2]);
+					} catch(NumberFormatException e) {
+						e.printStackTrace();
+						throw new RuntimeException("Error reading VolcanoStorage. Please report this on the github page.");
+					}
+				}
+			}
+			return (Integer) null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Error checking VolcanoStorage. Please report this on the github page.");
 		}
 	}
-	
-	public void addVolcano(Chunk chunk, int top) {
-		chunks.add(chunk);
-		tops.put(chunk, top);
+
+	public void addVolcano(Chunk chunk, int top) {	
+		String toWrite = "\r\n" + chunk.x + "|" + chunk.z + "|" + top;
+
+		try {
+			FileUtils.writeStringToFile(getFile(), toWrite, StandardCharsets.UTF_8, true);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Error creating VolcanoStorage. Please report this on the github page.");
+		}
 	}
-	
+
 	public boolean isVolcanoInRange(Chunk chunk){		
 		int xIn = (chunk.getPos().getXEnd() - chunk.getPos().getXStart())/2 + chunk.getPos().getXStart();
 		int zIn = (chunk.getPos().getZEnd() - chunk.getPos().getZStart())/2 + chunk.getPos().getZStart();	
-		
+
 		if(!LavaConfig.volcano.spawnChunks) {
 			BlockPos spawnpos = new BlockPos(chunk.getWorld().getSpawnPoint().getX(), 70, chunk.getWorld().getSpawnPoint().getZ());
 			if(spawnpos.getDistance(xIn, 70, zIn) <= LavaConfig.volcano.spawnDistance) {
 				return true;
 			}	
 		}
-		
-		for(Chunk chunkIn : chunks){
-			int x = (chunkIn.getPos().getXEnd() - chunkIn.getPos().getXStart())/2 + chunkIn.getPos().getXStart();
-			int z = (chunkIn.getPos().getZEnd() - chunkIn.getPos().getZStart())/2 + chunkIn.getPos().getZStart();	
-			BlockPos pos = new BlockPos(x,70,z);
-			
-			if(pos.getDistance(xIn, 70, zIn) <= LavaConfig.volcano.distance){
-				return true;
+
+		try {
+			BufferedReader r = Files.newReader(getFile(), StandardCharsets.UTF_8);
+			String line;
+			while((line = r.readLine()) != null) {
+				String s[] = line.split("\\|");
+				Chunk chunkIn;
+				try {
+					chunkIn = chunk.getWorld().getChunk(Integer.valueOf(s[0]), Integer.valueOf(s[1]));
+				} catch(NumberFormatException e) {
+					e.printStackTrace();
+					throw new RuntimeException("Error checking VolcanoStorage. Please report this on the github page.");
+				}
+
+				int x = (chunkIn.getPos().getXEnd() - chunkIn.getPos().getXStart())/2 + chunkIn.getPos().getXStart();
+				int z = (chunkIn.getPos().getZEnd() - chunkIn.getPos().getZStart())/2 + chunkIn.getPos().getZStart();	
+				BlockPos pos = new BlockPos(x,70,z);
+
+				if(pos.getDistance(xIn, 70, zIn) <= LavaConfig.volcano.distance){
+					return true;
+				}
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Error checking VolcanoStorage. Please report this on the github page.");
 		}
 		return false;
 	}
-	
-	public List<Chunk> getList() {
-		return chunks;
+
+	public Chunk get(int n, World world) {
+		try {
+			String line = "";
+			BufferedReader r = Files.newReader(getFile(), StandardCharsets.UTF_8);
+			for (int i = 0; i < n; i++) r.readLine();
+			line = r.readLine();
+			
+			String s[] = line.split("\\|");
+			try {
+				return world.getChunk(Integer.valueOf(s[0]), Integer.valueOf(s[1]));
+			} catch(NumberFormatException e) {
+				e.printStackTrace();
+				throw new RuntimeException("Error checking VolcanoStorage. Please report this on the github page.");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Error checking VolcanoStorage. Please report this on the github page.");
+		}
+	}
+
+	public int getNum() {
+		try {
+			BufferedReader r = Files.newReader(getFile(), StandardCharsets.UTF_8);
+			int lines = 0;
+			while (r.readLine() != null) lines++;
+			r.close();
+			return lines;
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Error reading VolcanoStorage. Please report this on the github page.");
+		}
+
 	}
 }

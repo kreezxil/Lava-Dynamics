@@ -32,7 +32,7 @@ public class ForcePostGenEffect extends CommandBase {
 
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-		Chunk chunk = sender.getEntityWorld().getChunkFromBlockCoords(sender.getPosition());
+		Chunk chunk = sender.getEntityWorld().getChunk(sender.getPosition());
 
 		if(!StorageManager.getVolcanoStorage(sender.getEntityWorld().provider.getDimension()).isVolcano(chunk)){
 			sender.sendMessage(new TextComponentString("Chunk does not contain a volcano. Please run this in a chunk that contains a volcamo."));

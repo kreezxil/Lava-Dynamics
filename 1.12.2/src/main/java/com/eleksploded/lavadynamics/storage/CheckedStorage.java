@@ -1,15 +1,18 @@
 package com.eleksploded.lavadynamics.storage;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.commons.io.FileUtils;
+
+import com.google.common.io.Files;
+
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.event.world.WorldEvent;
 
 public class CheckedStorage {
 	List<Chunk> chunks = new CopyOnWriteArrayList<Chunk>();
@@ -18,6 +21,15 @@ public class CheckedStorage {
 	
 	public CheckedStorage(int dimIDin){
 		dimID = dimIDin;
+		
+		if(!getFile().exists()) {
+			try {
+				getFile().createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new RuntimeException("Error creating CheckedStorage. Please report this on the github page.");
+			}
+		}
 	}
 	
 	File getFile() {
@@ -31,56 +43,33 @@ public class CheckedStorage {
 		return new File(tmp);
 	}
 	
-	public void load(WorldEvent.Load event){
-		if(event.getWorld().provider.getDimension() != dimID){ return; }
-		
-		try{
-			if(getFile().exists()){
-				Path path = getFile().toPath();
-				for(String in : Files.readAllLines(path)){
-					String[] tmp = in.split("\\|");
-					chunks.add(event.getWorld().getChunkFromChunkCoords(Integer.valueOf(tmp[0]), Integer.valueOf(tmp[1])));
-				}
-			} else {
-				getFile().createNewFile();
-			}
-		} catch(Exception e){
-			
-			e.printStackTrace();
-			throw new RuntimeException("Error loading CheckedStorage. Please report this on the github page.");
-		}
-	}
-	
-	public void save(WorldEvent.Save event){
-		if(event.getWorld().provider.getDimension() != dimID){ return; }
-		
-		try{
-			if(getFile().exists()){
-				Path path = getFile().toPath();
-				List<String> list = new ArrayList<String>();
-				for(Chunk chunk : chunks){
-					String tmp = chunk.x + "|" + chunk.z;
-					if(!list.contains(tmp)){
-						list.add(tmp);
-					}
-					getFile().delete();
-					getFile().createNewFile();
-					Files.write(path, list);
+	public boolean isChecked(Chunk c) {
+		try {
+			String chunk = c.x + "|" + c.z;
+			BufferedReader r = Files.newReader(getFile(), StandardCharsets.UTF_8);
+			String line;
+			while((line = r.readLine()) != null) {
+				if(line.contentEquals(chunk)) {
+					return true;
 				}
 			}
-		} catch(Exception e){
+			return false;
+		} catch (IOException e) {
 			e.printStackTrace();
-			throw new RuntimeException("Error saving CheckedStorage. Please report this on the github page.");
+			throw new RuntimeException("Error checking CheckedStorage. Please report this on the github page.");
 		}
-	}
-	
-	public boolean isChecked(Chunk chunk) {
-		return chunks.contains(chunk);
 	}
 	
 	public void addChecked(Chunk chunk) {
 		if(!chunks.contains(chunk)) {
-			chunks.add(chunk);
+			String toWrite = "\r\n" + chunk.x + "|" + chunk.z;
+			
+			try {
+				FileUtils.writeStringToFile(getFile(), toWrite, StandardCharsets.UTF_8, true);
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new RuntimeException("Error creating CheckedStorage. Please report this on the github page.");
+			}
 		}
 	}
 }

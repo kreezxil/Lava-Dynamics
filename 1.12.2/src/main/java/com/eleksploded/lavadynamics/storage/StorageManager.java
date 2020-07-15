@@ -8,9 +8,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import com.eleksploded.lavadynamics.LavaConfig;
 
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class StorageManager {
 	static Map<Integer, CheckedStorage> checked = new HashMap<Integer,CheckedStorage>();
@@ -30,36 +27,6 @@ public class StorageManager {
 				checked.put(id, new CheckedStorage(id));
 				volcano.put(id, new VolcanoStorage(id));
 			}
-		}
-	}
-	
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	static void load(WorldEvent.Load event){
-		
-		if(event.getWorld().isRemote) {
-			return;
-		}
-		
-		for(CheckedStorage store : checked.values()) {
-			store.load(event);
-		}
-		for(VolcanoStorage vol : volcano.values()){
-			vol.load(event);
-		}
-	}
-	
-	@SubscribeEvent
-	static void save(WorldEvent.Save event){
-		
-		if(event.getWorld().isRemote) {
-			return;
-		}
-		
-		for(CheckedStorage store : checked.values()) {
-			store.save(event);
-		}
-		for(VolcanoStorage vol : volcano.values()){
-			vol.save(event);
 		}
 	}
 }

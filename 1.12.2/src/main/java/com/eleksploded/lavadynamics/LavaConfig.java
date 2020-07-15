@@ -128,6 +128,9 @@ public class LavaConfig {
 		
 		@Config.Comment("How far in should biome filler blocks go? Set to 0 to disable use of filler blocks")
 		public int fillerSize = 2;
+		
+		@Config.Comment("How far down should biome meshing start?")
+		public int biomeStart = 3;
 	}
 	
 	public static class WorldSmeltingOptions {

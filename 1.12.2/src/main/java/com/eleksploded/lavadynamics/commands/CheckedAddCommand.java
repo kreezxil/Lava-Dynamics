@@ -28,7 +28,7 @@ public class CheckedAddCommand extends CommandBase{
 		}
 		
 		try{
-			StorageManager.getCheckedStorage(sender.getEntityWorld().provider.getDimension()).addChecked(sender.getEntityWorld().getChunkFromChunkCoords(Integer.valueOf(args[0]), Integer.valueOf(args[1])));
+			StorageManager.getCheckedStorage(sender.getEntityWorld().provider.getDimension()).addChecked(sender.getEntityWorld().getChunk(Integer.valueOf(args[0]), Integer.valueOf(args[1])));
 			sender.sendMessage(new TextComponentString("Added chunk [" + Integer.valueOf(args[0]) + "," + Integer.valueOf(args[1]) + "]"));
 		} catch(NumberFormatException e){
 			throw new WrongUsageException(getUsage(sender), new Object[0]);

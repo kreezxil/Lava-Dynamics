@@ -141,8 +141,12 @@ public class ConeVolcanoGen extends WorldGenerator {
 
 		for(float i1 = 0; i1 < radius; i1 += 0.5) {
 			for(float j1 = 0; j1 < 2 * Math.PI * i1; j1 += 0.5) {
-				if(LavaConfig.volcano.useBiome && i1 == radius-.5) {
-					setBlockWithBiomeTop(world,new BlockPos((int)Math.floor(x1 + Math.sin(j1) * i1), y1, (int)Math.floor(z1 + Math.cos(j1) * i1)));
+				if(LavaConfig.volcano.useBiome && i1 == radius-.5 && radius > LavaConfig.volcano.biomeStart) {
+					if(radius == LavaConfig.volcano.biomeStart && world.rand.nextBoolean()) {
+						setBlockWithOre(world,new BlockPos((int)Math.floor(x1 + Math.sin(j1) * i1), y1, (int)Math.floor(z1 + Math.cos(j1) * i1)), false);
+					} else {
+						setBlockWithBiomeTop(world,new BlockPos((int)Math.floor(x1 + Math.sin(j1) * i1), y1, (int)Math.floor(z1 + Math.cos(j1) * i1)));
+					}
 				} else {
 					setBlockWithOre(world,new BlockPos((int)Math.floor(x1 + Math.sin(j1) * i1), y1, (int)Math.floor(z1 + Math.cos(j1) * i1)), LavaConfig.volcano.useBiome && i1 >= (radius-((LavaConfig.volcano.fillerSize) + .5F)));
 				}

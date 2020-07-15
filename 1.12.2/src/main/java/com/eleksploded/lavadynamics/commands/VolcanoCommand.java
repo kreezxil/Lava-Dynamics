@@ -29,7 +29,7 @@ public class VolcanoCommand extends CommandBase {
 
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {		
-		Chunk chunk = sender.getEntityWorld().getChunkFromBlockCoords(sender.getPosition());
+		Chunk chunk = sender.getEntityWorld().getChunk(sender.getPosition());
 		boolean bypass;
 		if(args.length == 1){
 			try {
