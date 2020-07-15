@@ -24,14 +24,7 @@ public class VolcanoStorage {
 	public VolcanoStorage(int dimid){
 		dimID = dimid;
 
-		if(!getFile().exists()) {
-			try {
-				getFile().createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new RuntimeException("Error creating VolcanoStorage. Please report this on the github page.");
-			}
-		}
+		
 	}
 
 	File getFile() {
@@ -42,7 +35,17 @@ public class VolcanoStorage {
 		} else {
 			tmp = tmp + fileName;
 		}
-		return new File(tmp);
+		File file = new File(tmp);
+		
+		if(!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new RuntimeException("Error creating VolcanoStorage. Please report this on the github page.");
+			}
+		}
+		return file;
 	}
 
 

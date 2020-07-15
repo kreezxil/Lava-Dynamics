@@ -18,20 +18,11 @@ public class CheckedStorage {
 	List<Chunk> chunks = new CopyOnWriteArrayList<Chunk>();
 	String fileName = "LD_CheckedStorage";
 	int dimID;
-	
+
 	public CheckedStorage(int dimIDin){
 		dimID = dimIDin;
-		
-		if(!getFile().exists()) {
-			try {
-				getFile().createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new RuntimeException("Error creating CheckedStorage. Please report this on the github page.");
-			}
-		}
 	}
-	
+
 	File getFile() {
 		String tmp = DimensionManager.getCurrentSaveRootDirectory() + "/";
 
@@ -40,9 +31,18 @@ public class CheckedStorage {
 		} else {
 			tmp = tmp + fileName;
 		}
-		return new File(tmp);
+		File file =  new File(tmp);
+
+		try {
+			if(!file.exists()) file.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Error creating CheckedStorage. Please report this on the github page.");
+		}
+		
+		return file;
 	}
-	
+
 	public boolean isChecked(Chunk c) {
 		try {
 			String chunk = c.x + "|" + c.z;
@@ -59,11 +59,11 @@ public class CheckedStorage {
 			throw new RuntimeException("Error checking CheckedStorage. Please report this on the github page.");
 		}
 	}
-	
+
 	public void addChecked(Chunk chunk) {
 		if(!chunks.contains(chunk)) {
 			String toWrite = "\r\n" + chunk.x + "|" + chunk.z;
-			
+
 			try {
 				FileUtils.writeStringToFile(getFile(), toWrite, StandardCharsets.UTF_8, true);
 			} catch (IOException e) {
