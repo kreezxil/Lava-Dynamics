@@ -3,8 +3,6 @@ package com.eleksploded.lavadynamics.cap;
 import javax.annotation.Nullable;
 
 public class CheckedHandler implements IChecked {
-	static CheckedHandler instance = new CheckedHandler();
-
 	boolean checked = false;
 	boolean volcano = false;
 	int top;

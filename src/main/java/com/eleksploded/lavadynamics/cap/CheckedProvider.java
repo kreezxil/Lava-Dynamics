@@ -8,10 +8,12 @@ import net.minecraftforge.common.util.LazyOptional;
 
 public class CheckedProvider implements ICapabilitySerializable<CompoundNBT> {
 
+	CheckedHandler instance = new CheckedHandler();
+	
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
 		if(cap == CheckedCap.checkedCap) {
-			return LazyOptional.of(() -> CheckedHandler.instance).cast();
+			return LazyOptional.of(() -> instance).cast();
 		} else {
 			return LazyOptional.empty();
 		}
@@ -19,12 +21,12 @@ public class CheckedProvider implements ICapabilitySerializable<CompoundNBT> {
 
 	@Override
 	public CompoundNBT serializeNBT() {
-		return (CompoundNBT) CheckedCap.checkedCap.getStorage().writeNBT(CheckedCap.checkedCap, CheckedHandler.instance, null);
+		return (CompoundNBT) CheckedCap.checkedCap.getStorage().writeNBT(CheckedCap.checkedCap, instance, null);
 	}
 
 	@Override
 	public void deserializeNBT(CompoundNBT nbt) {
-		CheckedCap.checkedCap.getStorage().readNBT(CheckedCap.checkedCap, CheckedHandler.instance, null, nbt);
+		CheckedCap.checkedCap.getStorage().readNBT(CheckedCap.checkedCap, instance, null, nbt);
 	}
 
 }
