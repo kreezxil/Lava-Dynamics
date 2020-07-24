@@ -1,0 +1,33 @@
+modLoader="javafml" #mandatory
+loaderVersion="[32,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+issueTrackerURL="https://github.com/kreezxil/lava-dynamics/issues" #optional
+[[mods]] #mandatory
+modId="lavadynamics" #mandatory
+version="${file.jarVersion}" #mandatory
+displayName="Lava Dynamics" #mandatory
+updateJSONURL="https://raw.githubusercontent.com/kreezxil/Lava-Dynamics/1.12.2-fixed/Updates.json" #optional
+displayURL="https://www.curseforge.com/minecraft/mc-mods/lava-dynamics" #optional
+logoFile="examplemod.png" #optional
+credits="Kreezxil for allowing me to continue this mod"
+authors="Eleksploded, Kreezxil" #optional
+description='''
+
+'''
+[[dependencies.lavadynamics]] #optional
+    modId="forge" #mandatory
+    mandatory=true #mandatory
+    versionRange="[32,)" #mandatory
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.lavadynamics]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.1]"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.lavadynamics]]
+    modId="eleklib"
+    mandatory=true
+    versionRange="[1.3.3]"
+    ordering="NONE"
+    side="BOTH"

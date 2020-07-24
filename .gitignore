@@ -24,10 +24,21 @@ hs_err_pid*
 
 Workspace/*
 
-1.12.2/*
-!1.12.2/src/*
-1.12.2/src/.DS_Store
-5.5.15/
+
+.gradle/
+gradle/
+.settings/
+bin/
+build/
+gradle.properties
+run/
+*.launch
+gradlew
+
 
 
 .DS_Store
+
+.project
+
+.classpath

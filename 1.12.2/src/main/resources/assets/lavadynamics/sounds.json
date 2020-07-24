@@ -1,6 +1,0 @@
-{
-	"postgeneffect.rumble" : {
-		"category": "ambient",
-		"sounds": [ "lavadynamics:rumble" ]
-	}
-}
