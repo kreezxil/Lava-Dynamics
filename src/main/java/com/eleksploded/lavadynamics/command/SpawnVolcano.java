@@ -29,7 +29,7 @@ public class SpawnVolcano {
 		} catch (CommandSyntaxException e) {
 			c.getSource().sendErrorMessage(new TranslationTextComponent("ld.command.invalidpos"));
 		} catch (IllegalArgumentException e) {
-			Chunk chunk = (Chunk) c.getSource().getWorld().getChunk(new BlockPos(c.getSource().getPos()));
+			Chunk chunk = (Chunk) c.getSource().getWorld().getChunk(new BlockPos(c.getSource().getPos()));			
 			VolcanoManager.spawnVolcano(c.getSource().getWorld(), chunk);
 		}
 		

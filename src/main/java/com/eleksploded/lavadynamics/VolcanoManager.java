@@ -16,7 +16,6 @@ import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.event.world.ChunkEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid= "lavadynamics")
@@ -44,9 +43,9 @@ public class VolcanoManager {
 	static boolean active = false;
 	public static void spawnVolcano(World world, Chunk chunk) {
 		//----------Setup----------// 
-		if(active) { return; }
+		//if(active) { return; }
 		if(world.isRemote) { return; }
-		active = true;
+		//active = true;
 		boolean debug = LavaDynamics.LavaConfig.getBool("debug");
 		Random rand = world.getRandom();
 		//Get the center of the chunk
@@ -77,9 +76,9 @@ public class VolcanoManager {
 		if(debug) {
 			LavaDynamics.Logger.info("Generating Lava Pillar");
 		}
-
+		
 		//Get hight and set pillar
-		int height = chunk.getHeightmap(Heightmap.Type.WORLD_SURFACE).getHeight(x, z) - center.getY();
+		int height = chunk.getTopBlockY(Heightmap.Type.WORLD_SURFACE, x, z) - center.getY();
 		if(height <= 0){
 			height = 1;
 		}
@@ -111,9 +110,9 @@ public class VolcanoManager {
 		}
 
 		//Custom WorldGenerator
-		IVolcanoGenerator gen = getGenerator(world, new BlockPos(x, 255, z));
-		//ConeVolcanoGen gen = new ConeVolcanoGen();
-		gen.generate(world, rand, new BlockPos(x, 255, z));
+		IVolcanoGenerator gen = getGenerator(world, new BlockPos(x, height, z));
+		if(debug) LavaDynamics.Logger.debug("Running Generator");
+		gen.generate(world, rand, new BlockPos(x, height, z));
 		
 		if(debug) {
 			LavaDynamics.Logger.info("Done Generating. Filling with " + Blocks.LAVA);

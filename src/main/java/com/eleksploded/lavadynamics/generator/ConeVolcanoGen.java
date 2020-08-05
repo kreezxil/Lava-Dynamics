@@ -23,8 +23,11 @@ public class ConeVolcanoGen implements IVolcanoGenerator {
 
 	//Credit to CplPibald#7182 on discord for pointing out possible performance issue
 	public ConeVolcanoGen() {
+		
+		//TODO: Error in here somewhere. Too tired to figure it out now
+		
 		List<String> names = Arrays.stream((String[]) LavaDynamics.LavaConfig.getValue("ores")).collect(Collectors.toList());
-
+		
 		for(String name : names) {
 			String[] split = name.split("\\|");
 			if(split.length != 2){
@@ -48,28 +51,23 @@ public class ConeVolcanoGen implements IVolcanoGenerator {
 
 	public void generate(World world, Random random, BlockPos position)
 	{
-
+		boolean debug = LavaDynamics.LavaConfig.getBool("debug");
 		Random rand = new Random();
-		while (world.isAirBlock(position) && position.getY() > 15)
-		{
-			position = position.down();
-			//Cap at world limits, hopefully this should never happen though
-			if(position.getY() >= 255 || position.getY() <= 16) {
-				break;
-			}
-		}
 
+		if(debug) LavaDynamics.Logger.debug("Get Height for Volcano");
 		int height = rand.nextInt(LavaDynamics.LavaConfig.getInt("heightMax")-LavaDynamics.LavaConfig.getInt("heightMin")+1) + LavaDynamics.LavaConfig.getInt("heightMin");
 		if(height <= 0) {
 			return;
 		}
 
+		if(debug) LavaDynamics.Logger.debug("Get Caldera for volcano");
 		int caldera = (rand.nextInt(LavaDynamics.LavaConfig.getInt("calderaMax")-LavaDynamics.LavaConfig.getInt("calderaMin")+1) + LavaDynamics.LavaConfig.getInt("calderaMin"));
 
 		BlockPos pos = position.up(height);
 
 		int i = caldera;
 		int j = pos.getY();
+		if(debug) LavaDynamics.Logger.debug("Generate Volcano Cone");
 		while(true) {
 
 			if(j >= 255 || j <= 3) {
@@ -87,7 +85,9 @@ public class ConeVolcanoGen implements IVolcanoGenerator {
 			}
 
 		}
-
+		
+		if(debug) LavaDynamics.Logger.debug("Offsetting for caldera");
+		
 		BlockPos fill1 = position.up(height);
 		while(!world.isAirBlock(fill1)){
 			fill1=fill1.down();
@@ -98,7 +98,9 @@ public class ConeVolcanoGen implements IVolcanoGenerator {
 				break;
 			}
 		}
-
+		
+		if(debug) LavaDynamics.Logger.debug("Filling caldera");
+		
 		for(int radius = caldera-1;radius != 0;radius--){
 			int x1 = fill1.getX();
 			int y1 = fill1.getY()-1;
@@ -110,6 +112,7 @@ public class ConeVolcanoGen implements IVolcanoGenerator {
 			}
 			fill1 = fill1.down();
 		}
+		if(debug) LavaDynamics.Logger.debug("Done with Generator");
 	}
 
 	private boolean isCornerAir(World world, BlockPos pos, int radius) {
