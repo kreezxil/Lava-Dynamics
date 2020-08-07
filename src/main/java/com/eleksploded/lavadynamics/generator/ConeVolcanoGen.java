@@ -1,10 +1,8 @@
 package com.eleksploded.lavadynamics.generator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import com.eleksploded.lavadynamics.LavaDynamics;
 
@@ -23,10 +21,14 @@ public class ConeVolcanoGen implements IVolcanoGenerator {
 
 	//Credit to CplPibald#7182 on discord for pointing out possible performance issue
 	public ConeVolcanoGen() {
+		boolean debug = LavaDynamics.LavaConfig.getBool("debug");
 		
 		//TODO: Error in here somewhere. Too tired to figure it out now
+		if(debug) LavaDynamics.Logger.info("Reading Config");
+		@SuppressWarnings("unchecked")
+		List<String> names = (List<String>) LavaDynamics.LavaConfig.getValue("ores");
 		
-		List<String> names = Arrays.stream((String[]) LavaDynamics.LavaConfig.getValue("ores")).collect(Collectors.toList());
+		if(debug) LavaDynamics.Logger.info("Collecting ores & chances");
 		
 		for(String name : names) {
 			String[] split = name.split("\\|");
@@ -47,6 +49,7 @@ public class ConeVolcanoGen implements IVolcanoGenerator {
 				ores.add(block);
 			}
 		}
+		if(debug) LavaDynamics.Logger.info("Done!");
 	}
 
 	public void generate(World world, Random random, BlockPos position)
@@ -59,11 +62,13 @@ public class ConeVolcanoGen implements IVolcanoGenerator {
 		if(height <= 0) {
 			return;
 		}
+		
+		if(debug) LavaDynamics.Logger.debug("Volcano height is " + height);
 
 		if(debug) LavaDynamics.Logger.debug("Get Caldera for volcano");
 		int caldera = (rand.nextInt(LavaDynamics.LavaConfig.getInt("calderaMax")-LavaDynamics.LavaConfig.getInt("calderaMin")+1) + LavaDynamics.LavaConfig.getInt("calderaMin"));
 
-		BlockPos pos = position.up(height);
+		BlockPos pos = new BlockPos(position.getX(), position.getY() + height, position.getZ());
 
 		int i = caldera;
 		int j = pos.getY();

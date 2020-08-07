@@ -110,9 +110,9 @@ public class VolcanoManager {
 		}
 
 		//Custom WorldGenerator
-		IVolcanoGenerator gen = getGenerator(world, new BlockPos(x, height, z));
+		IVolcanoGenerator gen = getGenerator(world, new BlockPos(x, topY, z));
 		if(debug) LavaDynamics.Logger.debug("Running Generator");
-		gen.generate(world, rand, new BlockPos(x, height, z));
+		gen.generate(world, rand, new BlockPos(x, topY, z));
 		
 		if(debug) {
 			LavaDynamics.Logger.info("Done Generating. Filling with " + Blocks.LAVA);

@@ -65,7 +65,7 @@ public class LavaDynamics
         		b.addInt("volcanoYLevel", 10, "Approximate Y level of underground volcano lake", 0, 64);
         		
         		b.addInt("heightMin", 3, "Minimum Height of the volcano", 3, 100);
-        		b.addInt("heightMax", 3, "Maximum Height of the volcano", 4, 101);
+        		b.addInt("heightMax", 20, "Maximum Height of the volcano", 4, 101);
         		
         		b.addInt("calderaMin", 2 , "Minimum size of the calderas", 2, 20);
         		b.addInt("calderaMax", 6 , "Maximum size of the calderas", 2, 20);
