@@ -15,24 +15,36 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.world.ChunkEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid= "lavadynamics")
 public class VolcanoManager {
 	static Random rand = new Random();
-	//@SubscribeEvent
+	@SubscribeEvent
 	public static void chunkGen(ChunkEvent.Load e) {
-		Chunk chunk = ((Chunk)e.getChunk());
-		IChecked checked = chunk.getCapability(CheckedCap.checkedCap).orElseThrow(() -> new RuntimeException(CheckedCap.ThrowError));
-
 		if(!e.getWorld().isRemote()) {
+			boolean debug = LavaDynamics.LavaConfig.getBool("debug");
+			Chunk chunk = ((Chunk)e.getChunk());
+			IChecked checked = chunk.getCapability(CheckedCap.checkedCap).orElseThrow(() -> new RuntimeException(CheckedCap.ThrowError));
+			
+			if (debug) LavaDynamics.Logger.debug("Checking Chunk: " + chunk.getPos().x + "|" + chunk.getPos().z);
+			
 			if(!checked.isChecked()) {
 				checked.check();
-				if(LavaDynamics.LavaConfig.getBool("tile_protect") && chunk.getTileEntitiesPos().isEmpty()) {
-					if(!Utils.isVolcanoInRange(chunk)) {
+				if (debug) LavaDynamics.Logger.debug("Checked Chunk: " + chunk.getPos().x + "|" + chunk.getPos().z);
+				if(!LavaDynamics.LavaConfig.getBool("tile_protect") || chunk.getTileEntitiesPos().isEmpty()) {
+					if (debug) LavaDynamics.Logger.debug("Tile Check Passed");
+					if(!Utils.isVolcanoInRange((ServerWorld)e.getWorld(), chunk)) {
+						if (debug) LavaDynamics.Logger.debug("No Volcano In Range");
 						if(LavaDynamics.LavaConfig.getInt("chance") > rand.nextInt(1000) + 1) {
+							if (debug) LavaDynamics.Logger.debug("Spawning volcanp at Chunk: " + chunk.getPos().x + "|" + chunk.getPos().z);
 							spawnVolcano(chunk.getWorld(), chunk);
+						} else {
+							if (debug) LavaDynamics.Logger.debug("Chance Test failed");
+							return;
 						}
 					}
 				}
@@ -40,12 +52,10 @@ public class VolcanoManager {
 		}
 	}
 	
-	static boolean active = false;
 	public static void spawnVolcano(World world, Chunk chunk) {
 		//----------Setup----------// 
 		//if(active) { return; }
 		if(world.isRemote) { return; }
-		//active = true;
 		boolean debug = LavaDynamics.LavaConfig.getBool("debug");
 		Random rand = world.getRandom();
 		//Get the center of the chunk
@@ -63,12 +73,12 @@ public class VolcanoManager {
 		//----------Lava Lake----------//
 
 		//Generate new Lava lake at chunk center
-		Utils.lake(world, Blocks.LAVA, center, rand);
+		//Utils.lake(world, Blocks.LAVA, center, rand);
 		
 		//lakes.
 		//world.getChunkProvider().ge
 		if(debug) {
-			LavaDynamics.Logger.info("Lava lake generated");
+			//LavaDynamics.Logger.info("Lava lake generated");
 		}
 
 		//----------Lava Pillar---------//
@@ -166,7 +176,6 @@ public class VolcanoManager {
 		if(debug) {
 			LavaDynamics.Logger.info("Done with crater");
 		}
-		active = false;
 		//----------Done?----------//
 	}
 	
