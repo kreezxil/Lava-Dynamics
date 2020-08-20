@@ -9,14 +9,15 @@ import com.eleksploded.lavadynamics.generator.IVolcanoGenerator;
 import com.eleksploded.lavadynamics.utils.VolcanoCache;
 
 import net.minecraft.block.Blocks;
+import net.minecraft.util.concurrent.TickDelayedTask;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -50,6 +51,11 @@ public class VolcanoManager {
 						if(LavaDynamics.LavaConfig.getInt("chance") > rand.nextInt(1000) + 1) {
 							if (debug) LavaDynamics.Logger.debug("Spawning volcanp at Chunk: " + chunk.getPos().x + "|" + chunk.getPos().z);
 							spawnVolcano(chunk.getWorld(), chunk);
+							
+							chunk.getWorld().getServer().enqueue(new TickDelayedTask(10, () -> {
+								spawnVolcano(chunk.getWorld(), chunk);
+							}));
+							
 						} else {
 							if (debug) LavaDynamics.Logger.debug("Chance Test failed");
 							return;
@@ -69,11 +75,11 @@ public class VolcanoManager {
 		worldLoaded = false;
 	}
 	
-	public static void spawnVolcano(World world, Chunk chunk) {
+	public static void spawnVolcano(World worldIn, Chunk chunk) {
 		//----------Setup----------// 
 		//if(active) { return; }
-		if(world.isRemote) { return; }
-		
+		if(worldIn.isRemote) { return; }
+		ServerWorld world = (ServerWorld) worldIn;
 		//Add to cache
 		VolcanoCache.addCachedVolcano(chunk);
 		
@@ -128,14 +134,20 @@ public class VolcanoManager {
 		for(int i = 0; i <= height; i++) {
 			//Add starting height in. Cast int cause it was treating them as Strings for some reason
 			int j = (int)i + (int)center.getY();
+			
+			ChunkPos cPos = new ChunkPos(new BlockPos(x,j,z));
+			if(!world.getChunkProvider().isChunkLoaded(cPos)) {
+				if(debug) LavaDynamics.Logger.info("Chunk is unloaded, trying to load");
+				world.forceChunk(cPos.x, cPos.z, true);
+			}
+			
 			if(debug) {
 				LavaDynamics.Logger.info("Placing Lava at y=" + j);
-			}
-			//Set Block, which causes block updates to smelt things
-			if(debug) {
+
 				boolean isLoaded = world.getChunkProvider().isChunkLoaded(new ChunkPos(new BlockPos(x,j,z)));
 				System.out.println("isLoaded: " + isLoaded);
 			}
+			
 			world.setBlockState(new BlockPos(x,j,z), Blocks.LAVA.getDefaultState(), 3);
 			//Save TopY
 			topY = j;
@@ -213,9 +225,9 @@ public class VolcanoManager {
 	public static IVolcanoGenerator getGenerator(World world, BlockPos pos) {
 		Biome biome = world.getBiome(pos);
 		
-		if(biome == Biomes.OCEAN || biome == Biomes.DEEP_OCEAN || biome == Biomes.FROZEN_OCEAN || biome == Biomes.RIVER || biome == Biomes.FROZEN_RIVER) {
+		//if(biome == Biomes.OCEAN || biome == Biomes.DEEP_OCEAN || biome == Biomes.FROZEN_OCEAN || biome == Biomes.RIVER || biome == Biomes.FROZEN_RIVER) {
 			//return new WaterVolcanoGen();
-		}
+		//}
 		
 		return new ConeVolcanoGen();
 	}

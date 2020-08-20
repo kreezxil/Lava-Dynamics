@@ -163,7 +163,7 @@ public class ConeVolcanoGen implements IVolcanoGenerator {
 
 		if(ore <= chance) {
 			if(useFiller) {
-				block = worldIn.getBiome(blockpos).getSurfaceBuilderConfig().getUnder();
+				block = worldIn.getBiome(blockpos).func_242440_e().func_242502_e().getUnder();
 			} else {
 				block=Blocks.STONE.getDefaultState();
 			}
@@ -175,7 +175,7 @@ public class ConeVolcanoGen implements IVolcanoGenerator {
 
 	private void setBlockWithBiomeTop(World world, BlockPos blockpos) {
 		Biome biome = world.getBiome(blockpos);
-		BlockState s = biome.getSurfaceBuilderConfig().getTop();
+		BlockState s = biome.func_242440_e().func_242502_e().getTop();
 		world.setBlockState(blockpos, s);
 	}
 }
