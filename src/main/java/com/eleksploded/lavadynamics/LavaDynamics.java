@@ -58,7 +58,7 @@ public class LavaDynamics
 						c.addInt("spawnDistance", 500, "Block distance from spawn needed to spawn a volcano", 0, 10000);
 
 						c.addInt("playerDistance", 100, "Distance from a player needed before spawning a volcano", 0, 10000);
-						c.addInt("volcanoDistance", 32, "Distance from other volcanoes to spawn a volcano (in chunks). Scans a square of radius this.", 0, 128);
+						c.addInt("volcanoDistance", 16, "Distance from other volcanoes to spawn a volcano (in chunks, multiply by 16 for blocks). Scans a square of radius this.", 0, 128);
 					});
 					b.category("biome", "Options for volcanoes using biomes", c -> {
 						c.addBool("useBiome", true, "Should the volcano use the biome blocks");
@@ -82,6 +82,8 @@ public class LavaDynamics
 				}).category("PostGenEffects", "Options for PostGen Effects", b -> {
 					b.addInt("postGenEffectChance", 5, "Chance of an effect occuring (out of 1000). Set to 0 to disable.", 0, 1000);
 					b.addValue("blacklistEffects", Arrays.asList(new String[] {}), "List of effects to blacklist, just put the effect name here. Ex: \"erupt\"");
+				}).category("Performance", "Options that hava impact on performance", b -> {
+					b.addInt("volcanoCacheSize", 128, "Size of the cache of volcano chunks. Larger Caches will speed up world gen time, at the cost of RAM usage", 0, 65536);
 				})
 				.build("lavadynamics", ModConfig.Type.COMMON);
 	}

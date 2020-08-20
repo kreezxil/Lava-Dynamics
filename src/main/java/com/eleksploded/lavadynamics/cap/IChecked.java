@@ -9,4 +9,7 @@ public interface IChecked {
 	void setVolcano(int top);
 	void check();
 	void removeCheck();
+	
+	int getCooldown();
+	void setCooldown(int c);
 }
