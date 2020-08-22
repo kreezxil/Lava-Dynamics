@@ -26,9 +26,14 @@ public class Utils {
 				
 				ChunkPos pos = new ChunkPos(c.getPos().x + x, c.getPos().z + z);
 				
-				if(VolcanoCache.isCachedVolcano(pos)) {
-					if (debug) LavaDynamics.Logger.debug("Found Volcano from cache");
-					return true;
+				VolcanoCache.CacheResult result = VolcanoCache.getCacheResult(pos);
+				if(result != VolcanoCache.CacheResult.NON_CACHED) {
+					if (debug) LavaDynamics.Logger.debug("Found Chunk in cache, checking");
+					if(result == VolcanoCache.CacheResult.VOLCANO) {
+						return true;
+					} else {
+						continue;
+					}
 				}
 				
 				BlockPos from = new BlockPos(pos.getXStart(), 0, pos.getZStart());

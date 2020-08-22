@@ -33,7 +33,10 @@ public class RunPostGenEffect {
 				IChecked checked = chunk.getCapability(CheckedCap.checkedCap).orElseThrow(() -> new RuntimeException(CheckedCap.ThrowError));
 				
 				if(checked.isVolcano()) {
-					if(world.getRandom().nextInt(999)+1 <= LavaDynamics.LavaConfig.getInt("postgenchance")) {
+					
+					if(checked.getCooldown() > 0) {
+						checked.setCooldown(checked.getCooldown() - 1);
+					} else if(world.getRandom().nextInt(999)+1 <= LavaDynamics.LavaConfig.getInt("postgenchance")) {
 						IForgeRegistry<PostGenEffect> reg = GameRegistry.findRegistry(PostGenEffect.class);
 						ResourceLocation key = reg.getKeys().stream().skip(world.rand.nextInt((int)reg.getKeys().stream().count())).findFirst().get();
 						@SuppressWarnings("unchecked")

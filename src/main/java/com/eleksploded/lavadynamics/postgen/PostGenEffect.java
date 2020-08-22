@@ -1,13 +1,13 @@
 package com.eleksploded.lavadynamics.postgen;
 
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 
-public abstract class PostGenEffect implements IForgeRegistryEntry<PostGenEffect> {
+public abstract class PostGenEffect extends ForgeRegistryEntry<PostGenEffect> {
 	
 	public PostGenEffect() {
 		
 	}
 	
-	abstract void execute(Chunk chunk, int top);
+	public abstract void execute(Chunk chunk, int top);
 }

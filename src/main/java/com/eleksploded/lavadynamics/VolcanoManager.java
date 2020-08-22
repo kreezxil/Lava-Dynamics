@@ -40,7 +40,7 @@ public class VolcanoManager {
 
 			if (debug) LavaDynamics.Logger.debug("Checking Chunk: " + chunk.getPos().x + "|" + chunk.getPos().z);
 
-			if(VolcanoCache.isCachedVolcano(chunk)) return;
+			if(VolcanoCache.getCacheResult(chunk) != VolcanoCache.CacheResult.NON_CACHED) return;
 
 			if(!checked.isChecked()) {
 				checked.check();
@@ -48,15 +48,15 @@ public class VolcanoManager {
 				if(!LavaDynamics.LavaConfig.getBool("tile_protect") || chunk.getTileEntitiesPos().isEmpty()) {
 					if (debug) LavaDynamics.Logger.debug("Tile Check Passed");
 
-					chunk.getWorld().getServer().enqueue(new TickDelayedTask(10, () -> {
+					chunk.getWorld().getServer().enqueue(new TickDelayedTask(1, () -> {
 						if(!Utils.isVolcanoInRange((ServerWorld)e.getWorld(), chunk)) {
 							if (debug) LavaDynamics.Logger.debug("No Volcano In Range");
 							if(LavaDynamics.LavaConfig.getInt("chance") > rand.nextInt(1000) + 1) {
 								if (debug) LavaDynamics.Logger.debug("Spawning volcanp at Chunk: " + chunk.getPos().x + "|" + chunk.getPos().z);
 								spawnVolcano(chunk.getWorld(), chunk);
-
 							} else {
 								if (debug) LavaDynamics.Logger.debug("Chance Test failed");
+								VolcanoCache.addCachedChunk(chunk, false);
 								return;
 							}
 						}
@@ -82,7 +82,7 @@ public class VolcanoManager {
 		if(worldIn.isRemote) { return; }
 		ServerWorld world = (ServerWorld) worldIn;
 		//Add to cache
-		VolcanoCache.addCachedVolcano(chunk);
+		VolcanoCache.addCachedChunk(chunk, true);
 
 		boolean debug = LavaDynamics.LavaConfig.getBool("debug");
 		Random rand = world.getRandom();
@@ -194,6 +194,7 @@ public class VolcanoManager {
 		IChecked ch = chunk.getCapability(CheckedCap.checkedCap).orElseThrow(() -> new RuntimeException(CheckedCap.ThrowError));
 
 		ch.setVolcano(top);
+		ch.setCooldown(15);
 
 		if(debug) {
 			LavaDynamics.Logger.info("Done filling, Spawning crater");

@@ -13,6 +13,8 @@ import com.eleksploded.lavadynamics.cap.IChecked;
 import com.eleksploded.lavadynamics.command.CheckedCommand;
 import com.eleksploded.lavadynamics.command.SpawnVolcano;
 import com.eleksploded.lavadynamics.postgen.PostGenEffect;
+import com.eleksploded.lavadynamics.postgen.effects.EruptEffect;
+import com.eleksploded.lavadynamics.postgen.effects.RumbleEffect;
 
 import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
@@ -22,11 +24,14 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -41,12 +46,14 @@ public class LavaDynamics
 	public LavaDynamics() {
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onComplete);
 
 		MinecraftForge.EVENT_BUS.register(this);
 
 		LavaConfig = ConfigBuilder.builder()
 				.category("General", "General Settings", b -> {
 					b.addBool("debug", false, "Enable debug mode. Will result in console spam");
+					b.addBool("regDump", false, "Causes the mod to print all PostGenEffect registry contents to the console");
 				})
 				.category("Generator", "Generation Settings", b -> {
 					b.category("Restrictions", "Chances/restrictions of where to spawn", c -> {
@@ -107,10 +114,25 @@ public class LavaDynamics
 		CheckedCommand.register(e.getDispatcher());
 		SpawnVolcano.register(e.getDispatcher());
 	}
+	
+	public void onComplete(FMLLoadCompleteEvent e) {
+		if(LavaConfig.getBool("regDump")) {
+			System.out.println("Dumping PostGenEffect Registry...");
+			IForgeRegistry<PostGenEffect> reg = GameRegistry.findRegistry(PostGenEffect.class);
+			reg.forEach(effect -> {
+				System.out.println("	" + effect.getRegistryName());
+			});
+			System.out.println("Dump Complete");
+		}
+	}
+	
+	public static class LDPostGenEffects {
+		public static PostGenEffect erupt = new EruptEffect();
+		public static PostGenEffect rumble = new RumbleEffect();
+	}
 
 	@Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
 	public static class RegistryEvents {
-
 
 		@SubscribeEvent
 		public static void onRegRegistry(final RegistryEvent.NewRegistry reg) {
@@ -128,8 +150,10 @@ public class LavaDynamics
 		
 		@SubscribeEvent
 		public static void onPostGenRegistry(final RegistryEvent.Register<PostGenEffect> pge) {
-			//pge.getRegistry().register();
-			System.out.println("Hello");
+			IForgeRegistry<PostGenEffect> reg = pge.getRegistry();
+			
+			reg.register(LDPostGenEffects.erupt);
+			reg.register(LDPostGenEffects.rumble);
 		}
 	}
 }
