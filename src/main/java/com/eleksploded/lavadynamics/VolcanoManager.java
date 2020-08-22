@@ -54,12 +54,12 @@ public class VolcanoManager {
 							if(LavaDynamics.LavaConfig.getInt("chance") > rand.nextInt(1000) + 1) {
 								if (debug) LavaDynamics.Logger.debug("Spawning volcanp at Chunk: " + chunk.getPos().x + "|" + chunk.getPos().z);
 								spawnVolcano(chunk.getWorld(), chunk);
+								return;
 							} else {
 								if (debug) LavaDynamics.Logger.debug("Chance Test failed");
-								VolcanoCache.addCachedChunk(chunk, false);
-								return;
 							}
 						}
+						VolcanoCache.addCachedChunk(chunk, false);
 					}));
 				}
 			}

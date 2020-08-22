@@ -1,0 +1,123 @@
+package com.eleksploded.lavadynamics.postgen;
+
+import java.util.List;
+import java.util.stream.StreamSupport;
+
+import com.eleksploded.lavadynamics.LavaDynamics;
+import com.eleksploded.lavadynamics.cap.CheckedCap;
+
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.server.ChunkHolder;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.registries.IForgeRegistry;
+
+public class PostGenEffectThread implements Runnable {
+
+	ServerWorld world;
+
+	int oldTick = 0;
+	int newTick = 1;
+	public boolean running = true;
+
+	boolean success = false;;
+
+	public PostGenEffectThread(ServerWorld world) {
+		this.world = world;
+	}
+
+	@SuppressWarnings("resource")
+	@Override
+	public void run() {
+		boolean debug = LavaDynamics.LavaConfig.getBool("postgendebug");
+		
+		oldTick = new Long(world.getGameTime()).intValue();
+		newTick = oldTick + LavaDynamics.LavaConfig.getInt("PostGenEffectCooldown");
+		
+		while(running) {
+
+			int tickTime = new Long(world.getGameTime()).intValue();
+
+			if(tickTime < oldTick) {
+				oldTick = tickTime;
+				newTick = oldTick + LavaDynamics.LavaConfig.getInt("PostGenEffectCooldown");
+			}
+
+			if(tickTime >= oldTick + 1) {
+				oldTick++;
+
+				if(newTick >= oldTick) {
+					
+					if(debug) LavaDynamics.Logger.info("Random Chunk for postgen Effect");
+
+					success = false;
+
+					Iterable<ChunkHolder> chunks = world.getChunkProvider().chunkManager.getLoadedChunksIterable();
+
+					int count = world.getChunkProvider().chunkManager.getLoadedChunkCount();
+					if(count <= 0) {
+						return;
+					}
+					StreamSupport.stream(chunks.spliterator(), false).skip(world.getRandom().nextInt(count)).findFirst().ifPresent(chunkHolder -> {
+						Chunk chunk = chunkHolder.getChunkIfComplete();
+						if(chunk == null) return;
+						chunk.getCapability(CheckedCap.checkedCap).ifPresent(checked -> {
+							if(checked.isVolcano()) {
+								if(checked.getCooldown() > 0) {
+									checked.setCooldown(checked.getCooldown() - 1);
+								} else {//if(world.getRandom().nextInt(999)+1 <= LavaDynamics.LavaConfig.getInt("postgenchance")) {
+									IForgeRegistry<PostGenEffect> reg = GameRegistry.findRegistry(PostGenEffect.class);
+									ResourceLocation key = reg.getKeys().stream().skip(world.rand.nextInt((int)reg.getKeys().stream().count())).findFirst().get();
+									@SuppressWarnings("unchecked")
+									List<String> blacklistedEffects = (List<String>) LavaDynamics.LavaConfig.getValue("blacklistEffects");
+									if(!blacklistedEffects.contains(key.toString())) {
+										reg.getValue(key).execute(chunk, checked.getTop());
+										success = true;
+									}
+								}
+							}
+						});
+					});
+					if(success) {
+						oldTick = tickTime;
+						newTick = oldTick + LavaDynamics.LavaConfig.getInt("PostGenEffectCooldown");
+					}
+				}
+			}
+			if(debug) {
+				LavaDynamics.Logger.info(oldTick + " : " + newTick);
+			}
+		}
+	}
+
+	@Mod.EventBusSubscriber(modid = LavaDynamics.ModId)
+	public static class PostGenEffectThreadHandler {
+		static PostGenEffectThread pge = null;
+		static Thread pget = null;
+
+		@SubscribeEvent
+		public static void worldLoad(WorldEvent.Load e) {
+			if(!e.getWorld().isRemote() && pge == null && pget == null) {
+				LavaDynamics.Logger.info("Starting PostGenEffectThread");
+				pge = new PostGenEffectThread((ServerWorld)e.getWorld());
+				pget = new Thread(pge);
+				pget.start();
+			}
+		}
+
+		@SubscribeEvent
+		public static void worldUnload(WorldEvent.Unload e) {
+			if(!e.getWorld().isRemote()) {
+				LavaDynamics.Logger.info("PostGenEffectThread stopping");
+				pge.running = false;
+				pge = null;
+				pget = null;
+			}
+		}
+	}
+
+}

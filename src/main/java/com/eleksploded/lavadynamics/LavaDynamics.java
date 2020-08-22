@@ -34,7 +34,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod(LavaDynamics.ModId)
 public class LavaDynamics
 {
@@ -53,6 +52,7 @@ public class LavaDynamics
 		LavaConfig = ConfigBuilder.builder()
 				.category("General", "General Settings", b -> {
 					b.addBool("debug", false, "Enable debug mode. Will result in console spam");
+					b.addBool("postgendebug", false, "Enable debug mode for postgen. Will result in console spam");
 					b.addBool("regDump", false, "Causes the mod to print all PostGenEffect registry contents to the console");
 				})
 				.category("Generator", "Generation Settings", b -> {
@@ -67,7 +67,7 @@ public class LavaDynamics
 						c.addInt("playerDistance", 100, "Distance from a player needed before spawning a volcano", 0, 10000);
 						c.addInt("volcanoDistance", 16, "Distance from other volcanoes to spawn a volcano (in chunks, multiply by 16 for blocks). Scans a square of radius this.", 0, 128);
 					});
-					b.category("biome", "Options for volcanoes using biomes", c -> {
+					b.category("Biome", "Options for volcanoes using biomes", c -> {
 						c.addBool("useBiome", true, "Should the volcano use the biome blocks");
 
 						c.addInt("fillerSize", 2, "How far in should biome filler blocks go? Set to 0 to disable use of filler blocks", 0, 64);
@@ -88,9 +88,12 @@ public class LavaDynamics
 					b.addValue("ores", Arrays.asList(new String[] {"minecraft:coal_ore|15"}), "Ores to spawn in volcano. Format should be 'modid:block|chances' ");
 				}).category("PostGenEffects", "Options for PostGen Effects", b -> {
 					b.addInt("postGenEffectChance", 5, "Chance of an effect occuring (out of 1000). Set to 0 to disable.", 0, 1000);
+					
+					b.addInt("PostGenEffectCooldown", 1000, "Minumum ticks between effects", 0, 1728000);
+					
 					b.addValue("blacklistEffects", Arrays.asList(new String[] {}), "List of effects to blacklist, just put the effect name here. Ex: \"erupt\"");
 				}).category("Performance", "Options that hava impact on performance", b -> {
-					b.addInt("volcanoCacheSize", 128, "Size of the cache of volcano chunks. Larger Caches will speed up world gen time, at the cost of RAM usage", 0, 65536);
+					b.addInt("cacheSize", 256, "Size of the cache of chunks. Larger Caches will speed up world gen time, at the cost of RAM usage. Set to 0 to disable caching.", 0, 65536);
 				})
 				.build("lavadynamics", ModConfig.Type.COMMON);
 	}

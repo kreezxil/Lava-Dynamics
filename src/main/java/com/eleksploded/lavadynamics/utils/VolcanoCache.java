@@ -28,7 +28,7 @@ public class VolcanoCache {
 	}
 	
 	public static void addCachedChunk(ChunkPos pos, boolean volcano) {
-		int size = LavaDynamics.LavaConfig.getInt("volcanoCacheSize");
+		int size = LavaDynamics.LavaConfig.getInt("cacheSize");
 		
 		if(size == 0) {
 			if(CACHE != null) {
