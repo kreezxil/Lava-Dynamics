@@ -1,5 +1,7 @@
 package com.eleksploded.lavadynamics;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -33,21 +35,7 @@ public class WorldSmelting {
 			}
 
 			if(isByLava(world, e.getPos())) {
-				//IRecipe<?> r = getRecipeFromBlock(world.getRecipeManager(), e.getState().getBlock());
-				ItemStack stack = new ItemStack(e.getState().getBlock().asItem(), 1);
-				Inventory fakeInv = new Inventory(1);
-				fakeInv.addItem(stack);
-
-				IRecipe<?> r = world.getRecipeManager().getRecipe(IRecipeType.SMELTING, fakeInv, world).orElse(null);
-				//System.out.println(r.getType());
-				if(r != null && r.getType() == IRecipeType.SMELTING) {
-					Block output = Block.getBlockFromItem(r.getRecipeOutput().getItem());
-
-					if(output != Blocks.AIR) {
-						world.setBlockState(e.getPos(), output.getDefaultState());
-						world.playSound(null, e.getPos(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1, 1);
-					}
-				}
+				doSmelt(e.getPos(), world, e.getState());
 			}
 		}
 	}
@@ -61,46 +49,55 @@ public class WorldSmelting {
 					BlockPos pos = posIn.offset(dir, 1);
 					BlockState state = world.getBlockState(pos);
 
-					if(state.isAir(world, pos)) {
-						continue;
-					}
-
-					ItemStack stack = new ItemStack(state.getBlock().asItem(), 1);
-					Inventory fakeInv = new Inventory(1);
-					fakeInv.addItem(stack);
-
-					IRecipe<?> r = world.getRecipeManager().getRecipe(IRecipeType.SMELTING, fakeInv, world).orElse(null);
-
-					if(r != null && r.getType() == IRecipeType.SMELTING) {
-						Block output = Block.getBlockFromItem(r.getRecipeOutput().getItem());
-
-						if(output != Blocks.AIR) {
-							world.setBlockState(pos, output.getDefaultState());
-							world.playSound(null, pos, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1, 1);
-						}
-					}
+					doSmelt(pos, world, state);
 				}
 			}
 		}
 	}
 
-	public static boolean isByLava(World world, BlockPos pos) {
-		for(Direction dir : Direction.class.getEnumConstants()) {
-			Block b = world.getBlockState(pos.offset(dir, 1)).getBlock();
-			if(b == Blocks.LAVA) {
-				return true;
+	@SuppressWarnings("unchecked")
+	public static void doSmelt(BlockPos pos, World world, BlockState state) {
+		if(state.isAir(world, pos)) {
+			return;
+		}
+		
+		List<String> blacklist = (List<String>) LavaDynamics.LavaConfig.getValue("blacklistedBlocks");
+		if(blacklist.contains(state.getBlock().getRegistryName().toString())) return;
+
+		ItemStack stack = new ItemStack(state.getBlock().asItem(), 1);
+		Inventory fakeInv = new Inventory(1);
+		fakeInv.addItem(stack);
+
+		IRecipe<?> r = world.getRecipeManager().getRecipe(IRecipeType.SMELTING, fakeInv, world).orElse(null);
+
+		if(r != null && r.getType() == IRecipeType.SMELTING) {
+			Block output = Block.getBlockFromItem(r.getRecipeOutput().getItem());
+
+			if(output != Blocks.AIR) {
+				world.setBlockState(pos, output.getDefaultState());
+				world.playSound(null, pos, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1, 1);
 			}
 		}
-		return false;
 	}
 
-	public static IRecipe<?> getRecipeFromBlock(RecipeManager manager, Block block) {
-		for(IRecipe<?> recipe : manager.getRecipes()) {
-			Ingredient i = Ingredient.fromStacks(new ItemStack(block.asItem()));
-			if(recipe.getIngredients().contains(i)) {
-				return recipe;
-			}
+
+public static boolean isByLava(World world, BlockPos pos) {
+	for(Direction dir : Direction.class.getEnumConstants()) {
+		Block b = world.getBlockState(pos.offset(dir, 1)).getBlock();
+		if(b == Blocks.LAVA) {
+			return true;
 		}
-		return null;
 	}
+	return false;
+}
+
+public static IRecipe<?> getRecipeFromBlock(RecipeManager manager, Block block) {
+	for(IRecipe<?> recipe : manager.getRecipes()) {
+		Ingredient i = Ingredient.fromStacks(new ItemStack(block.asItem()));
+		if(recipe.getIngredients().contains(i)) {
+			return recipe;
+		}
+	}
+	return null;
+}
 }
