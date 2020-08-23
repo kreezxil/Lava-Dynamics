@@ -50,7 +50,7 @@ public class PostGenEffectThread implements Runnable {
 			if(tickTime >= oldTick + 1) {
 				oldTick++;
 
-				if(newTick >= oldTick) {
+				if(newTick > oldTick) {
 					
 					if(debug) LavaDynamics.Logger.info("Random Chunk for postgen Effect");
 
@@ -89,7 +89,7 @@ public class PostGenEffectThread implements Runnable {
 				}
 			}
 			if(debug) {
-				LavaDynamics.Logger.info(oldTick + " : " + newTick);
+				//LavaDynamics.Logger.info(oldTick + " : " + newTick);
 			}
 		}
 	}

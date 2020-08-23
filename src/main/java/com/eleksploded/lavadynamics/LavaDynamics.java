@@ -92,6 +92,9 @@ public class LavaDynamics
 					b.addInt("PostGenEffectCooldown", 1000, "Minumum ticks between effects", 0, 1728000);
 					
 					b.addValue("blacklistEffects", Arrays.asList(new String[] {}), "List of effects to blacklist, just put the effect name here. Ex: \"erupt\"");
+				}).category("WorldSmelting", "Options to do with world smelting", b -> {
+					b.addBool("worldSmeltingEnabled", true, "Is world smelting enabled");
+					b.addValue("blacklistedBlocks", Arrays.asList(new String[] {}), "Block IDs to ignore smelting (modid:block)");
 				}).category("Performance", "Options that hava impact on performance", b -> {
 					b.addInt("cacheSize", 256, "Size of the cache of chunks. Larger Caches will speed up world gen time, at the cost of RAM usage. Set to 0 to disable caching.", 0, 65536);
 				})
