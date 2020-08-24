@@ -1,5 +1,6 @@
 package com.eleksploded.lavadynamics;
 
+import java.util.List;
 import java.util.Random;
 
 import com.eleksploded.lavadynamics.cap.CheckedCap;
@@ -33,6 +34,12 @@ public class VolcanoManager {
 		if(!e.getWorld().isRemote()) {
 
 			if(!worldLoaded) return;
+			
+			String dimKey = ((ServerWorld) e.getWorld()).getDimensionKey().func_240901_a_().toString();
+			@SuppressWarnings("unchecked")
+			List<String> validDims = (List<String>) LavaDynamics.LavaConfig.getValue("validDims");
+			
+			if(!validDims.contains(dimKey)) return;
 
 			boolean debug = LavaDynamics.LavaConfig.getBool("debug");
 			Chunk chunk = ((Chunk)e.getChunk());

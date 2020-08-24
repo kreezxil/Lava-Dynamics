@@ -60,7 +60,7 @@ public class WorldSmelting {
 		if(state.isAir(world, pos)) {
 			return;
 		}
-		
+
 		List<String> blacklist = (List<String>) LavaDynamics.LavaConfig.getValue("blacklistedBlocks");
 		if(blacklist.contains(state.getBlock().getRegistryName().toString())) return;
 
@@ -80,24 +80,23 @@ public class WorldSmelting {
 		}
 	}
 
-
-public static boolean isByLava(World world, BlockPos pos) {
-	for(Direction dir : Direction.class.getEnumConstants()) {
-		Block b = world.getBlockState(pos.offset(dir, 1)).getBlock();
-		if(b == Blocks.LAVA) {
-			return true;
+	public static boolean isByLava(World world, BlockPos pos) {
+		for(Direction dir : Direction.class.getEnumConstants()) {
+			Block b = world.getBlockState(pos.offset(dir, 1)).getBlock();
+			if(b == Blocks.LAVA) {
+				return true;
+			}
 		}
+		return false;
 	}
-	return false;
-}
 
-public static IRecipe<?> getRecipeFromBlock(RecipeManager manager, Block block) {
-	for(IRecipe<?> recipe : manager.getRecipes()) {
-		Ingredient i = Ingredient.fromStacks(new ItemStack(block.asItem()));
-		if(recipe.getIngredients().contains(i)) {
-			return recipe;
+	public static IRecipe<?> getRecipeFromBlock(RecipeManager manager, Block block) {
+		for(IRecipe<?> recipe : manager.getRecipes()) {
+			Ingredient i = Ingredient.fromStacks(new ItemStack(block.asItem()));
+			if(recipe.getIngredients().contains(i)) {
+				return recipe;
+			}
 		}
+		return null;
 	}
-	return null;
-}
 }

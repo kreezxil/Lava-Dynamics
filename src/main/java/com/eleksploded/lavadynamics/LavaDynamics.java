@@ -66,6 +66,7 @@ public class LavaDynamics
 
 						c.addInt("playerDistance", 100, "Distance from a player needed before spawning a volcano", 0, 10000);
 						c.addInt("volcanoDistance", 16, "Distance from other volcanoes to spawn a volcano (in chunks, multiply by 16 for blocks). Scans a square of radius this.", 0, 128);
+						c.addValue("validDims", Arrays.asList(new String[] {"minecraft:overworld"}), "Valid dimensions for volcanoes to spawn in");
 					});
 					b.category("Biome", "Options for volcanoes using biomes", c -> {
 						c.addBool("useBiome", true, "Should the volcano use the biome blocks");
