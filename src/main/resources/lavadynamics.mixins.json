@@ -2,6 +2,7 @@
   "required": true,
   "package": "com.eleksploded.lavadynamics.mixins",
   "compatibilityLevel": "JAVA_8",
+  "refmap": "lavadynamics.refmap.json",
   "mixins": [
       "FluidFlowMixin",
       "BucketItemMixin"

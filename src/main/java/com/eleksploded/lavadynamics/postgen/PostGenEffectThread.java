@@ -42,7 +42,7 @@ public class PostGenEffectThread implements Runnable {
 		boolean debug = LavaDynamics.LavaConfig.getBool("postgendebug");
 		
 		oldTick = new Long(world.getGameTime()).intValue();
-		newTick = oldTick + 1;//1LavaDynamics.LavaConfig.getInt("PostGenEffectCooldown");
+		newTick = oldTick + LavaDynamics.LavaConfig.getInt("PostGenEffectCooldown");
 		
 		while(running) {
 
@@ -50,7 +50,7 @@ public class PostGenEffectThread implements Runnable {
 
 			if(tickTime < oldTick) {
 				oldTick = tickTime;
-				newTick = oldTick + 1;//LavaDynamics.LavaConfig.getInt("PostGenEffectCooldown");
+				newTick = oldTick + LavaDynamics.LavaConfig.getInt("PostGenEffectCooldown");
 			}
 
 			if(tickTime >= oldTick + 1) {
@@ -89,12 +89,9 @@ public class PostGenEffectThread implements Runnable {
 					});
 					if(success) {
 						oldTick = tickTime;
-						newTick = oldTick +1;// LavaDynamics.LavaConfig.getInt("PostGenEffectCooldown");
+						newTick = oldTick + LavaDynamics.LavaConfig.getInt("PostGenEffectCooldown");
 					}
 				}
-			}
-			if(debug) {
-				//LavaDynamics.Logger.info(oldTick + " : " + newTick);
 			}
 		}
 	}
@@ -103,11 +100,10 @@ public class PostGenEffectThread implements Runnable {
 	public static class PostGenEffectThreadHandler {
 		
 		static Map<ResourceLocation, PostGenEffectThread> pge = new HashMap<ResourceLocation, PostGenEffectThread>();
-		static Map<ResourceLocation, Thread> pget = new HashMap<ResourceLocation, Thread>();
 
 		@SubscribeEvent
 		public static void worldLoad(WorldEvent.Load e) {
-			if(!e.getWorld().isRemote()) {
+			if(!e.getWorld().isRemote() && LavaDynamics.LavaConfig.getBool("enablePostGenEffects")) {
 				@SuppressWarnings("unchecked")
 				List<String> validDims = (List<String>) LavaDynamics.LavaConfig.getValue("validDims");
 				
@@ -119,7 +115,6 @@ public class PostGenEffectThread implements Runnable {
 					PostGenEffectThread i = new PostGenEffectThread(world);
 					Thread t = new Thread(i);
 					pge.put(world.getDimensionKey().getRegistryName(), i);
-					pget.put(world.getDimensionKey().getRegistryName(), t);
 					t.start();
 				}
 			}
@@ -127,7 +122,7 @@ public class PostGenEffectThread implements Runnable {
 
 		@SubscribeEvent
 		public static void worldUnload(WorldEvent.Unload e) {
-			if(!e.getWorld().isRemote()) {
+			if(!e.getWorld().isRemote() && LavaDynamics.LavaConfig.getBool("enablePostGenEffects")) {
 				ServerWorld world = (ServerWorld) e.getWorld();
 				ResourceLocation key = world.getDimensionKey().func_240901_a_();
 				

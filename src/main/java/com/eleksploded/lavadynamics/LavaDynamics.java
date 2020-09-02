@@ -88,9 +88,9 @@ public class LavaDynamics
 					b.addInt("oreChance", 50, "Chance an ore spawns. x in 1000", 0, 1000);
 					b.addValue("ores", Arrays.asList(new String[] {"minecraft:coal_ore|15"}), "Ores to spawn in volcano. Format should be 'modid:block|chances' ");
 				}).category("PostGenEffects", "Options for PostGen Effects", b -> {
-					b.addInt("postGenEffectChance", 5, "Chance of an effect occuring (out of 1000). Set to 0 to disable.", 0, 1000);
+					b.addBool("enablePostGenEffects", true, "Chance of an effect occuring (out of 1000). Set to 0 to disable.");
 					
-					b.addInt("PostGenEffectCooldown", 1000, "Minumum ticks between effects", 0, 1728000);
+					b.addInt("PostGenEffectCooldown", 3, "Minumum ticks between effects (Set super low due to chance being super low. WIP)", 0, 1728000);
 					
 					b.addValue("blacklistEffects", Arrays.asList(new String[] {}), "List of effects to blacklist, just put the effect name here. Ex: \"erupt\"");
 				}).category("WorldSmelting", "Options to do with world smelting", b -> {
