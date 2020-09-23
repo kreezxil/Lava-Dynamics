@@ -1,10 +1,20 @@
 {
   "homepage": "https://www.curseforge.com/minecraft/mc-mods/lava-dynamics",
+  "1.16.1": {
+    "7.0.1": "Port"
+  },
+  "1.16.2": {
+    "7.0.1": "Port"
+  },
+  "1.16.3": {
+    "7.0.1": "Port"
+  },
   "1.12.2": {
+    "5.6.16": "Stuff",
   	"5.6.12": "Air Check Fix",
-	"5.6.11": "Min Distance from Spawn",
-	"5.6.10": "World Gen Fix",
-	"5.6.9": "Server Launch Fix",
+    "5.6.11": "Min Distance from Spawn",
+    "5.6.10": "World Gen Fix",
+    "5.6.9": "Server Launch Fix",
     "5.6.8": "Void World Gen Fix",
     "5.6.7": "Stuff N' Things",
   	"5.6.6": "Possible Performace Fix",
@@ -16,6 +26,15 @@
   },
   "promos": {
     "1.12.2-latest": "5.6.16",
-    "1.12.2-recommended": "5.6.16"
+    "1.12.2-recommended": "5.6.16",
+
+    "1.16.1-latest": "7.0.1",
+    "1.16.1-recommended": "7.0.1",
+
+    "1.16.2-latest": "7.0.1",
+    "1.16.2-recommended": "7.0.1",
+
+    "1.16.3-latest": "7.0.1",
+    "1.16.3-recommended": "7.0.1"
   }
 }
