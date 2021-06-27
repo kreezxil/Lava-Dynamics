@@ -1,72 +1,41 @@
 package com.eleksploded.lavadynamics.storage;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.Capability.IStorage;
 
-import org.apache.commons.io.FileUtils;
+public class CheckedStorage implements IStorage<IChecked> {
 
-import com.google.common.io.Files;
+	@Override
+	public NBTBase writeNBT(Capability<IChecked> capability, IChecked instance, EnumFacing side) {
 
-import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.DimensionManager;
+		NBTTagCompound n = new NBTTagCompound();
 
-public class CheckedStorage {
-	String fileName = "LD_CheckedStorage";
-	int dimID;
+		n.setBoolean("LD_Checked", instance.isChecked());
 
-	public CheckedStorage(int dimIDin){
-		dimID = dimIDin;
+		NBTTagCompound volcano = new NBTTagCompound();
+		volcano.setBoolean("is", instance.isVolcano());
+		if(instance.isVolcano()) {
+			volcano.setInteger("top", instance.getTop());
+			volcano.setInteger("cooldown", instance.getCooldown());
+		}
+		n.setTag("LD_Volcano", volcano);
+
+		return n;
 	}
 
-	File getFile() {
-		String tmp = DimensionManager.getCurrentSaveRootDirectory() + "/";
+	@Override
+	public void readNBT(Capability<IChecked> capability, IChecked instance, EnumFacing side, NBTBase nbt) {
+		NBTTagCompound n = (NBTTagCompound)nbt;
 
-		if(DimensionManager.getProvider(dimID).getSaveFolder() != null) {
-			tmp = tmp + DimensionManager.getProvider(dimID).getSaveFolder() + "/" + fileName;
-		} else {
-			tmp = tmp + fileName;
-		}
-		File file =  new File(tmp);
+		if(n.getBoolean("LD_Checked")) instance.check();
 
-		try {
-			if(!file.exists()) file.createNewFile();
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Error creating CheckedStorage. Please report this on the github page.");
-		}
-		
-		return file;
-	}
-
-	public boolean isChecked(Chunk c) {
-		try {
-			String chunk = c.x + "|" + c.z;
-			BufferedReader r = Files.newReader(getFile(), StandardCharsets.UTF_8);
-			String line;
-			while((line = r.readLine()) != null) {
-				if(line.contentEquals(chunk)) {
-					return true;
-				}
-			}
-			return false;
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Error checking CheckedStorage. Please report this on the github page.");
-		}
-	}
-
-	public void addChecked(Chunk chunk) {
-		if(!isChecked(chunk)) {
-			String toWrite = "\r\n" + chunk.x + "|" + chunk.z;
-
-			try {
-				FileUtils.writeStringToFile(getFile(), toWrite, StandardCharsets.UTF_8, true);
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new RuntimeException("Error creating CheckedStorage. Please report this on the github page.");
-			}
+		NBTTagCompound volcano = n.getCompoundTag("LD_Volcano");
+		if(volcano.getBoolean("is")) {
+			instance.setVolcano(volcano.getInteger("top"));
+			instance.setCooldown(volcano.getInteger("cooldown"));
 		}
 	}
 }

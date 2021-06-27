@@ -2,13 +2,7 @@ package com.eleksploded.lavadynamics;
 
 import java.util.Random;
 
-import org.apache.commons.lang3.ArrayUtils;
-
-import com.eleksploded.lavadynamics.storage.StorageManager;
-import com.eleksploded.lavadynamics.storage.VolcanoStorage;
-
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
@@ -20,8 +14,9 @@ public class WorldGenVolcano implements IWorldGenerator {
 	public void generate(Random rand, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
 		
 		if(!LavaConfig.volcano.worldGen) return;
-		Chunk chunk = chunkProvider.provideChunk(chunkX, chunkZ);
-		
+		throw new IllegalStateException("WorldGen generation is currently non-functional. Please disable in the config");
+		/*Chunk chunk = chunkProvider.provideChunk(chunkX, chunkZ);
+
 		if(timer != 0){
 			timer = timer-1;
 			try {
@@ -42,6 +37,6 @@ public class WorldGenVolcano implements IWorldGenerator {
 					Volcano.genVolcano(chunk, world);
 				}
 			}
-		}
+		}*/
 	}
 }

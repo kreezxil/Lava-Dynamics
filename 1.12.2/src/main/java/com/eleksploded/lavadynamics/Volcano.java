@@ -7,7 +7,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import com.eleksploded.lavadynamics.generators.ConeVolcanoGen;
 import com.eleksploded.lavadynamics.generators.MountianVolcanoGen;
 import com.eleksploded.lavadynamics.generators.WaterVolcanoGen;
-import com.eleksploded.lavadynamics.storage.StorageManager;
+import com.eleksploded.lavadynamics.storage.CheckedCap;
+import com.eleksploded.lavadynamics.storage.VolcanoRangeChecker;
 
 import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
@@ -96,13 +97,13 @@ public class Volcano {
 					LavaDynamics.Logger.info("VOLCANO!!!");
 				}
 				//Add chunk to tested Chunks
-				StorageManager.getCheckedStorage(event.getWorld().provider.getDimension()).addChecked(chunk); 
-				if(!StorageManager.getVolcanoStorage(event.getWorld().provider.getDimension()).isVolcanoInRange(chunk)){
+				chunk.getCapability(CheckedCap.checkedCap, null).check();
+				if(!VolcanoRangeChecker.getForDim(chunk.getWorld().provider.getDimension()).isVolcanoInRange(chunk, LavaConfig.volcano.minimumDistance)){
 					event.getWorld().setBlockState(new BlockPos(x,y,z), LavaDynamics.VolcanoBlock.getDefaultState());
 				}
 			} else {
 				//Add chunk to tested Chunks
-				StorageManager.getCheckedStorage(event.getWorld().provider.getDimension()).addChecked(chunk);
+				chunk.getCapability(CheckedCap.checkedCap, null).check();
 			}
 		} else {
 			if(LavaConfig.general.genVolcanoDebug) {
@@ -114,7 +115,7 @@ public class Volcano {
 
 	public static void genVolcano(Chunk chunk, World world) {
 		try {
-			StorageManager.getCheckedStorage(world.provider.getDimension()).addChecked(chunk);
+			chunk.getCapability(CheckedCap.checkedCap, null).check();
 		} catch (NullPointerException e) {
 			LavaDynamics.Logger.error("Must be running via command, or generation is taking place in an invalid dimension. "
 					+ "If it is an invalid dimension, please report on the github page.");
@@ -208,7 +209,7 @@ public class Volcano {
 				break;
 			}
 			try {
-				StorageManager.getVolcanoStorage(world.provider.getDimension()).addVolcano(chunk, fill.getY());
+				chunk.getCapability(CheckedCap.checkedCap, null).setVolcano(fill.getY());
 			} catch (NullPointerException e) {
 				LavaDynamics.Logger.error("Must be running via command, or generation is taking place in an invalid dimension. "
 						+ "If it is an invalid dimension, please report on the github page.");
@@ -272,7 +273,7 @@ public class Volcano {
 		if(LavaConfig.volcano.disaster){
 			return worldLoaded;
 		} else {
-			if(worldLoaded && !StorageManager.getCheckedStorage(chunk.getWorld().provider.getDimension()).isChecked(chunk) && !LavaConfig.volcano.worldGen) {
+			if(worldLoaded && !chunk.getCapability(CheckedCap.checkedCap, null).isChecked() && !LavaConfig.volcano.worldGen) {
 				return true;
 			} else {
 				return false;
