@@ -1,6 +1,6 @@
 package com.eleksploded.lavadynamics.commands;
 
-import com.eleksploded.lavadynamics.storage.StorageManager;
+import com.eleksploded.lavadynamics.storage.CheckedCap;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -24,7 +24,7 @@ public class CheckedChunkCommand extends CommandBase {
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		Chunk chunk = sender.getEntityWorld().getChunk(sender.getPosition());
-		if(StorageManager.getCheckedStorage(sender.getEntityWorld().provider.getDimension()).isChecked(chunk)){
+		if(chunk.getCapability(CheckedCap.checkedCap, null).isChecked()){
 			sender.sendMessage(new TextComponentString("Chunk [" + chunk.x + "," + chunk.z + "] has been checked"));
 		} else {
 			sender.sendMessage(new TextComponentString("Chunk [" + chunk.x + "," + chunk.z + "] has not been checked"));

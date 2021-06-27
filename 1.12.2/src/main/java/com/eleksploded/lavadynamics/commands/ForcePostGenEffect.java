@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 
 import com.eleksploded.lavadynamics.postgen.IPostGenEffect;
 import com.eleksploded.lavadynamics.postgen.PostGenEffectRegistry;
-import com.eleksploded.lavadynamics.storage.StorageManager;
+import com.eleksploded.lavadynamics.storage.CheckedCap;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -34,10 +34,10 @@ public class ForcePostGenEffect extends CommandBase {
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		Chunk chunk = sender.getEntityWorld().getChunk(sender.getPosition());
 
-		if(!StorageManager.getVolcanoStorage(sender.getEntityWorld().provider.getDimension()).isVolcano(chunk)){
+		if(!chunk.getCapability(CheckedCap.checkedCap, null).isVolcano()){
 			sender.sendMessage(new TextComponentString("Chunk does not contain a volcano. Please run this in a chunk that contains a volcamo."));
 		} else {
-			int top = StorageManager.getVolcanoStorage(sender.getEntityWorld().provider.getDimension()).getTop(chunk);
+			int top = chunk.getCapability(CheckedCap.checkedCap, null).getTop();
 			if(args.length == 0) {
 				PostGenEffectRegistry.runEffect(chunk, top);
 			} else if(args.length == 1){

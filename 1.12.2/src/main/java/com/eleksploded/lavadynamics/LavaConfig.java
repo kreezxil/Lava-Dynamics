@@ -27,6 +27,9 @@ public class LavaConfig {
 		
 		@Config.Comment("Enable debug outputs from Post generation volcano effects")
 		public boolean postGenDebug = false;
+		
+		@Config.Comment("Enable Threaded-Volcano Generation")
+		public boolean useThreadedGeneration = false;
 	}
 	
 	public static class PostGenEffectSettings{

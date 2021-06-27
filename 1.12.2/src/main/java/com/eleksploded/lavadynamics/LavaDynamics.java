@@ -15,7 +15,6 @@ import com.eleksploded.lavadynamics.postgen.effects.RumbleEffect;
 import com.eleksploded.lavadynamics.postgen.effects.erupt.DamageFallingBlock;
 import com.eleksploded.lavadynamics.postgen.effects.erupt.EruptEffect;
 import com.eleksploded.lavadynamics.proxy.CommonProxy;
-import com.eleksploded.lavadynamics.storage.StorageManager;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -72,7 +71,6 @@ public class LavaDynamics {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) { 
 		GameRegistry.registerWorldGenerator(new WorldGenVolcano(), 1);
-		MinecraftForge.EVENT_BUS.register(StorageManager.class);
 		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.register(RunEffects.class);
 		proxy.preInit(event);
@@ -91,8 +89,6 @@ public class LavaDynamics {
 			//mineralogy = true;
 		}
 		
-		StorageManager.init();
-
 		PostGenEffectRegistry.registerEffect(new EruptEffect());
 		PostGenEffectRegistry.registerEffect(rumbleEffect);
 		
