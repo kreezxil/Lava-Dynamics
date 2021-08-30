@@ -15,6 +15,7 @@ import com.eleksploded.lavadynamics.postgen.effects.RumbleEffect;
 import com.eleksploded.lavadynamics.postgen.effects.erupt.DamageFallingBlock;
 import com.eleksploded.lavadynamics.postgen.effects.erupt.EruptEffect;
 import com.eleksploded.lavadynamics.proxy.CommonProxy;
+import com.eleksploded.lavadynamics.threaded.GeneratorServerHandler;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -58,7 +59,7 @@ public class LavaDynamics {
 	public static final VolcanoArrow volcanoarrow = new VolcanoArrow();
 
 	//Init Proxies
-	@SidedProxy(modId=Reference.MODID,clientSide=Reference.cproxy, serverSide=Reference.sproxy)
+	@SidedProxy(modId=Reference.MODID, clientSide=Reference.cproxy, serverSide=Reference.sproxy)
 	public static CommonProxy proxy;
 
 	public static final Logger Logger = LogManager.getLogger("LavaDynamics");
@@ -91,6 +92,12 @@ public class LavaDynamics {
 		
 		PostGenEffectRegistry.registerEffect(new EruptEffect());
 		PostGenEffectRegistry.registerEffect(rumbleEffect);
+		
+		if(LavaConfig.general.useThreadedGeneration) {
+			MinecraftForge.EVENT_BUS.register(GeneratorServerHandler.class);
+		} else {
+			MinecraftForge.EVENT_BUS.register(Volcano.class);
+		}
 		
 	}
 

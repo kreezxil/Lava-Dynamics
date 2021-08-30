@@ -20,11 +20,9 @@ import net.minecraft.world.gen.feature.WorldGenLakes;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod.EventBusSubscriber
 public class Volcano {
 	private static boolean active = false;
 
@@ -44,8 +42,7 @@ public class Volcano {
 	}
 
 	@SubscribeEvent
-	public static void OnChunkLoad(ChunkEvent.Load event) {
-		
+	public static void OnChunkLoad(ChunkEvent.Load event) {		
 		if(!ArrayUtils.contains(LavaConfig.volcano.validDimensions, event.getWorld().provider.getDimension())){ return; }
 		
 		if(event.getWorld().isRemote) {

@@ -21,6 +21,8 @@ public class LavaConfig {
 	@Config.Name("World Smelting Settings")
 	public static WorldSmeltingOptions worldSmelt = new WorldSmeltingOptions();
 	
+	public static ThreadedOptions threadedOptions = new ThreadedOptions();
+	
 	public static class General {
 		@Config.Comment("Enable debug outputs from Volcano Generation")
 		public boolean genVolcanoDebug = false;
@@ -119,7 +121,7 @@ public class LavaConfig {
 		@Config.Comment("Amount of chances for said ore to spawn, be sure this matches ores (in order and length)")
 		public int[] chance = {15,4,3,2,2,3,1,1};
 		
-		@Config.Comment("Allow volcanoes to spawn in already checked chunks. Also ignores distance entry. May cause volcanoes to spawn inside eachother")
+		@Config.Comment("Allow volcanoes to spawn in already checked chunks. Ignores all checks except RNG. May cause volcanoes to spawn inside eachother")
 		public boolean disaster = false;
 		
 		@Config.Comment("Distance from other volcanoes needed to spawn a new volcano")
@@ -141,6 +143,10 @@ public class LavaConfig {
 		@Config.Comment({"Blocks to blacklist inworld smelting", 
 			"Add the result here. For example, to stop sand from smelting into glass, you would add 'minecraft:glass' to the list"})
 		public String[] blacklist = {};
+	}
+	
+	public static class ThreadedOptions {
+		public int chunksPerTick = 10;
 	}
 	
 	@Mod.EventBusSubscriber(modid = Reference.MODID)
